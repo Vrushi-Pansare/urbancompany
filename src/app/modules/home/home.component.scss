@@ -1,230 +1,2404 @@
-.home-container {
-  max-width: 1240px;
-  margin: 0 auto;
-  padding: 2rem 1.5rem;
+.uc-category-grid-section {
+  padding-top: 48px;
+  padding-bottom: 96px;
+  padding-left: 24px;
+  padding-right: 24px;
+  background-color: #ffffff;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
 
-  /* Hero Section */
-  .hero-section {
-    background: linear-gradient(135deg, #111111 0%, #222225 100%);
-    color: #ffffff;
-    border-radius: 20px;
-    padding: 3.5rem 3rem;
-    margin-bottom: 3rem;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  .uc-category-grid-container {
+    max-width: 1232px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 32px;
+    width: 100%;
+  }
 
-    .hero-title {
-      font-size: 2.8rem;
-      font-weight: 800;
-      margin-bottom: 0.8rem;
-      letter-spacing: -0.5px;
-    }
+  /* Left Column (Fixed width 481.33px) */
+  .uc-category-grid-content {
+    width: 481.33px;
+    max-width: 100%;
+    flex-shrink: 0;
+  }
 
-    .hero-subtitle {
-      font-size: 1.15rem;
-      color: #b0b0b8;
-      margin-bottom: 2rem;
-    }
+  /* Main Heading */
+  .uc-main-heading {
+    font-size: 36px;
+    line-height: 44px;
+    font-weight: 600;
+    color: #0f0f0f;
+    margin: 0 0 40px 0;
+    max-width: 100%;
+  }
 
-    .hero-stats {
+  /* Card Container (481.33px wide, white background, rounded border) */
+  .uc-unified-card {
+    width: 100%;
+    background-color: #ffffff;
+    border: 1px solid #eaeaef;
+    border-radius: 16px;
+    padding: 24px 24px 32px 24px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+  }
+
+  /* Services Grid (4 columns) */
+  .uc-services-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px 16px;
+
+    .uc-service-card {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 2rem;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+      padding-bottom: 8px;
 
-      .stat-item {
-        display: flex;
-        flex-direction: column;
+      &::after {
+        content: "";
+        position: absolute;
+        transform: scaleX(0);
+        height: 1.5px;
+        bottom: 0;
+        left: 10%;
+        right: 10%;
+        background-color: #000000;
+        transform-origin: bottom right;
+        transition: transform 0.2s ease-in-out;
+      }
 
-        .stat-number {
-          font-size: 1.5rem;
-          font-weight: 700;
-          color: #ffffff;
+      &:hover {
+        .uc-service-img-wrap {
+          opacity: 0.8;
         }
 
-        .stat-label {
-          font-size: 0.85rem;
-          color: #888892;
+        &::after {
+          transform: scaleX(1);
+          transform-origin: bottom left;
         }
       }
 
-      .stat-divider {
-        width: 1px;
-        height: 36px;
-        background: #333339;
+      .uc-service-img-wrap {
+        position: relative;
+        width: 98px;
+        height: 64px;
+        background-color: #f5f5f5;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4px;
+        transition: opacity 0.2s ease;
+
+        .uc-time-badge {
+          position: absolute;
+          bottom: -8px;
+          left: 50%;
+          transform: translateX(-50%);
+          background-color: #ffffff;
+          border: 1px solid #e2e2e2;
+          border-radius: 4px;
+          padding: 1px 6px;
+          font-size: 9px;
+          line-height: 12px;
+          font-weight: 600;
+          color: #07794c;
+          white-space: nowrap;
+          z-index: 2;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .uc-service-img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          border-radius: 4px;
+          aspect-ratio: 1.33333 / 1;
+        }
+      }
+
+      .uc-service-name {
+        font-size: 12px;
+        line-height: 16px;
+        color: #0f0f0f;
+        margin-top: 14px;
+        font-weight: 400;
+        text-align: center;
+        text-decoration: none !important;
       }
     }
   }
 
-  /* Section Title */
-  .section-title {
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: #111111;
-    margin-bottom: 1.8rem;
-  }
+  /* Native Smart Products Section */
+  .uc-smart-products-section {
+    margin-top: 36px;
 
-  /* Categories Section */
-  .categories-section {
-    margin-bottom: 3.5rem;
+    .uc-sub-heading {
+      font-size: 20px;
+      line-height: 28px;
+      font-weight: 600;
+      color: #545454;
+      margin: 0 0 16px 0;
+    }
 
-    .categories-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 1.5rem;
+    .uc-smart-products-grid {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
 
-      .category-card {
-        position: relative;
-        background: #ffffff;
-        border: 1px solid #eaeaef;
-        border-radius: 16px;
-        padding: 1.8rem 1.5rem;
+      .uc-smart-card {
         display: flex;
         flex-direction: column;
         align-items: center;
         text-align: center;
         cursor: pointer;
-        transition: all 0.25s ease;
+        position: relative;
+        padding-bottom: 8px;
 
-        &:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
-          border-color: #000000;
-        }
-
-        .badge {
+        &::after {
+          content: "";
           position: absolute;
-          top: 12px;
-          right: 12px;
-          background: #ff3b30;
-          color: #ffffff;
-          font-size: 0.7rem;
-          font-weight: 700;
-          padding: 0.25rem 0.6rem;
-          border-radius: 12px;
-          text-transform: uppercase;
+          transform: scaleX(0);
+          height: 1.5px;
+          bottom: 0;
+          left: 10%;
+          right: 10%;
+          background-color: #000000;
+          transform-origin: bottom right;
+          transition: transform 0.2s ease-in-out;
         }
-
-        .category-icon {
-          font-size: 2.8rem;
-          margin-bottom: 1rem;
-        }
-
-        .category-name {
-          font-size: 1rem;
-          font-weight: 600;
-          color: #222225;
-        }
-      }
-    }
-  }
-
-  /* Offers Section */
-  .offers-section {
-    margin-bottom: 3.5rem;
-
-    .offers-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
-
-      .offer-card {
-        border-radius: 16px;
-        padding: 2rem;
-        color: #ffffff;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s ease;
 
         &:hover {
-          transform: scale(1.02);
-        }
+          .uc-smart-img-wrap {
+            opacity: 0.8;
+          }
 
-        .offer-discount {
-          background: rgba(255, 255, 255, 0.25);
-          backdrop-filter: blur(8px);
-          padding: 0.3rem 0.8rem;
-          border-radius: 20px;
-          font-size: 0.75rem;
-          font-weight: 700;
-          letter-spacing: 0.5px;
-          margin-bottom: 1rem;
-        }
-
-        .offer-title {
-          font-size: 1.4rem;
-          font-weight: 700;
-          margin-bottom: 0.5rem;
-        }
-
-        .offer-subtitle {
-          font-size: 0.95rem;
-          opacity: 0.9;
-          margin-bottom: 1.5rem;
-        }
-
-        .book-now-btn {
-          background: #ffffff;
-          color: #111111;
-          border: none;
-          padding: 0.6rem 1.2rem;
-          border-radius: 8px;
-          font-weight: 700;
-          font-size: 0.85rem;
-          cursor: pointer;
-          transition: background 0.2s ease;
-
-          &:hover {
-            background: #f0f0f0;
+          &::after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
           }
         }
+
+        .uc-smart-img-wrap {
+          position: relative;
+          width: 98px;
+          height: 64px;
+          background-color: #f5f5f5;
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 4px;
+          transition: opacity 0.2s ease;
+
+          .uc-new-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background-color: #e91e63;
+            color: #ffffff;
+            font-size: 9px;
+            font-weight: 600;
+            padding: 1px 5px;
+            border-radius: 4px;
+            line-height: 12px;
+            z-index: 2;
+          }
+
+          .uc-smart-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 4px;
+            aspect-ratio: 1.33333 / 1;
+          }
+        }
+
+        .uc-smart-name {
+          font-size: 12px;
+          line-height: 16px;
+          color: #0f0f0f;
+          margin-top: 14px;
+          font-weight: 400;
+          text-align: center;
+          text-decoration: none !important;
+        }
       }
     }
   }
 
-  /* Guarantee Banner */
-  .guarantee-banner {
-    background: #f9f9fc;
-    border: 1px solid #eaeaef;
-    border-radius: 16px;
-    padding: 2rem;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 1.8rem;
+  /* Trust Markers Section */
+  .uc-trust-markers {
+    display: flex;
+    align-items: center;
+    gap: 75px;
+    margin-top: 32px;
+    margin-left: 15px;
 
-    .guarantee-item {
+    .uc-trust-item {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 12px;
 
-      .guarantee-icon {
-        font-size: 2.2rem;
+      &:last-child {
+        margin-left: 10px;
       }
 
-      h4 {
-        font-size: 1rem;
-        font-weight: 700;
-        color: #111111;
-        margin: 0 0 0.25rem 0;
+      .uc-trust-icon {
+        width: 32px;
+        height: 32px;
       }
 
-      p {
-        font-size: 0.85rem;
-        color: #66666e;
-        margin: 0;
+      .uc-trust-info {
+        display: flex;
+        flex-direction: column;
+
+        .uc-trust-val {
+          font-size: 20px;
+          line-height: 28px;
+          font-weight: 600;
+          color: #0f0f0f;
+        }
+
+        .uc-trust-lbl {
+          font-size: 14px;
+          line-height: 24px;
+          color: #545454;
+          font-weight: 400;
+        }
       }
+    }
+  }
+
+  /* Right Side Media Image Collage */
+  .uc-category-grid-media {
+    flex: 1;
+    max-width: 620px;
+    display: flex;
+    justify-content: flex-end;
+
+    .uc-hero-media-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      aspect-ratio: 1 / 1;
+      border-radius: 0px;
     }
   }
 }
 
-@media (max-width: 768px) {
-  .home-container {
-    .hero-section {
-      padding: 2rem;
+/* ── In the Spotlight Section ─────────────────────────────── */
+.uc-spotlight-section {
+  background-color: #ffffff;
+  padding: 0 24px 56px 24px;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
 
-      .hero-title {
-        font-size: 2rem;
+  .uc-spotlight-container {
+    max-width: 1232px;
+    margin: 0 auto;
+  }
+
+  .uc-spotlight-heading {
+    font-size: 36px;
+    line-height: 44px;
+    font-weight: 600;
+    color: #0f0f0f;
+    margin: 0 0 44px 0;
+  }
+
+  /* Wrapper that holds track + arrow buttons */
+  .uc-spotlight-carousel-wrap {
+    position: relative;
+  }
+
+  .uc-spotlight-track-wrap {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .uc-spotlight-track {
+    display: flex;
+    gap: 26px;
+    width: max-content;
+  }
+
+  .uc-spotlight-card {
+    flex-shrink: 0;
+    width: 385px;
+    height: 222px;
+    border-radius: 8px;
+    overflow: hidden;
+    display: block;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.2s ease-in-out;
+
+    &:hover {
+      transform: scale(1.025);
+    }
+
+    .uc-spotlight-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background-color: #f5f5f5;
+      display: block;
+    }
+  }
+
+  /* Arrow Buttons */
+  .uc-carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid rgba(227, 227, 227, 1);
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition:
+      box-shadow 0.2s ease,
+      transform 0.2s ease;
+
+    &:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    &--left {
+      left: -24px;
+    }
+
+    &--right {
+      right: -24px;
+    }
+
+    svg {
+      pointer-events: none;
+    }
+  }
+}
+
+/* ── New and Noteworthy Section ───────────────────────────── */
+.uc-noteworthy-section {
+  background-color: #ffffff;
+  padding: 30px 24px 96px 24px;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+
+  .uc-noteworthy-container {
+    max-width: 1232px;
+    margin: 0 auto;
+  }
+
+  .uc-noteworthy-heading {
+    font-size: 36px;
+    line-height: 44px;
+    font-weight: 600;
+    color: #0f0f0f;
+    margin: 0 0 39px 0;
+  }
+
+  .uc-noteworthy-carousel-wrap {
+    position: relative;
+  }
+
+  .uc-noteworthy-track-wrap {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .uc-noteworthy-track {
+    display: grid;
+    grid-template-rows: auto auto;
+    grid-auto-flow: column;
+    row-gap: 32px;
+    column-gap: 16px;
+    width: max-content;
+  }
+
+  .uc-noteworthy-card {
+    width: 233px;
+
+    .uc-noteworthy-card-link,
+    .uc-noteworthy-card-inner {
+      text-decoration: none;
+      display: block;
+      cursor: pointer;
+      color: inherit;
+    }
+
+    .uc-noteworthy-img-wrap {
+      position: relative;
+      width: 233px;
+      height: 233px;
+      border-radius: 8px;
+      overflow: hidden;
+      background-color: transparent;
+
+      .uc-noteworthy-img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
       }
+
+      .uc-noteworthy-badge {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        z-index: 2;
+        background-color: #841a3d;
+        color: #ffffff;
+        font-size: 12px;
+        line-height: 16px;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 4px;
+      }
+    }
+
+    .uc-noteworthy-title-wrap {
+      margin-top: 12px;
+
+      .uc-noteworthy-title {
+        font-size: 16px;
+        line-height: 24px;
+        font-weight: 600;
+        color: #0f0f0f;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .uc-noteworthy-time-info {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin-top: 4px;
+        font-size: 12px;
+        line-height: 16px;
+        color: #07794c;
+        font-weight: 400;
+      }
+    }
+  }
+
+  /* Arrow Buttons */
+  .uc-carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid rgba(227, 227, 227, 1);
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition:
+      box-shadow 0.2s ease,
+      transform 0.2s ease;
+
+    &:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    &--left {
+      left: -24px;
+    }
+
+    &--right {
+      right: -24px;
+    }
+
+    svg {
+      pointer-events: none;
+    }
+  }
+}
+
+/* ── Most Booked Services Section ─────────────────────────── */
+.uc-most-booked-section {
+  background-color: #ffffff;
+  padding: 0 24px 96px 24px;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+
+  .uc-most-booked-container {
+    max-width: 1232px;
+    margin: 0 auto;
+  }
+
+  .uc-most-booked-heading {
+    font-size: 36px;
+    line-height: 44px;
+    font-weight: 600;
+    color: #0f0f0f;
+    margin: 0 0 32px 0;
+  }
+
+  .uc-most-booked-carousel-wrap {
+    position: relative;
+  }
+
+  .uc-most-booked-track-wrap {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .uc-most-booked-track {
+    display: flex;
+    gap: 16px;
+    width: max-content;
+  }
+
+  .uc-most-booked-card {
+    width: 233.6px;
+    flex-shrink: 0;
+
+    .uc-most-booked-card-link,
+    .uc-most-booked-card-inner {
+      text-decoration: none;
+      display: block;
+      cursor: pointer;
+      color: inherit;
+    }
+
+    .uc-most-booked-img-wrap {
+      position: relative;
+      width: 233.6px;
+      height: 233.6px;
+      border-radius: 8px;
+      overflow: hidden;
+      background-color: #f5f5f5;
+
+      .uc-most-booked-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+    }
+
+    .uc-most-booked-info {
+      margin-top: 12px;
+
+      .uc-most-booked-title {
+        font-size: 16px;
+        line-height: 24px;
+        font-weight: 600;
+        color: #0f0f0f;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-height: 24px;
+      }
+
+      .uc-most-booked-rating-row {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin-top: 4px;
+
+        .uc-star-icon {
+          width: 12px;
+          height: 12px;
+          fill: #545454;
+          flex-shrink: 0;
+        }
+
+        .uc-rating-num {
+          font-size: 13px;
+          line-height: 16px;
+          color: #545454;
+          font-weight: 400;
+        }
+
+        .uc-rating-dot {
+          font-size: 12px;
+          color: #545454;
+          line-height: 16px;
+          margin: 0 1px;
+        }
+
+        .uc-instant-badge {
+          font-size: 12px;
+          line-height: 16px;
+          color: #545454;
+          font-weight: 400;
+        }
+      }
+
+      .uc-most-booked-price-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 4px;
+
+        .uc-price-val {
+          font-size: 14px;
+          line-height: 20px;
+          font-weight: 600;
+          color: #0f0f0f;
+        }
+
+        .uc-orig-price-val {
+          font-size: 12px;
+          line-height: 16px;
+          color: #757575;
+          text-decoration: line-through;
+        }
+      }
+    }
+  }
+
+  /* Arrow Buttons */
+  .uc-carousel-arrow {
+    position: absolute;
+    top: 40%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid rgba(227, 227, 227, 1);
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition:
+      box-shadow 0.2s ease,
+      transform 0.2s ease;
+
+    &:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    &--left {
+      left: -24px;
+    }
+
+    &--right {
+      right: -24px;
+    }
+
+    svg {
+      pointer-events: none;
+    }
+  }
+}
+
+/* ── Revamp your space with Section ──────────────────────── */
+.uc-revamp-section {
+  background-color: #ffffff;
+  padding: 0 24px 96px 24px;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+
+  .uc-revamp-container {
+    max-width: 1232px;
+    margin: 0 auto;
+  }
+
+  .uc-revamp-heading {
+    font-size: 36px;
+    line-height: 44px;
+    font-weight: 600;
+    color: #0f0f0f;
+    margin: 0 0 32px 0;
+  }
+
+  .uc-revamp-carousel-wrap {
+    position: relative;
+  }
+
+  .uc-revamp-track-wrap {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .uc-revamp-track {
+    display: flex;
+    gap: 24px;
+    width: max-content;
+  }
+
+  .uc-revamp-card {
+    flex-shrink: 0;
+    width: 394px;
+    height: 526px;
+    border-radius: 8px;
+    overflow: hidden;
+    display: block;
+    cursor: pointer;
+    text-decoration: none;
+    background-color: transparent;
+
+    .uc-revamp-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+  }
+
+  /* Arrow Buttons */
+  .uc-carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid rgba(227, 227, 227, 1);
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition:
+      box-shadow 0.2s ease,
+      transform 0.2s ease;
+
+    &:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    &--left {
+      left: -24px;
+    }
+
+    &--right {
+      right: -24px;
+    }
+
+    svg {
+      pointer-events: none;
+    }
+  }
+}
+
+/* ── Full Width Spotlight Banner Section ──────────────────── */
+.uc-spotlight-banner-section {
+  background-color: #ffffff;
+  padding: 0 24px 96px 24px;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+
+  .uc-spotlight-banner-container {
+    max-width: 1232px;
+    margin: 0 auto;
+  }
+
+  .uc-spotlight-banner-card {
+    display: block;
+    text-decoration: none;
+    width: 100%;
+    height: 405px;
+    border-radius: 1px;
+    overflow: hidden;
+    cursor: pointer;
+    background-color: transparent;
+
+    .uc-spotlight-banner-img {
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+      display: block;
+    }
+  }
+}
+
+/* ── Spa for Women Section ────────────────────────────────── */
+.uc-spa-section {
+  background-color: #ffffff;
+  padding: 0 24px 96px 24px;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, sans-serif;
+
+  .uc-spa-container {
+    max-width: 1232px;
+    margin: 0 auto;
+  }
+
+  .uc-spa-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+
+    .uc-spa-heading {
+      font-size: 36px;
+      line-height: 44px;
+      font-weight: 600;
+      color: #0f0f0f;
+      margin: 0;
+    }
+
+    .uc-see-all-btn {
+      background-color: #ffffff;
+      border: 1px solid rgba(227, 227, 227, 1);
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 600;
+      color: #6e42e5;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease;
+
+      &:hover {
+        background-color: #f7f5ff;
+        border-color: #6e42e5;
+      }
+    }
+  }
+
+  .uc-spa-carousel-wrap {
+    position: relative;
+  }
+
+  .uc-spa-track-wrap {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .uc-spa-track {
+    display: flex;
+    gap: 16px;
+    width: max-content;
+  }
+
+  .uc-spa-card {
+    width: 233.6px;
+    flex-shrink: 0;
+
+    .uc-spa-card-link,
+    .uc-spa-card-inner {
+      text-decoration: none;
+      display: block;
+      cursor: pointer;
+      color: inherit;
+    }
+
+    .uc-spa-img-wrap {
+      position: relative;
+      width: 233.6px;
+      height: 233.6px;
+      border-radius: 8px;
+      overflow: hidden;
+      background-color: #f5f5f5;
+
+      .uc-spa-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .uc-spa-badge {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        z-index: 2;
+        background-color: #6e42e5;
+        color: #ffffff;
+        font-size: 11px;
+        line-height: 14px;
+        font-weight: 700;
+        letter-spacing: 0.4px;
+        text-transform: uppercase;
+        padding: 3px 8px;
+        border-radius: 4px;
+      }
+    }
+
+    .uc-spa-info {
+      margin-top: 12px;
+
+      .uc-spa-title {
+        font-size: 16px;
+        line-height: 24px;
+        font-weight: 600;
+        color: #0f0f0f;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-height: 24px;
+      }
+
+      .uc-spa-rating-row {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin-top: 4px;
+
+        .uc-star-icon {
+          width: 12px;
+          height: 12px;
+          fill: #545454;
+          flex-shrink: 0;
+        }
+
+        .uc-rating-num {
+          font-size: 13px;
+          line-height: 16px;
+          color: #545454;
+          font-weight: 400;
+        }
+
+        .uc-rating-dot {
+          font-size: 12px;
+          color: #545454;
+          line-height: 16px;
+          margin: 0 1px;
+        }
+
+        .uc-instant-badge {
+          font-size: 12px;
+          line-height: 16px;
+          color: #545454;
+          font-weight: 400;
+        }
+      }
+
+      .uc-spa-price-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 4px;
+
+        .uc-price-val {
+          font-size: 14px;
+          line-height: 20px;
+          font-weight: 600;
+          color: #0f0f0f;
+        }
+
+        .uc-orig-price-val {
+          font-size: 12px;
+          line-height: 16px;
+          color: #757575;
+          text-decoration: line-through;
+        }
+      }
+    }
+  }
+
+  /* Arrow Buttons */
+  .uc-carousel-arrow {
+    position: absolute;
+    top: 40%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid rgba(227, 227, 227, 1);
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition:
+      box-shadow 0.2s ease,
+      transform 0.2s ease;
+
+    &:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    &--left {
+      left: -24px;
+    }
+
+    &--right {
+      right: -24px;
+    }
+
+    svg {
+      pointer-events: none;
+    }
+  }
+}
+
+/* ── Appliance repair & service Section ───────────────────── */
+.uc-appliance-section {
+  background-color: #ffffff;
+  padding: 0 24px 96px 24px;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, sans-serif;
+
+  .uc-appliance-container {
+    max-width: 1232px;
+    margin: 0 auto;
+  }
+
+  .uc-appliance-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+
+    .uc-appliance-heading {
+      font-size: 36px;
+      line-height: 44px;
+      font-weight: 600;
+      color: #0f0f0f;
+      margin: 0;
+    }
+
+    .uc-see-all-btn {
+      background-color: #ffffff;
+      border: 1px solid rgba(227, 227, 227, 1);
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 600;
+      color: #6e42e5;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease;
+
+      &:hover {
+        background-color: #f7f5ff;
+        border-color: #6e42e5;
+      }
+    }
+  }
+
+  .uc-appliance-carousel-wrap {
+    position: relative;
+  }
+
+  .uc-appliance-track-wrap {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .uc-appliance-track {
+    display: flex;
+    gap: 16px;
+    width: max-content;
+  }
+
+  .uc-appliance-card {
+    width: 233.6px;
+    flex-shrink: 0;
+
+    .uc-appliance-card-link,
+    .uc-appliance-card-inner {
+      text-decoration: none;
+      display: block;
+      cursor: pointer;
+      color: inherit;
+    }
+
+    .uc-appliance-img-wrap {
+      position: relative;
+      width: 233.6px;
+      height: 233.6px;
+      border-radius: 8px;
+      overflow: hidden;
+      background-color: #f5f5f5;
+
+      .uc-appliance-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .uc-appliance-badge {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        z-index: 2;
+        background-color: #6e42e5;
+        color: #ffffff;
+        font-size: 11px;
+        line-height: 14px;
+        font-weight: 700;
+        letter-spacing: 0.4px;
+        text-transform: uppercase;
+        padding: 3px 8px;
+        border-radius: 4px;
+      }
+    }
+
+    .uc-appliance-info {
+      margin-top: 12px;
+
+      .uc-appliance-title {
+        font-size: 16px;
+        line-height: 24px;
+        font-weight: 600;
+        color: #0f0f0f;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-height: 24px;
+      }
+
+      .uc-appliance-rating-row {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin-top: 4px;
+
+        .uc-star-icon {
+          width: 12px;
+          height: 12px;
+          fill: #545454;
+          flex-shrink: 0;
+        }
+
+        .uc-rating-num {
+          font-size: 13px;
+          line-height: 16px;
+          color: #545454;
+          font-weight: 400;
+        }
+
+        .uc-rating-dot {
+          font-size: 12px;
+          color: #545454;
+          line-height: 16px;
+          margin: 0 1px;
+        }
+
+        .uc-instant-badge {
+          font-size: 12px;
+          line-height: 16px;
+          color: #545454;
+          font-weight: 400;
+        }
+      }
+
+      .uc-appliance-price-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 4px;
+
+        .uc-price-val {
+          font-size: 14px;
+          line-height: 20px;
+          font-weight: 600;
+          color: #0f0f0f;
+        }
+
+        .uc-orig-price-val {
+          font-size: 12px;
+          line-height: 16px;
+          color: #757575;
+          text-decoration: line-through;
+        }
+      }
+    }
+  }
+
+  /* Arrow Buttons */
+  .uc-carousel-arrow {
+    position: absolute;
+    top: 40%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid rgba(227, 227, 227, 1);
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition:
+      box-shadow 0.2s ease,
+      transform 0.2s ease;
+
+    &:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    &--left {
+      left: -24px;
+    }
+
+    &--right {
+      right: -24px;
+    }
+
+    svg {
+      pointer-events: none;
+    }
+  }
+}
+
+/* ── Home repair & installation Section ──────────────────── */
+.uc-home-repairs-section {
+  background-color: #ffffff;
+  padding: 0 24px 96px 24px;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, sans-serif;
+
+  .uc-home-repairs-container {
+    max-width: 1232px;
+    margin: 0 auto;
+  }
+
+  .uc-home-repairs-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+
+    .uc-home-repairs-heading {
+      font-size: 36px;
+      line-height: 44px;
+      font-weight: 600;
+      color: #0f0f0f;
+      margin: 0;
+    }
+
+    .uc-see-all-btn {
+      background-color: #ffffff;
+      border: 1px solid rgba(227, 227, 227, 1);
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 600;
+      color: #6e42e5;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease;
+
+      &:hover {
+        background-color: #f7f5ff;
+        border-color: #6e42e5;
+      }
+    }
+  }
+
+  .uc-home-repairs-carousel-wrap {
+    position: relative;
+  }
+
+  .uc-home-repairs-track-wrap {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .uc-home-repairs-track {
+    display: flex;
+    gap: 16px;
+    width: max-content;
+  }
+
+  .uc-home-repairs-card {
+    width: 233.6px;
+    flex-shrink: 0;
+
+    .uc-home-repairs-card-link,
+    .uc-home-repairs-card-inner {
+      text-decoration: none;
+      display: block;
+      cursor: pointer;
+      color: inherit;
+    }
+
+    .uc-home-repairs-img-wrap {
+      position: relative;
+      width: 233.6px;
+      height: 233.6px;
+      border-radius: 8px;
+      overflow: hidden;
+      background-color: #f5f5f5;
+
+      .uc-home-repairs-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .uc-home-repairs-badge {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        z-index: 2;
+        background-color: #6e42e5;
+        color: #ffffff;
+        font-size: 11px;
+        line-height: 14px;
+        font-weight: 700;
+        letter-spacing: 0.4px;
+        text-transform: uppercase;
+        padding: 3px 8px;
+        border-radius: 4px;
+      }
+    }
+
+    .uc-home-repairs-info {
+      margin-top: 12px;
+
+      .uc-home-repairs-title {
+        font-size: 16px;
+        line-height: 24px;
+        font-weight: 600;
+        color: #0f0f0f;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-height: 24px;
+      }
+
+      .uc-home-repairs-rating-row {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin-top: 4px;
+
+        .uc-star-icon {
+          width: 12px;
+          height: 12px;
+          fill: #545454;
+          flex-shrink: 0;
+        }
+
+        .uc-rating-num {
+          font-size: 13px;
+          line-height: 16px;
+          color: #545454;
+          font-weight: 400;
+        }
+
+        .uc-rating-dot {
+          font-size: 12px;
+          color: #545454;
+          line-height: 16px;
+          margin: 0 1px;
+        }
+
+        .uc-instant-badge {
+          font-size: 12px;
+          line-height: 16px;
+          color: #545454;
+          font-weight: 400;
+        }
+      }
+
+      .uc-home-repairs-price-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 4px;
+
+        .uc-price-val {
+          font-size: 14px;
+          line-height: 20px;
+          font-weight: 600;
+          color: #0f0f0f;
+        }
+
+        .uc-orig-price-val {
+          font-size: 12px;
+          line-height: 16px;
+          color: #757575;
+          text-decoration: line-through;
+        }
+      }
+    }
+  }
+
+  /* Arrow Buttons */
+  .uc-carousel-arrow {
+    position: absolute;
+    top: 40%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid rgba(227, 227, 227, 1);
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition:
+      box-shadow 0.2s ease,
+      transform 0.2s ease;
+
+    &:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    &--left {
+      left: -24px;
+    }
+
+    &--right {
+      right: -24px;
+    }
+
+    svg {
+      pointer-events: none;
+    }
+  }
+}
+
+/* ── Massage for Men Section ─────────────────────────────── */
+.uc-massage-men-section {
+  background-color: #ffffff;
+  padding: 0 24px 96px 24px;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, sans-serif;
+
+  .uc-massage-men-container {
+    max-width: 1232px;
+    margin: 0 auto;
+  }
+
+  .uc-massage-men-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+
+    .uc-massage-men-heading {
+      font-size: 36px;
+      line-height: 44px;
+      font-weight: 600;
+      color: #0f0f0f;
+      margin: 0;
+    }
+
+    .uc-see-all-btn {
+      background-color: #ffffff;
+      border: 1px solid rgba(227, 227, 227, 1);
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 600;
+      color: #6e42e5;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease;
+
+      &:hover {
+        background-color: #f7f5ff;
+        border-color: #6e42e5;
+      }
+    }
+  }
+
+  .uc-massage-men-carousel-wrap {
+    position: relative;
+  }
+
+  .uc-massage-men-track-wrap {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .uc-massage-men-track {
+    display: flex;
+    gap: 16px;
+    width: max-content;
+  }
+
+  .uc-massage-men-card {
+    width: 233.6px;
+    flex-shrink: 0;
+
+    .uc-massage-men-card-link,
+    .uc-massage-men-card-inner {
+      text-decoration: none;
+      display: block;
+      cursor: pointer;
+      color: inherit;
+    }
+
+    .uc-massage-men-img-wrap {
+      position: relative;
+      width: 233.6px;
+      height: 233.6px;
+      border-radius: 8px;
+      overflow: hidden;
+      background-color: #f5f5f5;
+
+      .uc-massage-men-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .uc-massage-men-badge {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        z-index: 2;
+        background-color: #6e42e5;
+        color: #ffffff;
+        font-size: 11px;
+        line-height: 14px;
+        font-weight: 700;
+        letter-spacing: 0.4px;
+        text-transform: uppercase;
+        padding: 3px 8px;
+        border-radius: 4px;
+      }
+    }
+
+    .uc-massage-men-info {
+      margin-top: 12px;
+
+      .uc-massage-men-title {
+        font-size: 16px;
+        line-height: 24px;
+        font-weight: 600;
+        color: #0f0f0f;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-height: 24px;
+      }
+
+      .uc-massage-men-rating-row {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin-top: 4px;
+
+        .uc-star-icon {
+          width: 12px;
+          height: 12px;
+          fill: #545454;
+          flex-shrink: 0;
+        }
+
+        .uc-rating-num {
+          font-size: 13px;
+          line-height: 16px;
+          color: #545454;
+          font-weight: 400;
+        }
+
+        .uc-rating-dot {
+          font-size: 12px;
+          color: #545454;
+          line-height: 16px;
+          margin: 0 1px;
+        }
+
+        .uc-instant-badge {
+          font-size: 12px;
+          line-height: 16px;
+          color: #545454;
+          font-weight: 400;
+        }
+      }
+
+      .uc-massage-men-price-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 4px;
+
+        .uc-price-val {
+          font-size: 14px;
+          line-height: 20px;
+          font-weight: 600;
+          color: #0f0f0f;
+        }
+
+        .uc-orig-price-val {
+          font-size: 12px;
+          line-height: 16px;
+          color: #757575;
+          text-decoration: line-through;
+        }
+      }
+    }
+  }
+
+  /* Arrow Buttons */
+  .uc-carousel-arrow {
+    position: absolute;
+    top: 40%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid rgba(227, 227, 227, 1);
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition:
+      box-shadow 0.2s ease,
+      transform 0.2s ease;
+
+    &:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    &--left {
+      left: -24px;
+    }
+
+    &--right {
+      right: -24px;
+    }
+
+    svg {
+      pointer-events: none;
+    }
+  }
+}
+
+/* ── Salon for men Section ────────────────────────────────── */
+.uc-salon-men-section {
+  background-color: #ffffff;
+  padding: 0 24px 96px 24px;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, sans-serif;
+
+  .uc-salon-men-container {
+    max-width: 1232px;
+    margin: 0 auto;
+  }
+
+  .uc-salon-men-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+
+    .uc-salon-men-header-text {
+      .uc-salon-men-heading {
+        font-size: 36px;
+        line-height: 44px;
+        font-weight: 600;
+        color: #0f0f0f;
+        margin: 0;
+      }
+
+      .uc-salon-men-subheading {
+        font-size: 16px;
+        line-height: 24px;
+        color: #545454;
+        font-weight: 400;
+        margin: 4px 0 0 0;
+      }
+    }
+
+    .uc-see-all-btn {
+      background-color: #ffffff;
+      border: 1px solid rgba(227, 227, 227, 1);
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 600;
+      color: #6e42e5;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease;
+
+      &:hover {
+        background-color: #f7f5ff;
+        border-color: #6e42e5;
+      }
+    }
+  }
+
+  .uc-salon-men-carousel-wrap {
+    position: relative;
+  }
+
+  .uc-salon-men-track-wrap {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .uc-salon-men-track {
+    display: flex;
+    gap: 16px;
+    width: max-content;
+  }
+
+  .uc-salon-men-card {
+    width: 233.6px;
+    flex-shrink: 0;
+
+    .uc-salon-men-card-link,
+    .uc-salon-men-card-inner {
+      text-decoration: none;
+      display: block;
+      cursor: pointer;
+      color: inherit;
+    }
+
+    .uc-salon-men-img-wrap {
+      position: relative;
+      width: 233.6px;
+      height: 233.6px;
+      border-radius: 8px;
+      overflow: hidden;
+      background-color: #f5f5f5;
+
+      .uc-salon-men-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .uc-salon-men-badge {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        z-index: 2;
+        background-color: #6e42e5;
+        color: #ffffff;
+        font-size: 11px;
+        line-height: 14px;
+        font-weight: 700;
+        letter-spacing: 0.4px;
+        text-transform: uppercase;
+        padding: 3px 8px;
+        border-radius: 4px;
+      }
+    }
+
+    .uc-salon-men-info {
+      margin-top: 12px;
+
+      .uc-salon-men-title {
+        font-size: 16px;
+        line-height: 24px;
+        font-weight: 600;
+        color: #0f0f0f;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-height: 24px;
+      }
+
+      .uc-salon-men-rating-row {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin-top: 4px;
+
+        .uc-star-icon {
+          width: 12px;
+          height: 12px;
+          fill: #545454;
+          flex-shrink: 0;
+        }
+
+        .uc-rating-num {
+          font-size: 13px;
+          line-height: 16px;
+          color: #545454;
+          font-weight: 400;
+        }
+
+        .uc-rating-dot {
+          font-size: 12px;
+          color: #545454;
+          line-height: 16px;
+          margin: 0 1px;
+        }
+
+        .uc-instant-badge {
+          font-size: 12px;
+          line-height: 16px;
+          color: #545454;
+          font-weight: 400;
+        }
+      }
+
+      .uc-salon-men-price-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 4px;
+
+        .uc-price-val {
+          font-size: 14px;
+          line-height: 20px;
+          font-weight: 600;
+          color: #0f0f0f;
+        }
+
+        .uc-orig-price-val {
+          font-size: 12px;
+          line-height: 16px;
+          color: #757575;
+          text-decoration: line-through;
+        }
+      }
+    }
+  }
+
+  /* Arrow Buttons */
+  .uc-carousel-arrow {
+    position: absolute;
+    top: 40%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid rgba(227, 227, 227, 1);
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition:
+      box-shadow 0.2s ease,
+      transform 0.2s ease;
+
+    &:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    &--left {
+      left: -24px;
+    }
+
+    &--right {
+      right: -24px;
+    }
+
+    svg {
+      pointer-events: none;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .uc-spotlight-section {
+    padding: 0 16px 40px 16px;
+
+    .uc-spotlight-heading {
+      font-size: 24px;
+      line-height: 32px;
+    }
+
+    .uc-spotlight-card {
+      width: 280px;
+      height: 158px;
+    }
+
+    .uc-carousel-arrow {
+      display: none;
+    }
+  }
+
+  .uc-noteworthy-section {
+    padding: 0 16px 56px 16px;
+
+    .uc-noteworthy-heading {
+      font-size: 24px;
+      line-height: 32px;
+      margin-bottom: 24px;
+    }
+
+    .uc-noteworthy-track {
+      row-gap: 20px;
+      column-gap: 12px;
+    }
+
+    .uc-noteworthy-card {
+      width: 160px;
+
+      .uc-noteworthy-img-wrap {
+        width: 160px;
+        height: 160px;
+      }
+
+      .uc-noteworthy-title-wrap .uc-noteworthy-title {
+        font-size: 14px;
+        line-height: 20px;
+      }
+    }
+
+    .uc-carousel-arrow {
+      display: none;
+    }
+  }
+
+  .uc-most-booked-section {
+    padding: 0 16px 56px 16px;
+
+    .uc-most-booked-heading {
+      font-size: 24px;
+      line-height: 32px;
+      margin-bottom: 20px;
+    }
+
+    .uc-most-booked-track {
+      gap: 12px;
+    }
+
+    .uc-most-booked-card {
+      width: 160px;
+
+      .uc-most-booked-img-wrap {
+        width: 160px;
+        height: 160px;
+      }
+
+      .uc-most-booked-info .uc-most-booked-title {
+        font-size: 14px;
+        line-height: 20px;
+      }
+    }
+
+    .uc-carousel-arrow {
+      display: none;
+    }
+  }
+
+  .uc-revamp-section {
+    padding: 0 16px 56px 16px;
+
+    .uc-revamp-heading {
+      font-size: 24px;
+      line-height: 32px;
+      margin-bottom: 20px;
+    }
+
+    .uc-revamp-track {
+      gap: 16px;
+    }
+
+    .uc-revamp-card {
+      width: 280px;
+      height: 374px;
+    }
+
+    .uc-carousel-arrow {
+      display: none;
+    }
+  }
+
+  .uc-spotlight-banner-section {
+    padding: 0 16px 56px 16px;
+
+    .uc-spotlight-banner-card {
+      height: 180px;
+    }
+  }
+
+  .uc-spa-section {
+    padding: 0 16px 56px 16px;
+
+    .uc-spa-header {
+      margin-bottom: 20px;
+
+      .uc-spa-heading {
+        font-size: 24px;
+        line-height: 32px;
+      }
+    }
+
+    .uc-spa-track {
+      gap: 12px;
+    }
+
+    .uc-spa-card {
+      width: 160px;
+
+      .uc-spa-img-wrap {
+        width: 160px;
+        height: 160px;
+      }
+
+      .uc-spa-info .uc-spa-title {
+        font-size: 14px;
+        line-height: 20px;
+      }
+    }
+
+    .uc-carousel-arrow {
+      display: none;
+    }
+  }
+
+  .uc-appliance-section {
+    padding: 0 16px 56px 16px;
+
+    .uc-appliance-header {
+      margin-bottom: 20px;
+
+      .uc-appliance-heading {
+        font-size: 24px;
+        line-height: 32px;
+      }
+    }
+
+    .uc-appliance-track {
+      gap: 12px;
+    }
+
+    .uc-appliance-card {
+      width: 160px;
+
+      .uc-appliance-img-wrap {
+        width: 160px;
+        height: 160px;
+      }
+
+      .uc-appliance-info .uc-appliance-title {
+        font-size: 14px;
+        line-height: 20px;
+      }
+    }
+
+    .uc-carousel-arrow {
+      display: none;
+    }
+  }
+
+  .uc-home-repairs-section {
+    padding: 0 16px 56px 16px;
+
+    .uc-home-repairs-header {
+      margin-bottom: 20px;
+
+      .uc-home-repairs-heading {
+        font-size: 24px;
+        line-height: 32px;
+      }
+    }
+
+    .uc-home-repairs-track {
+      gap: 12px;
+    }
+
+    .uc-home-repairs-card {
+      width: 160px;
+
+      .uc-home-repairs-img-wrap {
+        width: 160px;
+        height: 160px;
+      }
+
+      .uc-home-repairs-info .uc-home-repairs-title {
+        font-size: 14px;
+        line-height: 20px;
+      }
+    }
+
+    .uc-carousel-arrow {
+      display: none;
+    }
+  }
+
+  .uc-massage-men-section {
+    padding: 0 16px 56px 16px;
+
+    .uc-massage-men-header {
+      margin-bottom: 20px;
+
+      .uc-massage-men-heading {
+        font-size: 24px;
+        line-height: 32px;
+      }
+    }
+
+    .uc-massage-men-track {
+      gap: 12px;
+    }
+
+    .uc-massage-men-card {
+      width: 160px;
+
+      .uc-massage-men-img-wrap {
+        width: 160px;
+        height: 160px;
+      }
+
+      .uc-massage-men-info .uc-massage-men-title {
+        font-size: 14px;
+        line-height: 20px;
+      }
+    }
+
+    .uc-carousel-arrow {
+      display: none;
+    }
+  }
+
+  .uc-salon-men-section {
+    padding: 0 16px 56px 16px;
+
+    .uc-salon-men-header {
+      margin-bottom: 20px;
+
+      .uc-salon-men-header-text {
+        .uc-salon-men-heading {
+          font-size: 24px;
+          line-height: 32px;
+        }
+
+        .uc-salon-men-subheading {
+          font-size: 14px;
+          line-height: 20px;
+        }
+      }
+    }
+
+    .uc-salon-men-track {
+      gap: 12px;
+    }
+
+    .uc-salon-men-card {
+      width: 160px;
+
+      .uc-salon-men-img-wrap {
+        width: 160px;
+        height: 160px;
+      }
+
+      .uc-salon-men-info .uc-salon-men-title {
+        font-size: 14px;
+        line-height: 20px;
+      }
+    }
+
+    .uc-carousel-arrow {
+      display: none;
+    }
+  }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 1024px) {
+  .uc-category-grid-section {
+    .uc-category-grid-container {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .uc-category-grid-content {
+      width: 100%;
+      max-width: 481.33px;
+    }
+
+    .uc-category-grid-media {
+      width: 100%;
+      max-width: 481.33px;
+      margin-top: 24px;
+    }
+  }
+}
+
+@media (max-width: 520px) {
+  .uc-category-grid-section {
+    padding: 24px 16px;
+
+    .uc-main-heading {
+      font-size: 24px;
+      line-height: 32px;
+      margin-bottom: 20px;
+    }
+
+    .uc-unified-card {
+      padding: 16px;
+    }
+
+    .uc-services-grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px 8px;
+    }
+
+    .uc-trust-markers {
+      gap: 24px;
+    }
+  }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 1024px) {
+  .uc-category-grid-section {
+    .uc-category-grid-container {
+      flex-direction: column;
+    }
+
+    .uc-category-grid-media {
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .uc-category-grid-section {
+    padding: 24px 16px;
+
+    .uc-main-heading {
+      font-size: 24px;
+      line-height: 32px;
+      margin-bottom: 20px;
+    }
+
+    .uc-services-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px 12px;
+      padding: 16px;
+    }
+
+    .uc-trust-markers {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 20px;
     }
   }
 }
