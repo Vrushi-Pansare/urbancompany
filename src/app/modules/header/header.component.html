@@ -1,0 +1,74 @@
+<header class="uc-header" id="header">
+  <div class="uc-header-inner">
+    <!-- Logo Column -->
+    <div class="uc-header-col uc-logo-col" id="logoColumn">
+      <a href="/" class="uc-logo-link">
+        <img 
+          [src]="logoUrl" 
+          alt="Urban Company logo" 
+          class="uc-logo-img"
+        />
+      </a>
+    </div>
+
+    <!-- Navigation Tabs Column -->
+    <div class="uc-header-col uc-nav-col" id="NavTabsColumn">
+      <nav class="uc-nav-tabs">
+        <a href="#" class="uc-nav-tab active">Native</a>
+      </nav>
+    </div>
+
+    <!-- Spacer -->
+    <div class="uc-spacer"></div>
+
+    <!-- Location & Search Column -->
+    <div class="uc-header-col uc-search-col" id="locationSearchColumn">
+      <div class="uc-search-container">
+        <!-- Location Picker -->
+        <div class="uc-location-picker">
+          <svg class="uc-icon" viewBox="0 0 24 24" fill="#757575">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+          </svg>
+          <span class="uc-location-text" [title]="currentLocation">{{ currentLocation }}</span>
+          <svg class="uc-dropdown-icon" viewBox="0 0 16 16" fill="#757575">
+            <path fill-rule="evenodd" d="M8 9.94L3.53 5.47 2.47 6.53l5 5a.75.75 0 001.06 0l5-5-1.06-1.06L8 9.94z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+
+        <div class="uc-search-divider"></div>
+
+        <!-- Service Search Input -->
+        <div class="uc-service-search">
+          <svg class="uc-icon" viewBox="0 0 24 24" fill="#545454">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M10.875 2a8.875 8.875 0 105.528 15.818l3.89 3.89 1.414-1.415-3.89-3.889A8.875 8.875 0 0010.875 2zM4 10.875a6.875 6.875 0 1113.75 0 6.875 6.875 0 01-13.75 0z"/>
+          </svg>
+          <input 
+            type="text" 
+            placeholder="Search for 'AC Service', 'Salon', 'Cleaning'..." 
+            class="uc-search-input"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Actions Column (Cart & Profile Buttons) -->
+    <div class="uc-header-col uc-actions-col" id="rightButtonColumn">
+      <div class="uc-actions-group">
+        <!-- Cart Button -->
+        <button class="uc-action-btn uc-cart-btn" aria-label="Cart">
+          <svg class="uc-btn-icon" viewBox="0 0 24 24" fill="#0F0F0F">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M3.327 2H1.75v2h1.389l3.339 11.687A2.5 2.5 0 008.88 17.5h8.988a2.5 2.5 0 002.403-1.813l2.475-8.662a1 1 0 00-.961-1.275H5.719l-.71-2.48A1.75 1.75 0 003.328 2zm5.074 13.137L6.29 7.75h14.17l-2.11 7.387a.5.5 0 01-.482.363H8.882a.5.5 0 01-.48.363z"/>
+            <path d="M8.5 21.75a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM18.25 21.75a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
+          </svg>
+        </button>
+
+        <!-- Profile Button -->
+        <button class="uc-action-btn uc-profile-btn" aria-label="Account Profile">
+          <svg class="uc-btn-icon" viewBox="0 0 24 24" fill="#0F0F0F">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M18.702 19.422A9.974 9.974 0 0022 12c0-5.523-4.477-10-10-10S2 6.477 2 12a9.975 9.975 0 003.326 7.447A9.963 9.963 0 0012 22a9.963 9.963 0 006.702-2.578zM12 4a8 8 0 00-6.183 13.076 7.752 7.752 0 012.933-2.362 4.75 4.75 0 116.5 0 7.755 7.755 0 012.933 2.362A8 8 0 0012 4zm4.718 14.461a5.753 5.753 0 00-9.436 0A7.964 7.964 0 0012 20a7.964 7.964 0 004.718-1.539zM12 14a2.75 2.75 0 100-5.5 2.75 2.75 0 000 5.5z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,12 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: #fcfcfd;
+  color: #111111;
+
+  .app-main {
+    flex: 1;
+  }
+}
