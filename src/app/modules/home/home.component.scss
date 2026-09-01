@@ -1,3 +1,18 @@
+:host {
+  display: block;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    background-color: rgba(245, 245, 245, 1.00);
+
+    section {
+      background-color: #ffffff;
+      border-bottom: 8px solid rgba(245, 245, 245, 1.00);
+      padding-bottom: 35px !important;
+    }
+  }
+}
+
 .uc-category-grid-section {
   padding-top: 48px;
   padding-bottom: 96px;
@@ -291,6 +306,182 @@
       border-radius: 0px;
     }
   }
+
+  /* Mobile Responsiveness (< 768px) */
+  @media (max-width: 768px) {
+    padding: 20px 0 35px 0 !important;
+    background-color: #ffffff;
+    border-bottom: 8px solid rgba(245, 245, 245, 1.00);
+
+    .uc-category-grid-container {
+      flex-direction: column;
+      gap: 0;
+      width: 100%;
+    }
+
+    .uc-category-grid-content {
+      width: 100%;
+    }
+
+    .uc-main-heading {
+      display: none;
+    }
+
+    .uc-category-grid-media {
+      display: none;
+    }
+
+    .uc-trust-markers {
+      display: none;
+    }
+
+    .uc-unified-card {
+      border: none;
+      box-shadow: none;
+      padding: 0 16px;
+      border-radius: 0;
+      background: transparent;
+    }
+
+    .uc-services-grid {
+      display: grid !important;
+      grid-template-columns: repeat(4, 1fr) !important;
+      gap: 16px 10px !important;
+      padding: 0 !important;
+
+      .uc-service-card {
+        padding-bottom: 0;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        &::after {
+          display: none;
+        }
+
+        .uc-service-img-wrap {
+          width: 100%;
+          max-width: 76px;
+          height: 64px;
+          background-color: #f5f5f5;
+          border-radius: 12px;
+          padding: 4px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+
+          .uc-time-badge {
+            position: absolute;
+            bottom: -7px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 1px 5px;
+            font-size: 9px;
+            line-height: 13px;
+            font-weight: 600;
+            color: rgba(7, 121, 76, 1);
+            border: 1px solid rgba(226, 226, 226, 1);
+            border-radius: 4px;
+            background-color: #ffffff;
+            white-space: nowrap;
+            z-index: 3;
+            box-shadow: none;
+          }
+
+          .uc-service-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            aspect-ratio: 1.33333 / 1;
+            border-radius: 6px;
+          }
+        }
+
+        .uc-service-name {
+          font-size: 11.5px;
+          line-height: 15px;
+          color: rgba(15, 15, 15, 1);
+          font-weight: 400;
+          margin-top: 10px;
+          text-align: center;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          word-break: break-word;
+        }
+      }
+    }
+
+    .uc-smart-products-section {
+      margin-top: 28px;
+      padding: 0;
+
+      .uc-sub-heading {
+        font-size: 17px;
+        line-height: 24px;
+        font-weight: 700;
+        color: #0f0f0f;
+        margin: 0 0 14px 0;
+      }
+
+      .uc-smart-products-grid {
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 16px 10px !important;
+
+        .uc-smart-card {
+          padding-bottom: 0;
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+
+          &::after {
+            display: none;
+          }
+
+          .uc-smart-img-wrap {
+            width: 100%;
+            max-width: 76px;
+            height: 64px;
+            background-color: #f5f5f5;
+            border-radius: 12px;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .uc-smart-img {
+              width: 100%;
+              height: 100%;
+              object-fit: contain;
+              aspect-ratio: 1.33333 / 1;
+              border-radius: 6px;
+            }
+          }
+
+          .uc-smart-name {
+            font-size: 11.5px;
+            line-height: 15px;
+            color: rgba(15, 15, 15, 1);
+            font-weight: 400;
+            margin-top: 10px;
+            text-align: center;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+          line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            word-break: break-word;
+          }
+        }
+      }
+    }
+  }
 }
 
 /* ── In the Spotlight Section ─────────────────────────────── */
@@ -396,6 +587,83 @@
       pointer-events: none;
     }
   }
+
+  /* Mobile Scroll Indicator */
+  .uc-scroll-indicator-wrap {
+    display: none;
+
+    @media (max-width: 768px) {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 16px;
+
+      .uc-scroll-indicator-track {
+        width: 64px;
+        height: 4px;
+        background-color: rgba(237, 237, 237, 1);
+        border-radius: 8px;
+        overflow: hidden;
+        position: relative;
+
+        .uc-scroll-indicator-thumb {
+          width: 18px;
+          height: 4px;
+          background-color: rgb(84, 84, 84);
+          border-radius: 8px;
+          transition: transform 0.1s linear;
+        }
+      }
+    }
+  }
+
+  /* Mobile Responsiveness (< 768px) */
+  @media (max-width: 768px) {
+    padding: 25px 0 35px 0 !important;
+    background-color: #ffffff;
+    border-bottom: 8px solid rgba(245, 245, 245, 1.00);
+
+    .uc-spotlight-container {
+      padding: 0;
+    }
+
+    .uc-spotlight-heading {
+      font-size: 20px;
+      line-height: 28px;
+      font-weight: 700;
+      color: rgba(15, 15, 15, 1);
+      margin: 0 0 16px 16px;
+    }
+
+    .uc-spotlight-track-wrap {
+      padding: 0 16px;
+    }
+
+    .uc-spotlight-track {
+      gap: 12px;
+    }
+
+    .uc-spotlight-card {
+      width: calc(100vw - 64px);
+      max-width: 335px;
+      height: auto;
+      aspect-ratio: 1.77778 / 1;
+      border-radius: 8px;
+
+      &:hover {
+        transform: none;
+      }
+
+      .uc-spotlight-img {
+        border-radius: 8px;
+        aspect-ratio: 1.77778 / 1;
+      }
+    }
+
+    .uc-carousel-arrow {
+      display: none !important;
+    }
+  }
 }
 
 /* ── New and Noteworthy Section ───────────────────────────── */
@@ -417,6 +685,102 @@
     font-weight: 600;
     color: #0f0f0f;
     margin: 0 0 39px 0;
+  }
+
+  @media (max-width: 768px) {
+    padding: 20px 0 35px 0 !important;
+    background-color: #ffffff;
+    border-bottom: 8px solid rgba(245, 245, 245, 1.00);
+
+    .uc-noteworthy-heading {
+      font-size: 20px;
+      line-height: 28px;
+      font-weight: 700;
+      color: rgba(15, 15, 15, 1);
+      margin: 0 0 16px 16px;
+    }
+
+    .uc-noteworthy-track-wrap {
+      padding: 0 16px;
+    }
+
+    .uc-noteworthy-track {
+      display: grid !important;
+      grid-template-rows: auto auto !important;
+      grid-auto-flow: column !important;
+      row-gap: 20px !important;
+      column-gap: 12px !important;
+      width: max-content;
+    }
+
+    .uc-noteworthy-card {
+      width: 108px !important;
+      flex-shrink: 0;
+
+      .uc-noteworthy-img-wrap {
+        width: 108px !important;
+        height: 108px !important;
+        border-radius: 8px;
+        background-color: transparent;
+
+        .uc-noteworthy-img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          border-radius: 8px;
+          aspect-ratio: 1 / 1;
+        }
+
+        .uc-noteworthy-badge {
+          display: none;
+        }
+      }
+
+      .uc-noteworthy-title-wrap {
+        margin-top: 8px;
+
+        .uc-noteworthy-title {
+          font-size: 12px;
+          line-height: 16px;
+          font-weight: 400;
+          color: rgba(15, 15, 15, 1);
+          text-align: left;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
+        .uc-noteworthy-time-info {
+          display: flex;
+          align-items: center;
+          gap: 3px;
+          margin-top: 4px;
+          font-size: 12px;
+          line-height: 16px;
+          color: rgba(7, 121, 76, 1);
+          font-weight: 400;
+
+          svg {
+            width: 12px;
+            height: 12px;
+            flex-shrink: 0;
+          }
+
+          span {
+            font-size: 12px;
+            line-height: 16px;
+            color: rgba(7, 121, 76, 1);
+            font-weight: 400;
+          }
+        }
+      }
+    }
+
+    .uc-carousel-arrow {
+      display: none !important;
+    }
   }
 
   .uc-noteworthy-carousel-wrap {
@@ -732,6 +1096,594 @@
       pointer-events: none;
     }
   }
+
+  .uc-most-booked-mobile-banner {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    padding: 20px 0 35px 0 !important;
+    background-color: #ffffff;
+    border-bottom: 8px solid rgba(245, 245, 245, 1.00);
+
+    .uc-most-booked-heading {
+      font-size: 20px;
+      line-height: 28px;
+      font-weight: 700;
+      color: rgba(15, 15, 15, 1);
+      margin: 0 0 16px 16px;
+    }
+
+    .uc-most-booked-track-wrap {
+      padding: 0 16px;
+    }
+
+    .uc-most-booked-track {
+      gap: 12px;
+    }
+
+    .uc-most-booked-card {
+      width: calc((100vw - 32px - 12px) / 2);
+      max-width: 180px;
+      flex-shrink: 0;
+
+      .uc-most-booked-img-wrap {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        aspect-ratio: 1 / 1;
+
+        .uc-most-booked-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: 8px;
+          aspect-ratio: 1 / 1;
+        }
+      }
+
+      .uc-most-booked-info {
+        margin-top: 8px;
+
+        .uc-most-booked-title {
+          font-size: 14px;
+          line-height: 20px;
+          font-weight: 400;
+          color: rgba(15, 15, 15, 1);
+          min-height: auto;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
+        .uc-most-booked-rating-row {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          margin-top: 4px;
+
+          .uc-star-icon {
+            width: 12px;
+            height: 12px;
+            fill: #545454;
+          }
+
+          .uc-rating-num {
+            font-size: 12px;
+            line-height: 16px;
+            color: rgba(84, 84, 84, 1);
+            font-weight: 400;
+          }
+
+          .uc-rating-dot {
+            font-size: 12px;
+            color: rgba(84, 84, 84, 1);
+            margin: 0 1px;
+          }
+
+          .uc-instant-badge {
+            font-size: 12px;
+            line-height: 16px;
+            color: rgba(84, 84, 84, 1);
+            font-weight: 400;
+          }
+        }
+
+        .uc-most-booked-price-row {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          margin-top: 4px;
+
+          .uc-price-val {
+            font-size: 14px;
+            line-height: 20px;
+            font-weight: 600;
+            color: rgba(15, 15, 15, 1);
+          }
+
+          .uc-orig-price-val {
+            font-size: 12px;
+            line-height: 16px;
+            color: #757575;
+            text-decoration: line-through;
+          }
+        }
+      }
+    }
+
+    .uc-carousel-arrow {
+      display: none !important;
+    }
+
+    .uc-most-booked-mobile-banner {
+      display: block !important;
+      width: 100%;
+      margin-top: 24px;
+      overflow: hidden;
+
+      .uc-most-booked-banner-img {
+        width: 100%;
+        height: auto;
+        display: block;
+        object-fit: cover;
+      }
+    }
+  }
+}
+
+/* ── Salon for Women Section ─────────────────────────────── */
+.uc-salon-women-section {
+  background-color: #ffffff;
+  padding: 0 24px 96px 24px;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+
+  .uc-salon-women-container {
+    max-width: 1232px;
+    margin: 0 auto;
+  }
+
+  .uc-salon-women-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+
+    .uc-salon-women-title-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .uc-salon-women-heading {
+      font-size: 36px;
+      line-height: 44px;
+      font-weight: 600;
+      color: #0f0f0f;
+      margin: 0;
+    }
+
+    .uc-salon-women-subheading {
+      font-size: 16px;
+      line-height: 24px;
+      color: #545454;
+      font-weight: 400;
+      margin: 0;
+    }
+
+    .uc-see-all-btn {
+      background-color: #ffffff;
+      border: 1px solid rgba(227, 227, 227, 1);
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 600;
+      color: #6e42e5;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease;
+
+      &:hover {
+        background-color: #f7f5ff;
+        border-color: #6e42e5;
+      }
+    }
+  }
+
+  .uc-salon-women-carousel-wrap {
+    position: relative;
+  }
+
+  .uc-salon-women-track-wrap {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .uc-salon-women-track {
+    display: flex;
+    gap: 16px;
+    width: max-content;
+  }
+
+  .uc-salon-women-card {
+    width: 233.6px;
+    flex-shrink: 0;
+
+    .uc-salon-women-card-link,
+    .uc-salon-women-card-inner {
+      text-decoration: none;
+      display: block;
+      cursor: pointer;
+      color: inherit;
+    }
+
+    .uc-salon-women-img-wrap {
+      position: relative;
+      width: 233.6px;
+      height: 233.6px;
+      border-radius: 8px;
+      overflow: hidden;
+      background-color: transparent;
+
+      .uc-salon-women-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .uc-salon-women-badge {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        z-index: 2;
+        background-color: #07794c;
+        color: #ffffff;
+        font-size: 12px;
+        line-height: 16px;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 4px;
+      }
+    }
+
+    .uc-salon-women-info {
+      margin-top: 12px;
+
+      .uc-salon-women-title {
+        font-size: 16px;
+        line-height: 24px;
+        font-weight: 600;
+        color: #0f0f0f;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-height: 24px;
+      }
+
+      .uc-salon-women-rating-row {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin-top: 4px;
+
+        .uc-star-icon {
+          width: 12px;
+          height: 12px;
+          fill: #545454;
+          flex-shrink: 0;
+        }
+
+        .uc-rating-num {
+          font-size: 13px;
+          line-height: 16px;
+          color: #545454;
+          font-weight: 400;
+        }
+
+        .uc-rating-dot {
+          font-size: 12px;
+          color: #545454;
+          line-height: 16px;
+          margin: 0 1px;
+        }
+
+        .uc-instant-badge {
+          font-size: 12px;
+          line-height: 16px;
+          color: #545454;
+          font-weight: 400;
+        }
+      }
+
+      .uc-salon-women-price-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 4px;
+
+        .uc-price-val {
+          font-size: 14px;
+          line-height: 20px;
+          font-weight: 600;
+          color: #0f0f0f;
+        }
+
+        .uc-orig-price-val {
+          font-size: 12px;
+          line-height: 16px;
+          color: #757575;
+          text-decoration: line-through;
+        }
+      }
+    }
+  }
+
+  /* Arrow Buttons */
+  .uc-carousel-arrow {
+    position: absolute;
+    top: 40%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid rgba(227, 227, 227, 1);
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition:
+      box-shadow 0.2s ease,
+      transform 0.2s ease;
+
+    &:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    &--left {
+      left: -24px;
+    }
+
+    &--right {
+      right: -24px;
+    }
+
+    svg {
+      pointer-events: none;
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 32px 0 40px 0 !important;
+    background-color: #ffffff;
+    border-bottom: 8px solid rgba(245, 245, 245, 1.00);
+
+    .uc-salon-women-container {
+      max-width: 100% !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      width: 100% !important;
+    }
+
+    .uc-salon-women-header {
+      padding: 0 16px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+
+      .uc-salon-women-heading {
+        font-size: 17px;
+        line-height: 24px;
+        font-weight: 700;
+        color: rgba(15, 15, 15, 1);
+        margin: 0;
+        flex: 1;
+      }
+
+      .uc-salon-women-subheading {
+        font-size: 12px;
+        line-height: 16px;
+        color: rgba(84, 84, 84, 1);
+      }
+
+      .uc-see-all-btn {
+        border: none;
+        padding: 0;
+        background: transparent;
+        flex-shrink: 0;
+        white-space: nowrap;
+
+        span {
+          font-size: 14px;
+          line-height: 20px;
+          font-weight: 600;
+          color: rgba(110, 66, 229, 1);
+          white-space: nowrap;
+        }
+      }
+    }
+
+    .uc-salon-women-track-wrap {
+      padding: 0 16px !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+      overflow-x: auto !important;
+      overflow-y: hidden !important;
+      scrollbar-width: none !important;
+      -ms-overflow-style: none !important;
+
+      &::-webkit-scrollbar {
+        display: none !important;
+      }
+    }
+
+    .uc-salon-women-track {
+      display: flex !important;
+      flex-direction: row !important;
+      flex-wrap: nowrap !important;
+      gap: 12px !important;
+      width: max-content !important;
+    }
+
+    .uc-salon-women-card {
+      width: 144px !important;
+      min-width: 144px !important;
+      max-width: 144px !important;
+      flex: 0 0 144px !important;
+      box-sizing: border-box !important;
+
+      .uc-salon-women-card-link,
+      .uc-salon-women-card-inner {
+        text-decoration: none !important;
+        display: block !important;
+        cursor: pointer !important;
+        color: inherit !important;
+        width: 144px !important;
+      }
+
+      .uc-salon-women-img-wrap {
+        width: 144px !important;
+        height: 144px !important;
+        border-radius: 8px !important;
+        aspect-ratio: 1 / 1 !important;
+        overflow: hidden !important;
+        position: relative !important;
+        background-color: transparent !important;
+
+        .uc-salon-women-img {
+          width: 144px !important;
+          height: 144px !important;
+          object-fit: cover !important;
+          border-radius: 8px !important;
+          aspect-ratio: 1 / 1 !important;
+          display: block !important;
+        }
+      }
+
+      .uc-salon-women-info {
+        margin-top: 8px;
+
+        .uc-salon-women-title {
+          font-size: 14px;
+          line-height: 20px;
+          font-weight: 400;
+          color: rgba(15, 15, 15, 1);
+          min-height: auto;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
+        .uc-salon-women-rating-row {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          margin-top: 4px;
+
+          .uc-star-icon {
+            width: 12px;
+            height: 12px;
+            fill: #545454;
+          }
+
+          .uc-rating-num {
+            font-size: 12px;
+            line-height: 16px;
+            color: rgba(84, 84, 84, 1);
+            font-weight: 400;
+          }
+
+          .uc-rating-dot {
+            font-size: 12px;
+            color: rgba(84, 84, 84, 1);
+            margin: 0 1px;
+          }
+
+          .uc-instant-badge {
+            font-size: 12px;
+            line-height: 16px;
+            color: rgba(84, 84, 84, 1);
+            font-weight: 400;
+          }
+        }
+
+        .uc-salon-women-price-row {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          margin-top: 4px;
+
+          .uc-price-val {
+            font-size: 14px;
+            line-height: 20px;
+            font-weight: 600;
+            color: rgba(15, 15, 15, 1);
+          }
+
+          .uc-orig-price-val {
+            font-size: 12px;
+            line-height: 16px;
+            color: #757575;
+            text-decoration: line-through;
+          }
+        }
+      }
+    }
+
+    .uc-carousel-arrow {
+      display: none !important;
+    }
+
+    .uc-salon-women-mobile-banners {
+      display: flex !important;
+      flex-direction: column;
+      width: 100%;
+      margin-top: 24px;
+      gap: 16px;
+
+      .uc-salon-women-banner-item {
+        width: 100%;
+        overflow: hidden;
+
+        .uc-salon-women-banner-img {
+          width: 100%;
+          height: auto;
+          display: block;
+          object-fit: fill;
+          aspect-ratio: 1 / 1;
+        }
+      }
+    }
+  }
+
+  .uc-salon-women-mobile-banners {
+    display: none;
+  }
 }
 
 /* ── Revamp your space with Section ──────────────────────── */
@@ -831,6 +1783,10 @@
       pointer-events: none;
     }
   }
+
+  @media (max-width: 768px) {
+    display: none !important;
+  }
 }
 
 /* ── Full Width Spotlight Banner Section ──────────────────── */
@@ -863,6 +1819,10 @@
       display: block;
     }
   }
+
+  @media (max-width: 768px) {
+    display: none !important;
+  }
 }
 
 /* ── Spa for Women Section ────────────────────────────────── */
@@ -870,7 +1830,7 @@
   background-color: #ffffff;
   padding: 0 24px 96px 24px;
   font-family:
-    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
     Arial, sans-serif;
 
   .uc-spa-container {
@@ -1092,6 +2052,429 @@
       pointer-events: none;
     }
   }
+
+  @media (max-width: 768px) {
+    padding: 32px 0 40px 0 !important;
+    background-color: #ffffff;
+    border-bottom: 8px solid rgba(245, 245, 245, 1.00);
+
+    .uc-spa-container {
+      max-width: 100% !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      width: 100% !important;
+    }
+
+    .uc-spa-header {
+      padding: 0 16px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+
+      .uc-spa-heading {
+        font-size: 17px;
+        line-height: 24px;
+        font-weight: 700;
+        color: rgba(15, 15, 15, 1);
+        margin: 0;
+        flex: 1;
+      }
+
+      .uc-see-all-btn {
+        border: none;
+        padding: 0;
+        background: transparent;
+        flex-shrink: 0;
+        white-space: nowrap;
+
+        span {
+          font-size: 14px;
+          line-height: 20px;
+          font-weight: 600;
+          color: rgba(110, 66, 229, 1);
+          white-space: nowrap;
+        }
+      }
+    }
+
+    .uc-spa-track-wrap {
+      padding: 0 16px !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+      overflow-x: auto !important;
+      overflow-y: hidden !important;
+      scrollbar-width: none !important;
+      -ms-overflow-style: none !important;
+
+      &::-webkit-scrollbar {
+        display: none !important;
+      }
+    }
+
+    .uc-spa-track {
+      display: flex !important;
+      flex-direction: row !important;
+      flex-wrap: nowrap !important;
+      gap: 12px !important;
+      width: max-content !important;
+    }
+
+    .uc-spa-card {
+      width: 144px !important;
+      min-width: 144px !important;
+      max-width: 144px !important;
+      flex: 0 0 144px !important;
+      box-sizing: border-box !important;
+
+      .uc-spa-card-link,
+      .uc-spa-card-inner {
+        text-decoration: none !important;
+        display: block !important;
+        cursor: pointer !important;
+        color: inherit !important;
+        width: 144px !important;
+      }
+
+      .uc-spa-img-wrap {
+        width: 144px !important;
+        height: 144px !important;
+        border-radius: 8px !important;
+        aspect-ratio: 1 / 1 !important;
+        overflow: hidden !important;
+        position: relative !important;
+        background-color: transparent !important;
+
+        .uc-spa-img {
+          width: 144px !important;
+          height: 144px !important;
+          object-fit: cover !important;
+          border-radius: 8px !important;
+          aspect-ratio: 1 / 1 !important;
+          display: block !important;
+        }
+
+        .uc-spa-badge {
+          top: 6px;
+          left: 6px;
+          background-color: rgba(110, 66, 229, 1);
+          color: #ffffff;
+          font-size: 10px;
+          line-height: 14px;
+          font-weight: 600;
+          letter-spacing: 0.4px;
+          text-transform: uppercase;
+          padding: 2px 6px;
+          border-radius: 4px;
+        }
+      }
+
+      .uc-spa-info {
+        margin-top: 8px;
+
+        .uc-spa-title {
+          font-size: 14px;
+          line-height: 20px;
+          font-weight: 400;
+          color: rgba(15, 15, 15, 1);
+          min-height: auto;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
+        .uc-spa-rating-row {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          margin-top: 4px;
+
+          .uc-star-icon {
+            width: 12px;
+            height: 12px;
+            fill: #545454;
+          }
+
+          .uc-rating-num {
+            font-size: 12px;
+            line-height: 16px;
+            color: rgba(84, 84, 84, 1);
+            font-weight: 400;
+          }
+
+          .uc-rating-dot {
+            font-size: 12px;
+            color: rgba(84, 84, 84, 1);
+            margin: 0 1px;
+          }
+
+          .uc-instant-badge {
+            font-size: 12px;
+            line-height: 16px;
+            color: rgba(84, 84, 84, 1);
+            font-weight: 400;
+          }
+        }
+
+        .uc-spa-price-row {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          margin-top: 4px;
+
+          .uc-price-val {
+            font-size: 14px;
+            line-height: 20px;
+            font-weight: 600;
+            color: rgba(15, 15, 15, 1);
+          }
+
+          .uc-orig-price-val {
+            font-size: 12px;
+            line-height: 16px;
+            color: #757575;
+            text-decoration: line-through;
+          }
+        }
+      }
+    }
+
+    .uc-carousel-arrow {
+      display: none !important;
+    }
+  }
+}
+
+/* ── Cleaning Essentials Section (Mobile Only) ───────────── */
+.uc-cleaning-essentials-section {
+  display: none;
+
+  @media (max-width: 768px) {
+    display: block !important;
+    padding: 32px 0 40px 0 !important;
+    background-color: #ffffff;
+    border-bottom: 8px solid rgba(245, 245, 245, 1.00);
+
+    .uc-cleaning-essentials-container {
+      max-width: 100% !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      width: 100% !important;
+    }
+
+    .uc-cleaning-essentials-header {
+      padding: 0 16px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .uc-cleaning-essentials-title-group {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .uc-cleaning-essentials-heading {
+        font-size: 20px;
+        line-height: 28px;
+        font-weight: 700;
+        color: rgba(15, 15, 15, 1);
+        margin: 0;
+      }
+
+      .uc-cleaning-essentials-subheading {
+        font-size: 12px;
+        line-height: 16px;
+        color: rgba(84, 84, 84, 1);
+        margin: 0;
+      }
+
+      .uc-see-all-btn {
+        border: none;
+        padding: 0;
+        background: transparent;
+        flex-shrink: 0;
+        white-space: nowrap;
+        cursor: pointer;
+
+        span {
+          font-size: 14px;
+          line-height: 20px;
+          font-weight: 600;
+          color: rgba(110, 66, 229, 1);
+          white-space: nowrap;
+        }
+      }
+    }
+
+    .uc-cleaning-essentials-track-wrap {
+      overflow-x: auto !important;
+      overflow-y: hidden !important;
+      padding: 0 16px !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+      scrollbar-width: none !important;
+      -ms-overflow-style: none !important;
+
+      &::-webkit-scrollbar {
+        display: none !important;
+      }
+    }
+
+    .uc-cleaning-essentials-track {
+      display: flex !important;
+      flex-direction: row !important;
+      flex-wrap: nowrap !important;
+      gap: 12px !important;
+      width: max-content !important;
+    }
+
+    .uc-cleaning-essentials-card {
+      width: 144px !important;
+      min-width: 144px !important;
+      max-width: 144px !important;
+      flex: 0 0 144px !important;
+      box-sizing: border-box !important;
+
+      .uc-cleaning-essentials-card-link,
+      .uc-cleaning-essentials-card-inner {
+        text-decoration: none !important;
+        display: block !important;
+        cursor: pointer !important;
+        color: inherit !important;
+        width: 144px !important;
+      }
+
+      .uc-cleaning-essentials-img-wrap {
+        width: 144px !important;
+        height: 144px !important;
+        border-radius: 8px !important;
+        aspect-ratio: 1 / 1 !important;
+        overflow: hidden !important;
+        position: relative !important;
+        background-color: transparent !important;
+
+        .uc-cleaning-essentials-img {
+          width: 144px !important;
+          height: 144px !important;
+          object-fit: cover !important;
+          border-radius: 8px !important;
+          aspect-ratio: 1 / 1 !important;
+          display: block !important;
+        }
+
+        .uc-cleaning-essentials-badge {
+          position: absolute;
+          top: 6px;
+          left: 6px;
+          z-index: 2;
+          background-color: rgba(110, 66, 229, 1);
+          color: #ffffff;
+          font-size: 10px;
+          line-height: 14px;
+          font-weight: 600;
+          letter-spacing: 0.4px;
+          text-transform: uppercase;
+          padding: 2px 6px;
+          border-radius: 4px;
+        }
+      }
+
+      .uc-cleaning-essentials-info {
+        margin-top: 8px;
+
+        .uc-cleaning-essentials-title {
+          font-size: 14px;
+          line-height: 20px;
+          font-weight: 400;
+          color: rgba(15, 15, 15, 1);
+          min-height: auto;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
+        .uc-cleaning-essentials-rating-row {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          margin-top: 4px;
+
+          .uc-star-icon {
+            width: 12px;
+            height: 12px;
+            fill: #545454;
+          }
+
+          .uc-rating-num {
+            font-size: 12px;
+            line-height: 16px;
+            color: rgba(84, 84, 84, 1);
+            font-weight: 400;
+          }
+
+          .uc-rating-dot {
+            font-size: 12px;
+            color: rgba(84, 84, 84, 1);
+            margin: 0 1px;
+          }
+
+          .uc-instant-badge {
+            font-size: 12px;
+            line-height: 16px;
+            color: rgba(84, 84, 84, 1);
+            font-weight: 400;
+          }
+        }
+
+        .uc-cleaning-essentials-price-row {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          margin-top: 4px;
+
+          .uc-price-val {
+            font-size: 14px;
+            line-height: 20px;
+            font-weight: 600;
+            color: rgba(15, 15, 15, 1);
+          }
+
+          .uc-orig-price-val {
+            font-size: 12px;
+            line-height: 16px;
+            color: #757575;
+            text-decoration: line-through;
+          }
+        }
+      }
+    }
+
+    .uc-carousel-arrow {
+      display: none !important;
+    }
+
+    .uc-cleaning-essentials-mobile-banner {
+      display: block !important;
+      width: 100%;
+      margin-top: 24px;
+      overflow: hidden;
+
+      .uc-cleaning-essentials-banner-img {
+        width: 100%;
+        height: auto;
+        display: block;
+        object-fit: fill;
+        aspect-ratio: 1 / 1;
+      }
+    }
+  }
 }
 
 /* ── Appliance repair & service Section ───────────────────── */
@@ -1099,7 +2482,7 @@
   background-color: #ffffff;
   padding: 0 24px 96px 24px;
   font-family:
-    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
     Arial, sans-serif;
 
   .uc-appliance-container {
@@ -1321,6 +2704,189 @@
       pointer-events: none;
     }
   }
+
+  @media (max-width: 768px) {
+    padding: 32px 0 40px 0 !important;
+    background-color: #ffffff;
+    border-bottom: 8px solid rgba(245, 245, 245, 1.00);
+
+    .uc-appliance-header {
+      padding: 0 16px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+
+      .uc-appliance-heading {
+        font-size: 17px;
+        line-height: 24px;
+        font-weight: 700;
+        color: rgba(15, 15, 15, 1);
+        margin: 0;
+        flex: 1;
+      }
+
+      .uc-see-all-btn {
+        border: none;
+        padding: 0;
+        background: transparent;
+        flex-shrink: 0;
+        white-space: nowrap;
+
+        span {
+          font-size: 14px;
+          line-height: 20px;
+          font-weight: 600;
+          color: rgba(110, 66, 229, 1);
+          white-space: nowrap;
+        }
+      }
+    }
+
+    .uc-appliance-container {
+      max-width: 100% !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+
+    .uc-appliance-track-wrap {
+      padding: 0 16px !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+
+    .uc-appliance-track {
+      display: flex !important;
+      gap: 12px !important;
+      width: max-content !important;
+    }
+
+    .uc-appliance-card {
+      width: 144px !important;
+      min-width: 144px !important;
+      max-width: 144px !important;
+      flex: 0 0 144px !important;
+      box-sizing: border-box !important;
+
+      .uc-appliance-card-link,
+      .uc-appliance-card-inner {
+        text-decoration: none !important;
+        display: block !important;
+        cursor: pointer !important;
+        color: inherit !important;
+        width: 144px !important;
+      }
+
+      .uc-appliance-img-wrap {
+        width: 144px !important;
+        height: 144px !important;
+        border-radius: 8px !important;
+        aspect-ratio: 1 / 1 !important;
+        overflow: hidden !important;
+        position: relative !important;
+        background-color: transparent !important;
+
+        .uc-appliance-img {
+          width: 144px !important;
+          height: 144px !important;
+          object-fit: cover !important;
+          border-radius: 8px !important;
+          aspect-ratio: 1 / 1 !important;
+          display: block !important;
+        }
+
+        .uc-appliance-badge {
+          top: 6px;
+          left: 6px;
+          background-color: rgba(110, 66, 229, 1);
+          color: #ffffff;
+          font-size: 10px;
+          line-height: 14px;
+          font-weight: 600;
+          letter-spacing: 0.4px;
+          text-transform: uppercase;
+          padding: 2px 6px;
+          border-radius: 4px;
+        }
+      }
+
+      .uc-appliance-info {
+        margin-top: 8px;
+
+        .uc-appliance-title {
+          font-size: 14px;
+          line-height: 20px;
+          font-weight: 400;
+          color: rgba(15, 15, 15, 1);
+          min-height: auto;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
+        .uc-appliance-rating-row {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          margin-top: 4px;
+
+          .uc-star-icon {
+            width: 12px;
+            height: 12px;
+            fill: #545454;
+          }
+
+          .uc-rating-num {
+            font-size: 12px;
+            line-height: 16px;
+            color: rgba(84, 84, 84, 1);
+            font-weight: 400;
+          }
+
+          .uc-rating-dot {
+            font-size: 12px;
+            color: rgba(84, 84, 84, 1);
+            margin: 0 1px;
+          }
+
+          .uc-instant-badge {
+            font-size: 12px;
+            line-height: 16px;
+            color: rgba(84, 84, 84, 1);
+            font-weight: 400;
+          }
+        }
+
+        .uc-appliance-price-row {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          margin-top: 4px;
+
+          .uc-price-val {
+            font-size: 14px;
+            line-height: 20px;
+            font-weight: 600;
+            color: rgba(15, 15, 15, 1);
+          }
+
+          .uc-orig-price-val {
+            font-size: 12px;
+            line-height: 16px;
+            color: #757575;
+            text-decoration: line-through;
+          }
+        }
+      }
+    }
+
+    .uc-carousel-arrow {
+      display: none !important;
+    }
+  }
 }
 
 /* ── Home repair & installation Section ──────────────────── */
@@ -1328,7 +2894,7 @@
   background-color: #ffffff;
   padding: 0 24px 96px 24px;
   font-family:
-    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
     Arial, sans-serif;
 
   .uc-home-repairs-container {
@@ -1550,6 +3116,189 @@
       pointer-events: none;
     }
   }
+
+  @media (max-width: 768px) {
+    padding: 32px 0 40px 0 !important;
+    background-color: #ffffff;
+    border-bottom: 8px solid rgba(245, 245, 245, 1.00);
+
+    .uc-home-repairs-container {
+      max-width: 100% !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+
+    .uc-home-repairs-header {
+      padding: 0 16px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+
+      .uc-home-repairs-heading {
+        font-size: 17px;
+        line-height: 24px;
+        font-weight: 700;
+        color: rgba(15, 15, 15, 1);
+        margin: 0;
+        flex: 1;
+      }
+
+      .uc-see-all-btn {
+        border: none;
+        padding: 0;
+        background: transparent;
+        flex-shrink: 0;
+        white-space: nowrap;
+
+        span {
+          font-size: 14px;
+          line-height: 20px;
+          font-weight: 600;
+          color: rgba(110, 66, 229, 1);
+          white-space: nowrap;
+        }
+      }
+    }
+
+    .uc-home-repairs-track-wrap {
+      padding: 0 16px !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+
+    .uc-home-repairs-track {
+      display: flex !important;
+      gap: 12px !important;
+      width: max-content !important;
+    }
+
+    .uc-home-repairs-card {
+      width: 144px !important;
+      min-width: 144px !important;
+      max-width: 144px !important;
+      flex: 0 0 144px !important;
+      box-sizing: border-box !important;
+
+      .uc-home-repairs-card-link,
+      .uc-home-repairs-card-inner {
+        text-decoration: none !important;
+        display: block !important;
+        cursor: pointer !important;
+        color: inherit !important;
+        width: 144px !important;
+      }
+
+      .uc-home-repairs-img-wrap {
+        width: 144px !important;
+        height: 144px !important;
+        border-radius: 8px !important;
+        aspect-ratio: 1 / 1 !important;
+        overflow: hidden !important;
+        position: relative !important;
+        background-color: transparent !important;
+
+        .uc-home-repairs-img {
+          width: 144px !important;
+          height: 144px !important;
+          object-fit: cover !important;
+          border-radius: 8px !important;
+          aspect-ratio: 1 / 1 !important;
+          display: block !important;
+        }
+
+        .uc-home-repairs-badge {
+          top: 6px;
+          left: 6px;
+          background-color: rgba(110, 66, 229, 1);
+          color: #ffffff;
+          font-size: 10px;
+          line-height: 14px;
+          font-weight: 600;
+          letter-spacing: 0.4px;
+          text-transform: uppercase;
+          padding: 2px 6px;
+          border-radius: 4px;
+        }
+      }
+
+      .uc-home-repairs-info {
+        margin-top: 8px;
+
+        .uc-home-repairs-title {
+          font-size: 14px;
+          line-height: 20px;
+          font-weight: 400;
+          color: rgba(15, 15, 15, 1);
+          min-height: auto;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
+        .uc-home-repairs-rating-row {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          margin-top: 4px;
+
+          .uc-star-icon {
+            width: 12px;
+            height: 12px;
+            fill: #545454;
+          }
+
+          .uc-rating-num {
+            font-size: 12px;
+            line-height: 16px;
+            color: rgba(84, 84, 84, 1);
+            font-weight: 400;
+          }
+
+          .uc-rating-dot {
+            font-size: 12px;
+            color: rgba(84, 84, 84, 1);
+            margin: 0 1px;
+          }
+
+          .uc-instant-badge {
+            font-size: 12px;
+            line-height: 16px;
+            color: rgba(84, 84, 84, 1);
+            font-weight: 400;
+          }
+        }
+
+        .uc-home-repairs-price-row {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          margin-top: 4px;
+
+          .uc-price-val {
+            font-size: 14px;
+            line-height: 20px;
+            font-weight: 600;
+            color: rgba(15, 15, 15, 1);
+          }
+
+          .uc-orig-price-val {
+            font-size: 12px;
+            line-height: 16px;
+            color: #757575;
+            text-decoration: line-through;
+          }
+        }
+      }
+    }
+
+    .uc-carousel-arrow {
+      display: none !important;
+    }
+  }
 }
 
 /* ── Massage for Men Section ─────────────────────────────── */
@@ -1557,7 +3306,7 @@
   background-color: #ffffff;
   padding: 0 24px 96px 24px;
   font-family:
-    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
     Arial, sans-serif;
 
   .uc-massage-men-container {
@@ -1779,6 +3528,219 @@
       pointer-events: none;
     }
   }
+
+  @media (max-width: 768px) {
+    padding: 32px 0 40px 0 !important;
+    background-color: #ffffff;
+    border-bottom: 8px solid rgba(245, 245, 245, 1.00);
+
+    .uc-massage-men-container {
+      max-width: 100% !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      width: 100% !important;
+    }
+
+    .uc-massage-men-header {
+      padding: 0 16px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+
+      .uc-massage-men-heading {
+        font-size: 17px;
+        line-height: 24px;
+        font-weight: 700;
+        color: rgba(15, 15, 15, 1);
+        margin: 0;
+        flex: 1;
+      }
+
+      .uc-see-all-btn {
+        border: none;
+        padding: 0;
+        background: transparent;
+        flex-shrink: 0;
+        white-space: nowrap;
+
+        span {
+          font-size: 14px;
+          line-height: 20px;
+          font-weight: 600;
+          color: rgba(110, 66, 229, 1);
+          white-space: nowrap;
+        }
+      }
+    }
+
+    .uc-massage-men-track-wrap {
+      padding: 0 16px !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+      overflow-x: auto !important;
+      overflow-y: hidden !important;
+      scrollbar-width: none !important;
+      -ms-overflow-style: none !important;
+
+      &::-webkit-scrollbar {
+        display: none !important;
+      }
+    }
+
+    .uc-massage-men-track {
+      display: flex !important;
+      flex-direction: row !important;
+      flex-wrap: nowrap !important;
+      gap: 12px !important;
+      width: max-content !important;
+    }
+
+    .uc-massage-men-card {
+      width: 144px !important;
+      min-width: 144px !important;
+      max-width: 144px !important;
+      flex: 0 0 144px !important;
+      box-sizing: border-box !important;
+
+      .uc-massage-men-card-link,
+      .uc-massage-men-card-inner {
+        text-decoration: none !important;
+        display: block !important;
+        cursor: pointer !important;
+        color: inherit !important;
+        width: 144px !important;
+      }
+
+      .uc-massage-men-img-wrap {
+        width: 144px !important;
+        height: 144px !important;
+        border-radius: 8px !important;
+        aspect-ratio: 1 / 1 !important;
+        overflow: hidden !important;
+        position: relative !important;
+        background-color: transparent !important;
+
+        .uc-massage-men-img {
+          width: 144px !important;
+          height: 144px !important;
+          object-fit: cover !important;
+          border-radius: 8px !important;
+          aspect-ratio: 1 / 1 !important;
+          display: block !important;
+        }
+
+        .uc-massage-men-badge {
+          top: 6px;
+          left: 6px;
+          background-color: rgba(110, 66, 229, 1);
+          color: #ffffff;
+          font-size: 10px;
+          line-height: 14px;
+          font-weight: 600;
+          letter-spacing: 0.4px;
+          text-transform: uppercase;
+          padding: 2px 6px;
+          border-radius: 4px;
+        }
+      }
+
+      .uc-massage-men-info {
+        margin-top: 8px;
+
+        .uc-massage-men-title {
+          font-size: 14px;
+          line-height: 20px;
+          font-weight: 400;
+          color: rgba(15, 15, 15, 1);
+          min-height: auto;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
+        .uc-massage-men-rating-row {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          margin-top: 4px;
+
+          .uc-star-icon {
+            width: 12px;
+            height: 12px;
+            fill: #545454;
+          }
+
+          .uc-rating-num {
+            font-size: 12px;
+            line-height: 16px;
+            color: rgba(84, 84, 84, 1);
+            font-weight: 400;
+          }
+
+          .uc-rating-dot {
+            font-size: 12px;
+            color: rgba(84, 84, 84, 1);
+            margin: 0 1px;
+          }
+
+          .uc-instant-badge {
+            font-size: 12px;
+            line-height: 16px;
+            color: rgba(84, 84, 84, 1);
+            font-weight: 400;
+          }
+        }
+
+        .uc-massage-men-price-row {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          margin-top: 4px;
+
+          .uc-price-val {
+            font-size: 14px;
+            line-height: 20px;
+            font-weight: 600;
+            color: rgba(15, 15, 15, 1);
+          }
+
+          .uc-orig-price-val {
+            font-size: 12px;
+            line-height: 16px;
+            color: #757575;
+            text-decoration: line-through;
+          }
+        }
+      }
+    }
+
+    .uc-carousel-arrow {
+      display: none !important;
+    }
+
+    .uc-massage-men-mobile-banner {
+      display: block !important;
+      width: 100%;
+      margin-top: 24px;
+      overflow: hidden;
+
+      .uc-massage-men-banner-img {
+        width: 100%;
+        height: auto;
+        display: block;
+        object-fit: fill;
+        aspect-ratio: 1 / 1;
+      }
+    }
+  }
+
+  .uc-massage-men-mobile-banner {
+    display: none;
+  }
 }
 
 /* ── Salon for men Section ────────────────────────────────── */
@@ -1786,7 +3748,7 @@
   background-color: #ffffff;
   padding: 0 24px 96px 24px;
   font-family:
-    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
     Arial, sans-serif;
 
   .uc-salon-men-container {
@@ -2017,6 +3979,227 @@
     svg {
       pointer-events: none;
     }
+  }
+
+  @media (max-width: 768px) {
+    padding: 32px 0 40px 0 !important;
+    background-color: #ffffff;
+    border-bottom: 8px solid rgba(245, 245, 245, 1.00);
+
+    .uc-salon-men-container {
+      max-width: 100% !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      width: 100% !important;
+    }
+
+    .uc-salon-men-header {
+      padding: 0 16px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+
+      .uc-salon-men-header-text {
+        .uc-salon-men-heading {
+          font-size: 17px;
+          line-height: 24px;
+          font-weight: 700;
+          color: rgba(15, 15, 15, 1);
+          margin: 0;
+        }
+
+        .uc-salon-men-subheading {
+          font-size: 12px;
+          line-height: 16px;
+          color: rgba(84, 84, 84, 1);
+          margin: 0;
+        }
+      }
+
+      .uc-see-all-btn {
+        border: none;
+        padding: 0;
+        background: transparent;
+        flex-shrink: 0;
+        white-space: nowrap;
+
+        span {
+          font-size: 14px;
+          line-height: 20px;
+          font-weight: 600;
+          color: rgba(110, 66, 229, 1);
+          white-space: nowrap;
+        }
+      }
+    }
+
+    .uc-salon-men-track-wrap {
+      padding: 0 16px !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+      overflow-x: auto !important;
+      overflow-y: hidden !important;
+      scrollbar-width: none !important;
+      -ms-overflow-style: none !important;
+
+      &::-webkit-scrollbar {
+        display: none !important;
+      }
+    }
+
+    .uc-salon-men-track {
+      display: flex !important;
+      flex-direction: row !important;
+      flex-wrap: nowrap !important;
+      gap: 12px !important;
+      width: max-content !important;
+    }
+
+    .uc-salon-men-card {
+      width: 144px !important;
+      min-width: 144px !important;
+      max-width: 144px !important;
+      flex: 0 0 144px !important;
+      box-sizing: border-box !important;
+
+      .uc-salon-men-card-link,
+      .uc-salon-men-card-inner {
+        text-decoration: none !important;
+        display: block !important;
+        cursor: pointer !important;
+        color: inherit !important;
+        width: 144px !important;
+      }
+
+      .uc-salon-men-img-wrap {
+        width: 144px !important;
+        height: 144px !important;
+        border-radius: 8px !important;
+        aspect-ratio: 1 / 1 !important;
+        overflow: hidden !important;
+        position: relative !important;
+        background-color: transparent !important;
+
+        .uc-salon-men-img {
+          width: 144px !important;
+          height: 144px !important;
+          object-fit: cover !important;
+          border-radius: 8px !important;
+          aspect-ratio: 1 / 1 !important;
+          display: block !important;
+        }
+
+        .uc-salon-men-badge {
+          top: 6px;
+          left: 6px;
+          background-color: rgba(110, 66, 229, 1);
+          color: #ffffff;
+          font-size: 10px;
+          line-height: 14px;
+          font-weight: 600;
+          letter-spacing: 0.4px;
+          text-transform: uppercase;
+          padding: 2px 6px;
+          border-radius: 4px;
+        }
+      }
+
+      .uc-salon-men-info {
+        margin-top: 8px;
+
+        .uc-salon-men-title {
+          font-size: 14px;
+          line-height: 20px;
+          font-weight: 400;
+          color: rgba(15, 15, 15, 1);
+          min-height: auto;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
+        .uc-salon-men-rating-row {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          margin-top: 4px;
+
+          .uc-star-icon {
+            width: 12px;
+            height: 12px;
+            fill: #545454;
+          }
+
+          .uc-rating-num {
+            font-size: 12px;
+            line-height: 16px;
+            color: rgba(84, 84, 84, 1);
+            font-weight: 400;
+          }
+
+          .uc-rating-dot {
+            font-size: 12px;
+            color: rgba(84, 84, 84, 1);
+            margin: 0 1px;
+          }
+
+          .uc-instant-badge {
+            font-size: 12px;
+            line-height: 16px;
+            color: rgba(84, 84, 84, 1);
+            font-weight: 400;
+          }
+        }
+
+        .uc-salon-men-price-row {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          margin-top: 4px;
+
+          .uc-price-val {
+            font-size: 14px;
+            line-height: 20px;
+            font-weight: 600;
+            color: rgba(15, 15, 15, 1);
+          }
+
+          .uc-orig-price-val {
+            font-size: 12px;
+            line-height: 16px;
+            color: #757575;
+            text-decoration: line-through;
+          }
+        }
+      }
+    }
+
+    .uc-carousel-arrow {
+      display: none !important;
+    }
+
+    .uc-salon-men-mobile-banner {
+      display: block !important;
+      width: 100%;
+      margin-top: 24px;
+      overflow: hidden;
+
+      .uc-salon-men-banner-img {
+        width: 100%;
+        height: auto;
+        display: block;
+        object-fit: fill;
+        aspect-ratio: 3 / 1;
+      }
+    }
+  }
+
+  .uc-salon-men-mobile-banner {
+    display: none;
   }
 }
 
@@ -2335,70 +4518,6 @@
       width: 100%;
       max-width: 481.33px;
       margin-top: 24px;
-    }
-  }
-}
-
-@media (max-width: 520px) {
-  .uc-category-grid-section {
-    padding: 24px 16px;
-
-    .uc-main-heading {
-      font-size: 24px;
-      line-height: 32px;
-      margin-bottom: 20px;
-    }
-
-    .uc-unified-card {
-      padding: 16px;
-    }
-
-    .uc-services-grid {
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px 8px;
-    }
-
-    .uc-trust-markers {
-      gap: 24px;
-    }
-  }
-}
-
-/* Mobile Responsiveness */
-@media (max-width: 1024px) {
-  .uc-category-grid-section {
-    .uc-category-grid-container {
-      flex-direction: column;
-    }
-
-    .uc-category-grid-media {
-      width: 100%;
-      max-width: 500px;
-      margin: 0 auto;
-    }
-  }
-}
-
-@media (max-width: 600px) {
-  .uc-category-grid-section {
-    padding: 24px 16px;
-
-    .uc-main-heading {
-      font-size: 24px;
-      line-height: 32px;
-      margin-bottom: 20px;
-    }
-
-    .uc-services-grid {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 20px 12px;
-      padding: 16px;
-    }
-
-    .uc-trust-markers {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 20px;
     }
   }
 }

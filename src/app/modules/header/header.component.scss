@@ -226,17 +226,32 @@
   .uc-mobile-header {
     display: flex;
     flex-direction: column;
-    background-color: #0e0259;
-    padding: 14px 16px 12px;
+    background-color: rgb(17, 146, 232);
+    padding: 14px 16px 16px 16px;
     color: #ffffff;
+    box-shadow: 0 2px 10px rgba(17, 146, 232, 0.2);
 
     .uc-mobile-location-row {
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       gap: 12px;
 
-      .uc-mobile-loc-icon {
-        padding-top: 2px;
+      .uc-mobile-loc-icon-badge {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+
+        svg {
+          fill: #008ce7;
+          width: 18px;
+          height: 18px;
+        }
       }
 
       .uc-mobile-loc-info {
@@ -244,26 +259,64 @@
         flex-direction: column;
         flex: 1;
 
-        .uc-mobile-loc-title {
-          font-size: 16px;
-          font-weight: 700;
-          color: #ffffff;
-          line-height: 20px;
+        .uc-mobile-loc-title-row {
+          display: flex;
+          align-items: center;
+          height: 24px;
+          overflow: hidden;
+
+          .uc-loc-in-text {
+            font-size: 16px;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 24px;
+            letter-spacing: -0.2px;
+          }
+
+          .uc-rolling-digit-box {
+            height: 24px;
+            width: 10px;
+            overflow: hidden;
+            position: relative;
+            display: inline-block;
+
+            .uc-rolling-digit-track {
+              display: flex;
+              flex-direction: column;
+              transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+              .uc-rolling-digit {
+                height: 24px;
+                line-height: 24px;
+                font-size: 16px;
+                font-weight: 700;
+                color: #ffffff;
+                text-align: center;
+                display: block;
+              }
+            }
+          }
         }
 
         .uc-mobile-loc-address {
           display: flex;
           align-items: center;
-          gap: 6px;
-          font-size: 12.5px;
-          color: #d0d0d0;
-          margin-top: 2px;
+          gap: 5px;
+          font-size: 12px;
+          color: rgba(255, 255, 255, 0.9);
+          margin-top: 1px;
 
           .uc-address-truncate {
-            max-width: 260px;
+            max-width: 250px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+          }
+
+          .uc-loc-chevron {
+            fill: #ffffff;
+            opacity: 0.9;
+            flex-shrink: 0;
           }
         }
       }
@@ -271,15 +324,40 @@
 
     .uc-mobile-search-row {
       margin-top: 14px;
+      transition: background-color 0.2s ease, box-shadow 0.2s ease, padding 0.2s ease;
+
+      &.sticky-active {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        margin-top: 0;
+        padding: 10px 16px 12px 16px;
+        z-index: 1050;
+        background-color: #ffffff !important;
+        border-bottom: 1px solid rgba(230, 230, 230, 1);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+
+        .uc-mobile-search-box {
+          background-color: #f5f5f5;
+          border: 1px solid rgba(227, 227, 227, 1);
+        }
+      }
 
       .uc-mobile-search-box {
         display: flex;
         align-items: center;
         gap: 10px;
-        background-color: #241c4f;
-        border-radius: 8px;
-        padding: 10px 14px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background-color: #ffffff;
+        border-radius: 10px;
+        padding: 11px 14px;
+        border: 1px solid rgba(227, 227, 227, 1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+        .uc-mobile-search-icon {
+          stroke: #545454;
+          flex-shrink: 0;
+        }
 
         .uc-mobile-search-input {
           border: none;
@@ -287,10 +365,127 @@
           background: transparent;
           width: 100%;
           font-size: 14px;
-          color: #ffffff;
+          color: #0f0f0f;
+          font-family: inherit;
 
           &::placeholder {
-            color: #a8a4c8;
+            color: #757575;
+            font-weight: 400;
+          }
+        }
+      }
+    }
+
+    .uc-mobile-search-placeholder {
+      height: 48px;
+      margin-top: 14px;
+    }
+
+    /* Hero Ad Banner (Exact 3:1 aspect ratio full-width container) */
+    .uc-mobile-hero-banner-wrap {
+      margin-top: 14px;
+      margin-left: -16px;
+      margin-right: -16px;
+      margin-bottom: -16px;
+      overflow: hidden;
+      display: block;
+
+      .uc-mobile-hero-banner-link {
+        display: block;
+        width: 100%;
+        text-decoration: none;
+
+        .uc-mobile-hero-banner-img {
+          width: 100%;
+          height: auto;
+          aspect-ratio: 3 / 1;
+          object-fit: cover;
+          display: block;
+        }
+      }
+    }
+
+    /* InstaHelp Purple Custom Banner Layout */
+    .uc-mobile-instahelp-banner-wrap {
+      margin-top: 16px;
+      margin-left: -16px;
+      margin-right: -16px;
+      margin-bottom: -16px;
+      padding: 4px 16px 16px;
+
+      .uc-instahelp-card {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        position: relative;
+
+        .uc-instahelp-text-col {
+          flex: 1;
+          color: #ffffff;
+          padding-bottom: 2px;
+          z-index: 2;
+
+          .uc-instahelp-brand {
+            font-size: 24px;
+            font-weight: 900;
+            font-style: italic;
+            color: #ffffff;
+            margin: 0 0 6px 0;
+            letter-spacing: -0.5px;
+          }
+
+          .uc-instahelp-sub {
+            font-size: 14.5px;
+            font-weight: 600;
+            color: #ffffff;
+            margin: 0 0 4px 0;
+            line-height: 18px;
+          }
+
+          .uc-instahelp-price-row {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            margin-bottom: 8px;
+
+            .uc-instahelp-orig-price {
+              text-decoration: line-through;
+              color: rgba(255, 255, 255, 0.7);
+              font-size: 14px;
+            }
+
+            .uc-instahelp-offer-price {
+              font-size: 18px;
+              font-weight: 800;
+              color: #ffffff;
+            }
+          }
+
+          .uc-instahelp-badge-row {
+            .uc-instahelp-badge {
+              font-size: 11px;
+              font-weight: 800;
+              color: #ffffff;
+              letter-spacing: 0.5px;
+            }
+          }
+        }
+
+        .uc-instahelp-img-col {
+          width: 140px;
+          height: 120px;
+          flex-shrink: 0;
+          display: flex;
+          align-items: flex-end;
+          justify-content: flex-end;
+          position: relative;
+
+          .uc-instahelp-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
           }
         }
       }
@@ -307,22 +502,24 @@
     left: 0;
     right: 0;
     z-index: 9999;
-    background-color: #121212;
-    border-top: 1px solid #242424;
+    background-color: #ffffff;
+    border-top: 1px solid #e3e3e3;
     padding: 8px 0 6px;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
 
     .uc-bottom-nav-item {
       display: flex;
       flex-direction: column;
       align-items: center;
       text-decoration: none;
-      color: #9e9e9e;
+      color: #757575;
       font-size: 11px;
+      font-weight: 500;
       transition: color 0.2s ease;
 
       &.active {
-        color: #ffffff;
-        font-weight: 600;
+        color: #0f0f0f;
+        font-weight: 700;
       }
 
       .uc-bottom-icon-box {
@@ -334,10 +531,10 @@
 
         .uc-bottom-logo-badge {
           font-weight: 900;
-          font-size: 12px;
-          background: #ffffff;
-          color: #000000;
-          padding: 1px 4px;
+          font-size: 11px;
+          background: #0f0f0f;
+          color: #ffffff;
+          padding: 2px 4px;
           border-radius: 3px;
           text-transform: lowercase;
           line-height: 1;

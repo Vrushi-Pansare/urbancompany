@@ -173,6 +173,8 @@
 /* ── Responsive Styling ─────────────────────────── */
 @media (max-width: 768px) {
   .uc-footer {
+    padding-bottom: 80px !important;
+
     .uc-footer-logo-row {
       padding: 16px 16px 36px 16px;
     }

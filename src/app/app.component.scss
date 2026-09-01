@@ -9,5 +9,14 @@
   .app-main {
     flex: 1;
     padding-top: 70px;
+
+    @media (max-width: 768px) {
+      padding-top: 0;
+      background-color: rgba(245, 245, 245, 1.00);
+    }
+  }
+
+  @media (max-width: 768px) {
+    background-color: rgba(245, 245, 245, 1.00);
   }
 }

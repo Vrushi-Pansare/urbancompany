@@ -1,4 +1,11 @@
-import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import {
+  Component,
+  ViewChild,
+  ElementRef,
+  AfterViewInit,
+  OnInit,
+  HostListener,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 interface CategoryItem {
@@ -49,60 +56,52 @@ interface MostBookedService {
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
-export class HomeComponent implements AfterViewInit {
+export class HomeComponent implements OnInit, AfterViewInit {
   categories: CategoryItem[] = [
     {
       id: 'instahelp',
       name: 'InstaHelp',
-      image:
-        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T09:01:56.893Z/InstaHelp.jpg',
+      image: 'assets/categories/instahelp.jpg',
       timeBadge: '14 mins',
     },
     {
       id: 'womens-salon',
       name: "Women's Salon & Spa",
-      image:
-        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T09:13:45.430Z/womens-salon.jpg',
+      image: 'assets/categories/womens-salon.jpg',
       timeBadge: '44 mins',
     },
     {
       id: 'mens-salon',
       name: "Men's Salon & Massage",
-      image:
-        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T09:03:19.114Z/mens-salon.jpg',
+      image: 'assets/categories/mens-salon.jpg',
       timeBadge: '44 mins',
     },
     {
       id: 'cleaning',
       name: 'Cleaning & Pest Control',
-      image:
-        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T08:55:35.336Z/cleaning.jpg',
+      image: 'assets/categories/cleaning.jpg',
     },
     {
       id: 'painting',
       name: 'Home Painting & Upgrade',
-      image:
-        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T09:04:40.894Z/painting.jpg',
+      image: 'assets/categories/painting.jpg',
     },
     {
       id: 'appliance',
       name: 'AC & Appliance Repair',
-      image:
-        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T08:54:50.690Z/appliance.jpg',
+      image: 'assets/categories/appliance.jpg',
       timeBadge: '44 mins',
     },
     {
       id: 'handyman',
       name: 'Electrician, Plumber & Carpenter',
-      image:
-        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T08:56:29.741Z/handyman.jpg',
-      timeBadge: '25 mins',
+      image: 'assets/categories/handyman.jpeg',
+      timeBadge: '44 mins',
     },
     {
-      id: 'all',
+      id: 'all-services',
       name: 'All services',
-      image:
-        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T08:53:56.267Z/all.jpg',
+      image: 'assets/categories/all-services.jpeg',
     },
   ];
 
@@ -168,6 +167,18 @@ export class HomeComponent implements AfterViewInit {
   canScrollRightMassageMen = true;
   private readonly MASSAGE_MEN_SCROLL_STEP = 250;
 
+  @ViewChild('salonWomenTrack')
+  salonWomenTrackRef!: ElementRef<HTMLDivElement>;
+  canScrollLeftSalonWomen = false;
+  canScrollRightSalonWomen = true;
+  private readonly SALON_WOMEN_SCROLL_STEP = 250;
+
+  @ViewChild('cleaningEssentialsTrack')
+  cleaningEssentialsTrackRef!: ElementRef<HTMLDivElement>;
+  canScrollLeftCleaningEssentials = false;
+  canScrollRightCleaningEssentials = true;
+  private readonly CLEANING_ESSENTIALS_SCROLL_STEP = 250;
+
   @ViewChild('salonMenTrack')
   salonMenTrackRef!: ElementRef<HTMLDivElement>;
   canScrollLeftSalonMen = false;
@@ -186,8 +197,12 @@ export class HomeComponent implements AfterViewInit {
       this.onHomeRepairsScroll();
       this.onMassageMenScroll();
       this.onSalonMenScroll();
+      this.onSalonWomenScroll();
+      this.onCleaningEssentialsScroll();
     }, 0);
   }
+
+  spotlightScrollProgress = 0;
 
   scrollCarousel(direction: 'left' | 'right'): void {
     const el = this.spotlightTrackRef.nativeElement;
@@ -202,6 +217,13 @@ export class HomeComponent implements AfterViewInit {
     if (!el) return;
     this.canScrollLeft = el.scrollLeft > 0;
     this.canScrollRight = el.scrollLeft + el.clientWidth < el.scrollWidth - 1;
+
+    const maxScroll = el.scrollWidth - el.clientWidth;
+    if (maxScroll > 0) {
+      this.spotlightScrollProgress = (el.scrollLeft / maxScroll) * (64 - 18);
+    } else {
+      this.spotlightScrollProgress = 0;
+    }
   }
 
   scrollNoteworthyCarousel(direction: 'left' | 'right'): void {
@@ -354,6 +376,102 @@ export class HomeComponent implements AfterViewInit {
       el.scrollLeft + el.clientWidth < el.scrollWidth - 1;
   }
 
+  scrollSalonWomenCarousel(direction: 'left' | 'right'): void {
+    const el = this.salonWomenTrackRef.nativeElement;
+    el.scrollBy({
+      left:
+        direction === 'right'
+          ? this.SALON_WOMEN_SCROLL_STEP
+          : -this.SALON_WOMEN_SCROLL_STEP,
+      behavior: 'smooth',
+    });
+  }
+
+  onSalonWomenScroll(): void {
+    const el = this.salonWomenTrackRef?.nativeElement;
+    if (!el) return;
+    this.canScrollLeftSalonWomen = el.scrollLeft > 0;
+    this.canScrollRightSalonWomen =
+      el.scrollLeft + el.clientWidth < el.scrollWidth - 1;
+  }
+
+  scrollCleaningEssentialsCarousel(direction: 'left' | 'right'): void {
+    const el = this.cleaningEssentialsTrackRef.nativeElement;
+    el.scrollBy({
+      left:
+        direction === 'right'
+          ? this.CLEANING_ESSENTIALS_SCROLL_STEP
+          : -this.CLEANING_ESSENTIALS_SCROLL_STEP,
+      behavior: 'smooth',
+    });
+  }
+
+  onCleaningEssentialsScroll(): void {
+    const el = this.cleaningEssentialsTrackRef?.nativeElement;
+    if (!el) return;
+    this.canScrollLeftCleaningEssentials = el.scrollLeft > 0;
+    this.canScrollRightCleaningEssentials =
+      el.scrollLeft + el.clientWidth < el.scrollWidth - 1;
+  }
+
+  isMobile = false;
+
+  @HostListener('window:resize')
+  onResize(): void {
+    if (typeof window !== 'undefined') {
+      this.isMobile = window.innerWidth <= 768;
+    }
+  }
+
+  ngOnInit(): void {
+    if (typeof window !== 'undefined') {
+      this.isMobile = window.innerWidth <= 768;
+    }
+  }
+
+  get displaySpotlightBanners(): SpotlightBanner[] {
+    return this.isMobile ? this.mobileSpotlightBanners : this.spotlightBanners;
+  }
+
+  get displayNoteworthyItems(): NoteworthyItem[] {
+    return this.isMobile ? this.mobileNoteworthyItems : this.noteworthyItems;
+  }
+
+  get displayMostBookedServices(): MostBookedService[] {
+    return this.isMobile
+      ? this.mobileMostBookedServices
+      : this.mostBookedServices;
+  }
+
+  get displaySpaServices(): MostBookedService[] {
+    return this.isMobile ? this.spaServicesMobile : this.spaServices;
+  }
+
+  get displayApplianceServices(): MostBookedService[] {
+    return this.isMobile
+      ? this.applianceServicesMobile
+      : this.applianceServices;
+  }
+
+  get displayHomeRepairsServices(): MostBookedService[] {
+    return this.isMobile
+      ? this.homeRepairsServicesMobile
+      : this.homeRepairsServices;
+  }
+
+  get displayMassageMenServices(): MostBookedService[] {
+    return this.isMobile
+      ? this.massageMenServicesMobile
+      : this.massageMenServices;
+  }
+
+  get displaySalonMenServices(): MostBookedService[] {
+    return this.isMobile
+      ? this.salonMenServicesMobile
+      : this.salonMenServices;
+  }
+
+  // PC Original Spotlight Banners
   spotlightBanners: SpotlightBanner[] = [
     {
       id: 'banner-1',
@@ -409,6 +527,63 @@ export class HomeComponent implements AfterViewInit {
     },
   ];
 
+  // Mobile Spotlight Banners
+  mobileSpotlightBanners: SpotlightBanner[] = [
+    {
+      id: 'banner-1',
+      alt: 'Urban Company Banner 2',
+      image:
+        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T10:07:49.210Z/banner-1.jpg',
+    },
+    {
+      id: 'banner-salon-luxe',
+      alt: 'Salon Luxe',
+      image:
+        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T10:11:18.839Z/banner-salon-luxe.jpg',
+      link: 'https://www.urbancompany.com/delhi-ncr-salon-luxe',
+    },
+    {
+      id: 'banner-cleaning',
+      alt: 'Full Home/ By Room Cleaning',
+      image:
+        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T10:10:15.488Z/banner-cleaning.jpg',
+      link: 'https://www.urbancompany.com/delhi-ncr-professional-home-cleaning',
+    },
+    {
+      id: 'banner-painting',
+      alt: 'Walls & Rooms Painting',
+      image:
+        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T10:08:20.458Z/banner-4.jpg',
+    },
+    {
+      id: 'banner-ac',
+      alt: 'AC Service & Repair',
+      image:
+        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T10:09:48.986Z/banner-ac.jpg',
+      link: 'https://www.urbancompany.com/delhi-ncr-ac-service-repair',
+    },
+    {
+      id: 'banner-bathroom',
+      alt: 'Bathroom Cleaning',
+      image:
+        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T10:08:46.743Z/banner-6.jpg',
+    },
+    {
+      id: 'banner-7',
+      alt: 'Urban Company Banner 9',
+      image:
+        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T10:09:16.521Z/banner-7.jpg',
+    },
+    {
+      id: 'banner-pest',
+      alt: 'Cockroach Control',
+      image:
+        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T10:10:49.030Z/banner-pest.jpg',
+      link: 'https://www.urbancompany.com/delhi-ncr-pest-control',
+    },
+  ];
+
+  // PC Original Noteworthy Items (6 columns, 2 rows)
   noteworthyItems: NoteworthyItem[] = [
     // Column 1
     {
@@ -500,6 +675,86 @@ export class HomeComponent implements AfterViewInit {
     },
   ];
 
+  // Mobile Noteworthy Items
+  mobileNoteworthyItems: NoteworthyItem[] = [
+    {
+      id: 'noteworthy-cleaning',
+      title: 'Full Home/ By Room Cleaning',
+      image:
+        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T10:40:08.043Z/noteworthy-cleaning.jpg',
+      link: 'https://www.urbancompany.com/delhi-ncr-professional-home-cleaning',
+    },
+    {
+      id: 'noteworthy-painting',
+      title: 'Full home painting',
+      image:
+        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T10:42:57.013Z/noteworthy-painting.jpg',
+    },
+    {
+      id: 'noteworthy-living-bedroom',
+      title: 'Living & Bedroom Cleaning ',
+      image:
+        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T10:40:50.960Z/noteworthy-furniture.jpg',
+    },
+    {
+      id: 'noteworthy-kitchen',
+      title: 'Kitchen Cleaning',
+      image:
+        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T10:41:56.105Z/noteworthy-kitchen.jpg',
+      link: 'https://www.urbancompany.com/delhi-ncr-kitchen-cleaning',
+    },
+    {
+      id: 'noteworthy-water-purifier',
+      title: 'Native Water Purifier',
+      image:
+        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T10:45:18.558Z/noteworthy-water-purifier.jpg',
+    },
+    {
+      id: 'noteworthy-smart-locks',
+      title: 'Native Smart Locks',
+      image:
+        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T10:43:31.874Z/noteworthy-smart-locks.jpg',
+    },
+    {
+      id: 'noteworthy-stove',
+      title: 'Stove Service & Repair',
+      image:
+        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T10:44:35.648Z/noteworthy-stove.jpg',
+      link: 'https://www.urbancompany.com/delhi-ncr-gas-stove-repair',
+      timeInfo: 'In 44 mins',
+    },
+    {
+      id: 'noteworthy-laptop',
+      title: 'Laptop Repair',
+      image:
+        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T10:42:27.692Z/noteworthy-laptop.jpg',
+      link: 'https://www.urbancompany.com/new-delhi-laptop-repair',
+      timeInfo: 'In 44 mins',
+    },
+    {
+      id: 'noteworthy-spa',
+      title: 'Spa Ayurveda',
+      image:
+        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T10:44:04.195Z/noteworthy-spa.jpg',
+      link: 'https://www.urbancompany.com/delhi-ncr-spa-ayurveda',
+    },
+    {
+      id: 'noteworthy-hair-women',
+      title: 'Hair Studio for Women',
+      image:
+        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T10:41:18.879Z/noteworthy-hair-women.jpg',
+      link: 'https://www.urbancompany.com/delhi-ncr-women-hair-services',
+    },
+    {
+      id: 'noteworthy-ac',
+      title: 'AC',
+      image:
+        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T10:39:35.498Z/noteworthy-ac.jpg',
+      timeInfo: 'In 44 mins',
+    },
+  ];
+
+  // PC Original Most Booked Services
   mostBookedServices: MostBookedService[] = [
     {
       id: 'most-booked-ac-repair',
@@ -596,6 +851,106 @@ export class HomeComponent implements AfterViewInit {
     },
   ];
 
+  // Mobile Most Booked Services
+  mobileMostBookedServices: MostBookedService[] = [
+    {
+      id: 'most-booked-cleaning-2-bath',
+      title: 'Intense cleaning (2 bathroom)',
+      image:
+        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T11:10:27.534Z/most-booked-cleaning-2-bath.jpg',
+      rating: '4.80',
+      isInstant: true,
+      price: '₹918',
+      originalPrice: '₹998',
+    },
+    {
+      id: 'most-booked-waxing',
+      title: 'Roll-on waxing (Full arms, legs & underarms)',
+      image:
+        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T11:13:43.247Z/most-booked-waxing.jpg',
+      link: 'https://www.urbancompany.com/delhi-ncr-salon-at-home',
+      rating: '4.86',
+      isInstant: true,
+      price: '₹899',
+    },
+    {
+      id: 'most-booked-cleaning-3-bath',
+      title: 'Intense cleaning (3 bathroom)',
+      image:
+        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T11:11:09.693Z/most-booked-cleaning-3-bath.jpg',
+      rating: '4.80',
+      isInstant: true,
+      price: '₹1,197',
+      originalPrice: '₹1,497',
+    },
+    {
+      id: 'most-booked-water-purifier',
+      title: 'Water Purifier / RO Service & Repair',
+      image:
+        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T11:13:17.490Z/most-booked-water-purifier.jpg',
+      link: 'https://www.urbancompany.com/delhi-ncr-kent-ro-repair',
+      rating: '4.80',
+      price: '₹299',
+    },
+    {
+      id: 'most-booked-plumber',
+      title: 'Plumber consultation',
+      image:
+        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T11:12:42.923Z/most-booked-plumber.jpg',
+      link: 'https://www.urbancompany.com/delhi-ncr-plumbers-density',
+      rating: '4.74',
+      price: '₹99',
+    },
+    {
+      id: 'most-booked-haircut-men',
+      title: 'Haircut for men',
+      image:
+        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T11:08:19.513Z/Haircutformen.jpg',
+      link: 'https://www.urbancompany.com/delhi-ncr-mens-grooming',
+      rating: '4.86',
+      price: '₹259',
+    },
+    {
+      id: 'most-booked-carpenter',
+      title: 'Book a carpenter',
+      image:
+        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T11:09:39.920Z/most-booked-carpenter.jpg',
+      link: 'https://www.urbancompany.com/delhi-ncr-carpenters-density',
+      rating: '4.66',
+      isInstant: true,
+      price: '₹99',
+    },
+    {
+      id: 'most-booked-electrician',
+      title: 'Electrician consultation',
+      image:
+        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T11:11:45.276Z/most-booked-electrician.jpg',
+      link: 'https://www.urbancompany.com/delhi-ncr-electrician-density',
+      rating: '4.75',
+      isInstant: true,
+      price: '₹99',
+    },
+    {
+      id: 'most-booked-cleanup',
+      title: 'Power glow cleanup',
+      image:
+        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T11:05:40.989Z/Foam-jetACservice.jpg',
+      link: 'https://www.urbancompany.com/delhi-ncr-salon-at-home',
+      rating: '4.86',
+      isInstant: true,
+      price: '₹699',
+    },
+    {
+      id: 'most-booked-drain',
+      title: 'Drain blockage removal',
+      image:
+        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T12:51:40.579Z/home-repair-drain-blockage.jpg',
+      link: 'https://www.urbancompany.com/delhi-ncr-plumbers-density',
+      rating: '4.77',
+      price: '₹99',
+    },
+  ];
+
   revampBanners: SpotlightBanner[] = [
     {
       id: 'revamp-furniture-polish',
@@ -613,7 +968,7 @@ export class HomeComponent implements AfterViewInit {
 
   spotlightMassageBanner = {
     id: 'spotlight-massage',
-    alt: 'Urban Company Spotlight Massage',
+    alt: 'Urban Company Spotlight',
     image:
       'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T11:33:17.748Z/spotlight-massage.jpg',
   };
@@ -632,6 +987,49 @@ export class HomeComponent implements AfterViewInit {
     image:
       'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T13:10:49.379Z/spotlight-locks.jpg',
   };
+
+  salonWomenServices: MostBookedService[] = [
+    {
+      id: 'salon-women-waxing',
+      title: 'Roll-on waxing (Full arms, legs & underarms)',
+      image:
+        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T11:13:43.247Z/most-booked-waxing.jpg',
+      link: 'https://www.urbancompany.com/delhi-ncr-salon-at-home',
+      rating: '4.86',
+      isInstant: true,
+      price: '₹899',
+    },
+    {
+      id: 'salon-women-cleanup',
+      title: 'Power glow cleanup',
+      image:
+        'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T11:05:40.989Z/Foam-jetACservice.jpg',
+      link: 'https://www.urbancompany.com/delhi-ncr-salon-at-home',
+      rating: '4.86',
+      isInstant: true,
+      price: '₹699',
+    },
+    {
+      id: 'salon-women-pedicure',
+      title: 'Crystal rose pedicure',
+      image:
+        'https://www.urbancompany.com/img/images/supply/customer-app-supply/1763038614950-13e09b.jpeg?bucket=urbanclap-prod&quality=90&format=auto&width=144&dpr=2',
+      link: 'https://www.urbancompany.com/delhi-ncr-salon-at-home',
+      rating: '4.83',
+      isInstant: true,
+      price: '₹759',
+    },
+    {
+      id: 'salon-women-facial',
+      title: 'Aroma Magic instant glow facial',
+      image:
+        'https://www.urbancompany.com/img/images/supply/customer-app-supply/1787560577261-b70127.jpeg?bucket=urbanclap-prod&quality=90&format=auto&width=144&dpr=2',
+      link: 'https://www.urbancompany.com/delhi-ncr-salon-at-home',
+      rating: '4.85',
+      isInstant: true,
+      price: '₹999',
+    },
+  ];
 
   spaServices: MostBookedService[] = [
     {
@@ -684,6 +1082,120 @@ export class HomeComponent implements AfterViewInit {
       rating: '4.84',
       isInstant: true,
       price: '₹929',
+    },
+  ];
+
+  spaServicesMobile: MostBookedService[] = [
+    {
+      id: 'spa-quick-comfort',
+      title: 'Quick comfort therapy',
+      badge: '17% OFF',
+      image:
+        'https://www.urbancompany.com/img/images/supply/customer-app-supply/1765967044786-77bf34.jpeg?bucket=urbanclap-prod&quality=90&format=auto&width=144&dpr=2',
+      link: 'https://www.urbancompany.com/delhi-ncr-thai-massage-for-women',
+      rating: '4.80',
+      isInstant: true,
+      price: '₹999',
+      originalPrice: '₹1,199',
+    },
+    {
+      id: 'spa-top-to-toe',
+      title: 'Top-to-toe stress relief massage',
+      image:
+        'https://www.urbancompany.com/img/images/growth/luminosity/1656575927066-d267b0.jpeg?bucket=urbanclap-prod&quality=90&format=auto&width=144&dpr=2',
+      link: 'https://www.urbancompany.com/delhi-ncr-thai-massage-for-women',
+      rating: '4.81',
+      isInstant: true,
+      price: '₹1,929',
+    },
+    {
+      id: 'spa-full-body-scrub',
+      title: 'Full body massage & scrub',
+      image:
+        'https://www.urbancompany.com/img/images/growth/luminosity/1729149877618-bd4221.jpeg?bucket=urbanclap-prod&quality=90&format=auto&width=144&dpr=2',
+      link: 'https://www.urbancompany.com/delhi-ncr-thai-massage-for-women',
+      rating: '4.82',
+      isInstant: true,
+      price: '₹1,699',
+    },
+    {
+      id: 'spa-leg-relief',
+      title: 'Leg relief massage',
+      image:
+        'https://www.urbancompany.com/img/images/supply/customer-app-supply/1764927910031-575580.jpeg?bucket=urbanclap-prod&quality=90&format=auto&width=144&dpr=2',
+      link: 'https://www.urbancompany.com/delhi-ncr-thai-massage-for-women',
+      rating: '4.83',
+      isInstant: true,
+      price: '₹929',
+    },
+    {
+      id: 'spa-back-relief',
+      title: 'Back relief massage',
+      image:
+        'https://www.urbancompany.com/img/images/growth/luminosity/1656577671070-e48cba.jpeg?bucket=urbanclap-prod&quality=90&format=auto&width=144&dpr=2',
+      link: 'https://www.urbancompany.com/delhi-ncr-thai-massage-for-women',
+      rating: '4.84',
+      isInstant: true,
+      price: '₹929',
+    },
+  ];
+
+  cleaningEssentialsServices: MostBookedService[] = [
+    {
+      id: 'cleaning-intense-2-bath',
+      title: 'Intense cleaning (2 bathroom)',
+      image: 'assets/cleaning/intense-cleaning-2-bath.jpeg',
+      rating: '4.80',
+      price: '₹918',
+      originalPrice: '₹998',
+    },
+    {
+      id: 'cleaning-intense-3-bath',
+      title: 'Intense cleaning (3 bathroom)',
+      image: 'assets/cleaning/intense-cleaning-3-bath.png',
+      rating: '4.80',
+      price: '₹1,197',
+      originalPrice: '₹1,497',
+    },
+    {
+      id: 'cleaning-fridge',
+      title: 'Fridge cleaning',
+      image: 'assets/cleaning/fridge-cleaning.jpeg',
+      link: 'https://www.urbanclap.com/pune-professional-kitchen-cleaning',
+      rating: '4.83',
+      price: '₹399',
+    },
+    {
+      id: 'cleaning-pest-utensils',
+      title: 'Pest control (includes utensil removal)',
+      image: 'assets/cleaning/pest-control-utensils.jpeg',
+      link: 'https://www.urbancompany.com/pune-pest-control',
+      rating: '4.79',
+      price: '₹1,249',
+    },
+    {
+      id: 'cleaning-pest-no-utensils',
+      title: 'Pest control (no utensil removal)',
+      image: 'assets/cleaning/pest-control-no-utensils.jpeg',
+      link: 'https://www.urbancompany.com/pune-pest-control',
+      rating: '4.80',
+      price: '₹998',
+    },
+    {
+      id: 'cleaning-kitchen-window',
+      title: 'Kitchen window cleaning',
+      image: 'assets/cleaning/kitchen-window-cleaning.jpeg',
+      link: 'https://www.urbanclap.com/pune-professional-kitchen-cleaning',
+      rating: '4.78',
+      price: '₹399',
+    },
+    {
+      id: 'cleaning-apt-pest',
+      title: 'Apartment pest control (includes utensil removal)',
+      image: 'assets/cleaning/apartment-pest-control.jpeg',
+      link: 'https://www.urbancompany.com/pune-pest-control',
+      rating: '4.79',
+      price: '₹1,849',
     },
   ];
 
@@ -770,6 +1282,97 @@ export class HomeComponent implements AfterViewInit {
       link: 'https://www.urbancompany.com/delhi-ncr-ac-service-repair',
       rating: '4.79',
       price: '₹699',
+    },
+  ];
+
+  applianceServicesMobile: MostBookedService[] = [
+    {
+      id: 'appliance-water-purifier',
+      title: 'Water Purifier / RO Service & Repair',
+      image: 'assets/appliance/water-purifier.jpeg',
+      link: 'https://www.urbancompany.com/pune-ro-repair',
+      rating: '4.80',
+      isInstant: true,
+      price: '₹299',
+    },
+    {
+      id: 'appliance-geyser-checkup',
+      title: 'Geyser check-up',
+      image: 'assets/appliance/geyser-checkup.jpeg',
+      link: 'https://www.urbancompany.com/pune-geyser-reapir',
+      rating: '4.72',
+      isInstant: true,
+      price: '₹249',
+    },
+    {
+      id: 'appliance-ac-repair',
+      title: 'AC repair',
+      image: 'assets/appliance/ac-repair.png',
+      link: 'https://www.urbancompany.com/pune-ac-service-repair',
+      rating: '4.73',
+      isInstant: true,
+      price: '₹299',
+    },
+    {
+      id: 'appliance-microwave-checkup',
+      title: 'Microwave check-up',
+      image: 'assets/appliance/microwave-checkup.jpeg',
+      link: 'https://www.urbancompany.com/pune-microwave-repair',
+      rating: '4.82',
+      isInstant: true,
+      price: '₹199',
+    },
+    {
+      id: 'appliance-tv-checkup',
+      title: 'TV check-up',
+      image: 'assets/appliance/tv-checkup.jpeg',
+      link: 'https://www.urbancompany.com/pune-tv-repair',
+      rating: '4.77',
+      price: '₹249',
+    },
+    {
+      id: 'appliance-foam-jet-ac',
+      title: 'Foam-jet AC service',
+      image: 'assets/appliance/foam-jet-ac.jpeg',
+      link: 'https://www.urbancompany.com/pune-ac-service-repair',
+      rating: '4.75',
+      isInstant: true,
+      price: '₹649',
+    },
+    {
+      id: 'appliance-geyser-installation',
+      title: 'Geyser installation',
+      image: 'assets/appliance/geyser-installation.jpeg',
+      link: 'https://www.urbancompany.com/pune-geyser-reapir',
+      rating: '4.78',
+      isInstant: true,
+      price: '₹499',
+    },
+    {
+      id: 'appliance-ac-uninstallation',
+      title: 'AC uninstallation',
+      image: 'assets/appliance/ac-uninstallation.png',
+      link: 'https://www.urbancompany.com/pune-ac-service-repair',
+      rating: '4.79',
+      isInstant: true,
+      price: '₹649',
+    },
+    {
+      id: 'appliance-geyser-service',
+      title: 'Geyser service',
+      image: 'assets/appliance/geyser-service.jpeg',
+      link: 'https://www.urbancompany.com/pune-geyser-reapir',
+      rating: '4.76',
+      isInstant: true,
+      price: '₹599',
+    },
+    {
+      id: 'appliance-washing-machine-installation',
+      title: 'Washing machine installation',
+      image: 'assets/appliance/washing-machine-installation.jpeg',
+      link: 'https://www.urbancompany.com/pune-washing-machine-repair',
+      rating: '4.80',
+      price: '₹399',
     },
   ];
 
@@ -873,6 +1476,94 @@ export class HomeComponent implements AfterViewInit {
     },
   ];
 
+  homeRepairsServicesMobile: MostBookedService[] = [
+    {
+      id: 'home-repair-plumber-consultation',
+      title: 'Plumber consultation',
+      image: 'assets/homerepairs/plumber-consultation.jpeg',
+      link: 'https://www.urbancompany.com/pune-plumbers-density',
+      rating: '4.74',
+      price: '₹99',
+    },
+    {
+      id: 'home-repair-drain-blockage',
+      title: 'Drain blockage removal',
+      image: 'assets/homerepairs/drain-blockage.jpeg',
+      link: 'https://www.urbancompany.com/pune-plumbers-density',
+      rating: '4.77',
+      price: '₹99',
+    },
+    {
+      id: 'home-repair-carpenter',
+      title: 'Book a carpenter',
+      image: 'assets/homerepairs/carpenter.jpeg',
+      link: 'https://www.urbancompany.com/pune-carpenters-density',
+      rating: '4.66',
+      isInstant: true,
+      price: '₹99',
+    },
+    {
+      id: 'home-repair-electrician',
+      title: 'Electrician consultation',
+      image: 'assets/homerepairs/electrician.jpeg',
+      link: 'https://www.urbancompany.com/pune-electrician-density',
+      rating: '4.75',
+      isInstant: true,
+      price: '₹99',
+    },
+    {
+      id: 'home-repair-fan',
+      title: 'Regular ceiling fan replace/install',
+      badge: '10% off',
+      image: 'assets/homerepairs/ceiling-fan.jpeg',
+      link: 'https://www.urbancompany.com/pune-electrician-density',
+      rating: '4.85',
+      isInstant: true,
+      price: '₹99',
+    },
+    {
+      id: 'home-repair-shelf',
+      title: 'Shelf installation',
+      image: 'assets/homerepairs/shelf-installation.jpeg',
+      link: 'https://www.urbancompany.com/pune-carpenters-density',
+      rating: '4.80',
+      isInstant: true,
+      price: '₹139',
+    },
+    {
+      id: 'home-repair-flush-tank',
+      title: 'Flush tank repair',
+      image: 'assets/homerepairs/flush-tank.png',
+      link: 'https://www.urbancompany.com/pune-plumbers-density',
+      rating: '4.76',
+      price: '₹99',
+    },
+    {
+      id: 'home-repair-wash-basin-leakage',
+      title: 'Wash basin leakage repair',
+      image: 'assets/homerepairs/wash-basin-leakage.jpeg',
+      link: 'https://www.urbancompany.com/pune-plumbers-density',
+      rating: '4.78',
+      price: '₹99',
+    },
+    {
+      id: 'home-repair-connection-hose',
+      title: 'Connection hose installation',
+      image: 'assets/homerepairs/connection-hose.png',
+      link: 'https://www.urbancompany.com/pune-plumbers-density',
+      rating: '4.78',
+      price: '₹99',
+    },
+    {
+      id: 'home-repair-wash-basin-blockage',
+      title: 'Wash basin blockage removal',
+      image: 'assets/homerepairs/wash-basin-blockage.jpeg',
+      link: 'https://www.urbancompany.com/pune-plumbers-density',
+      rating: '4.79',
+      price: '₹99',
+    },
+  ];
+
   massageMenServices: MostBookedService[] = [
     {
       id: 'massage-men-quick-comfort',
@@ -915,6 +1606,51 @@ export class HomeComponent implements AfterViewInit {
       rating: '4.85',
       isInstant: true,
       price: '₹919',
+    },
+  ];
+
+  massageMenServicesMobile: MostBookedService[] = [
+    {
+      id: 'massage-men-quick-comfort',
+      title: 'Quick comfort therapy',
+      badge: '17% off',
+      image: 'assets/massagemen/quick-comfort.jpeg',
+      link: 'https://www.urbancompany.com/pune-massage-for-men',
+      rating: '4.81',
+      price: '₹999',
+      originalPrice: '₹1,199',
+    },
+    {
+      id: 'massage-men-top-to-toe',
+      title: 'Top-to-toe stress relief massage',
+      image: 'assets/massagemen/top-to-toe.jpeg',
+      link: 'https://www.urbancompany.com/pune-massage-for-men',
+      rating: '4.83',
+      price: '₹1,979',
+    },
+    {
+      id: 'massage-men-leg-relief',
+      title: 'Leg relief massage',
+      image: 'assets/massagemen/leg-relief.jpeg',
+      link: 'https://www.urbancompany.com/pune-massage-for-men',
+      rating: '4.85',
+      price: '₹919',
+    },
+    {
+      id: 'massage-men-back-relief',
+      title: 'Back relief massage',
+      image: 'assets/massagemen/back-relief.jpeg',
+      link: 'https://www.urbancompany.com/pune-massage-for-men',
+      rating: '4.85',
+      price: '₹919',
+    },
+    {
+      id: 'massage-men-holistic',
+      title: 'Holistic de-stress massage',
+      image: 'assets/massagemen/holistic-de-stress.jpeg',
+      link: 'https://www.urbancompany.com/pune-massage-for-men',
+      rating: '4.83',
+      price: '₹1,559',
     },
   ];
 
@@ -967,6 +1703,49 @@ export class HomeComponent implements AfterViewInit {
       link: 'https://www.urbancompany.com/delhi-ncr-mens-grooming',
       rating: '4.76',
       isInstant: true,
+      price: '₹549',
+    },
+  ];
+
+  salonMenServicesMobile: MostBookedService[] = [
+    {
+      id: 'salon-men-haircut-men',
+      title: 'Haircut for men',
+      image: 'assets/salonmen/haircut-men.jpeg',
+      link: 'https://www.urbancompany.com/pune-mens-grooming',
+      rating: '4.86',
+      price: '₹259',
+    },
+    {
+      id: 'salon-men-haircut-boys',
+      title: 'Haircut for boys',
+      image: 'assets/salonmen/haircut-boys.jpeg',
+      link: 'https://www.urbancompany.com/pune-mens-grooming',
+      rating: '4.83',
+      price: '₹259',
+    },
+    {
+      id: 'salon-men-massage',
+      title: 'Head, neck & shoulder massage',
+      image: 'assets/salonmen/head-neck-massage.jpeg',
+      link: 'https://www.urbancompany.com/pune-mens-grooming',
+      rating: '4.81',
+      price: '₹299',
+    },
+    {
+      id: 'salon-men-pedicure-deep',
+      title: 'Brightening lemon deep cleanse pedicure ',
+      image: 'assets/salonmen/pedicure-deep-cleanse.jpeg',
+      link: 'https://www.urbancompany.com/pune-mens-grooming',
+      rating: '4.78',
+      price: '₹799',
+    },
+    {
+      id: 'salon-men-pedicure-express',
+      title: 'Brightening lemon express pedicure',
+      image: 'assets/salonmen/pedicure-express.jpeg',
+      link: 'https://www.urbancompany.com/pune-mens-grooming',
+      rating: '4.76',
       price: '₹549',
     },
   ];
