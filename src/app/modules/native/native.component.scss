@@ -1,0 +1,175 @@
+/* ==========================================================================
+   NATIVE COMPONENT STYLES
+   ========================================================================== */
+
+/* Desktop / PC / Laptop View (> 768px) */
+.uc-native-desktop {
+  display: block;
+  background-color: #ffffff;
+  min-height: calc(100vh - 120px);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  padding-top: 70px; /* Offset for Fixed Desktop Header */
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Oxygen-Sans, Ubuntu, Cantarell, Arial, sans-serif !important;
+
+  #homescreenContent_0,
+  #homescreenContent_2 {
+    padding-top: 0px;
+    padding-bottom: 48px;
+    padding-left: 24px;
+    padding-right: 24px;
+    margin-top: 0;
+    margin-bottom: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    h2,
+    .css-146c3p1 {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Oxygen-Sans, Ubuntu, Cantarell, Arial, sans-serif !important;
+      font-size: 36px !important;
+      line-height: 44px !important;
+      color: rgb(15, 15, 15) !important;
+      font-weight: 600 !important;
+      text-align: left !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      letter-spacing: -0.5px !important;
+      text-decoration: none !important;
+      text-transform: none !important;
+      width: 100% !important;
+      display: block !important;
+    }
+
+    .r-h3s6tt {
+      height: 24px;
+      min-height: 24px;
+      width: 100%;
+    }
+  }
+
+  .uc-desktop-track-wrap {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+    margin-top: 0;
+
+    .uc-native-scroll {
+      display: block !important;
+      width: 100% !important;
+      overflow-x: auto !important;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      padding: 4px 0;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+
+      .uc-native-row {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        width: max-content !important;
+      }
+    }
+
+    /* Native Card (389px x 389px, 1:1) */
+    .uc-native-card {
+      flex: 0 0 389px !important;
+      width: 389px !important;
+      min-width: 389px !important;
+      max-width: 389px !important;
+      height: 389px !important;
+      flex-shrink: 0 !important;
+      border-radius: 8px !important;
+      overflow: hidden !important;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.2s ease-in-out;
+      background-color: transparent;
+
+      .uc-native-card-inner {
+        width: 100%;
+        height: 100%;
+        border-radius: 8px;
+        overflow: hidden;
+
+        .uc-native-banner-img {
+          object-fit: contain;
+          height: 100%;
+          width: 100%;
+          border-radius: 8px;
+          display: block;
+          transition: transform 0.25s ease-in-out;
+        }
+      }
+
+      &:hover .uc-native-banner-img {
+        transform: scale(1.02);
+      }
+
+      &:active .uc-native-banner-img {
+        transform: scale(0.96);
+      }
+    }
+
+    /* Spacer between cards */
+    .uc-card-spacer-wrap {
+      flex: 0 0 24px !important;
+      width: 24px !important;
+      min-width: 24px !important;
+      height: 389px !important;
+      flex-shrink: 0 !important;
+
+      .uc-card-spacer {
+        width: 24px;
+        min-width: 24px;
+        height: 100%;
+      }
+    }
+  }
+}
+
+/* Mobile View (<= 768px) */
+.uc-native-mobile {
+  display: none;
+  background-color: #ffffff;
+  min-height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  padding-bottom: 70px; /* Offset for Mobile Bottom Navigation */
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Oxygen-Sans, Ubuntu, Cantarell, Arial, sans-serif !important;
+
+  .uc-native-mobile-container {
+    width: 100%;
+    margin: 0 auto;
+    padding: 0;
+    box-sizing: border-box;
+  }
+}
+
+/* Responsive Media Queries */
+@media (min-width: 769px) {
+  .uc-native-desktop {
+    display: block !important;
+  }
+  .uc-native-mobile {
+    display: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .uc-native-desktop {
+    display: none !important;
+  }
+  .uc-native-mobile {
+    display: block !important;
+  }
+}

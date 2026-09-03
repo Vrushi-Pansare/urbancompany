@@ -1,0 +1,354 @@
+/* ==========================================================================
+   BEAUTY COMPONENT STYLES (Desktop Only)
+   ========================================================================== */
+
+.uc-beauty-desktop {
+  display: block;
+  background-color: #ffffff;
+  min-height: calc(100vh - 120px);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  padding-top: 70px; /* Offset for Fixed Desktop Header */
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Oxygen-Sans, Ubuntu, Cantarell, Arial, sans-serif !important;
+
+  #categoryGridSection {
+    padding-top: 48px;
+    padding-bottom: 96px;
+    padding-left: 24px;
+    padding-right: 24px;
+    margin-top: 0;
+    margin-bottom: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .uc-beauty-inner {
+      max-width: 1217px;
+      width: 100%;
+    }
+
+    .uc-beauty-columns-row {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 40px;
+      width: 100%;
+    }
+
+    /* Left Column */
+    .uc-beauty-left-col {
+      flex: 0 0 520px;
+      max-width: 520px;
+
+      h1,
+      .css-146c3p1 {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Oxygen-Sans, Ubuntu, Cantarell, Arial, sans-serif !important;
+        font-size: 36px !important;
+        line-height: 44px !important;
+        color: rgb(15, 15, 15) !important;
+        font-weight: 600 !important;
+        text-align: left !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        letter-spacing: -0.5px !important;
+        text-decoration: none !important;
+        text-transform: none !important;
+        width: 100% !important;
+        display: block !important;
+      }
+    }
+
+    /* Category Card Box */
+    .uc-beauty-grid-card {
+      width: 475px;
+      padding: 24px 24px 15px;
+      border: 1px solid rgb(226, 226, 226);
+      border-radius: 12px;
+      background-color: #ffffff;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+      box-sizing: border-box;
+
+      .uc-grid-row {
+        display: flex;
+        flex-direction: row;
+        gap: 16px;
+        margin-bottom: 15px;
+
+        &:last-child {
+          margin-bottom: 0;
+          padding-bottom: 15px;
+        }
+      }
+
+      .uc-service-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        cursor: pointer;
+        text-decoration: none;
+        transition: transform 0.2s ease, opacity 0.2s ease;
+
+        .uc-icon-tile {
+          width: 100%;
+          height: 76px;
+          background-color: #f5f5f5;
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+          margin-bottom: 8px;
+          transition: background-color 0.2s ease;
+
+          .uc-icon-img-wrap {
+            width: 46px;
+            height: 46px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .uc-service-icon-img {
+              width: 100%;
+              height: 100%;
+              object-fit: contain;
+              display: block;
+            }
+          }
+
+          .uc-pill-badge {
+            position: absolute;
+            bottom: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ffffff;
+            border: 1px solid rgb(226, 226, 226);
+            border-radius: 12px;
+            padding: 1px 6px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+            z-index: 2;
+
+            .uc-pill-badge-text {
+              font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+              font-size: 9px !important;
+              line-height: 14px !important;
+              color: rgb(7, 121, 76) !important;
+              font-weight: 600 !important;
+              margin: 0 !important;
+              white-space: nowrap !important;
+            }
+          }
+        }
+
+        .uc-label-wrap {
+          width: 100%;
+          text-align: center;
+
+          .uc-service-name {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+            font-size: 12px !important;
+            line-height: 16px !important;
+            color: rgb(15, 15, 15) !important;
+            font-weight: 400 !important;
+            text-align: center !important;
+            margin: 0 !important;
+          }
+        }
+
+        &:hover {
+          opacity: 0.85;
+
+          .uc-icon-tile {
+            background-color: #ededed;
+          }
+
+          .uc-service-name {
+            text-decoration: underline !important;
+          }
+        }
+
+        &:active {
+          transform: scale(0.95);
+        }
+      }
+    }
+
+    /* Trust Markers */
+    .uc-trust-markers-row {
+      display: flex;
+      flex-direction: row;
+      gap: 48px;
+
+      .uc-trust-item {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+      }
+    }
+
+    /* Right Column Hero Banner */
+    .uc-beauty-right-col {
+      flex: 1;
+      display: flex;
+      justify-content: flex-end;
+      margin-top: -65px;
+
+      .uc-hero-media-wrap {
+        width: 100%;
+        max-width: 580px;
+        border-radius: 8px;
+        overflow: hidden;
+
+        .uc-hero-img {
+          width: 100%;
+          height: auto;
+          aspect-ratio: 1 / 1;
+          object-fit: cover;
+          display: block;
+          border-radius: 8px;
+          transition: transform 0.3s ease;
+
+          &:hover {
+            transform: scale(1.01);
+          }
+        }
+      }
+    }
+  }
+
+  /* homescreenContent_5: In the spotlight */
+  #homescreenContent_5 {
+    padding-top: 0px;
+    padding-bottom: 96px;
+    padding-left: 24px;
+    padding-right: 24px;
+    margin-top: 0;
+    margin-bottom: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .uc-beauty-inner {
+      max-width: 1217px;
+      width: 100%;
+    }
+
+    h2,
+    .css-146c3p1 {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Oxygen-Sans, Ubuntu, Cantarell, Arial, sans-serif !important;
+      font-size: 36px !important;
+      line-height: 44px !important;
+      color: rgb(15, 15, 15) !important;
+      font-weight: 600 !important;
+      text-align: left !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      letter-spacing: -0.5px !important;
+      text-decoration: none !important;
+      text-transform: none !important;
+      width: 100% !important;
+      display: block !important;
+    }
+
+    .r-h3s6tt {
+      height: 24px;
+      min-height: 24px;
+      width: 100%;
+    }
+  }
+
+  /* Spotlight Track & Cards */
+  .uc-desktop-track-wrap {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+    margin-top: 0;
+
+    .uc-spotlight-scroll {
+      display: block !important;
+      width: 100% !important;
+      overflow-x: auto !important;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      padding: 4px 0;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+
+      .uc-spotlight-row {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        width: max-content !important;
+      }
+    }
+
+    /* Spotlight Card (389px x 219px, 16:9 banner) */
+    .uc-spotlight-card {
+      flex: 0 0 389px !important;
+      width: 389px !important;
+      min-width: 389px !important;
+      max-width: 389px !important;
+      height: 219px !important;
+      flex-shrink: 0 !important;
+      border-radius: 8px !important;
+      overflow: hidden !important;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.2s ease-in-out;
+      background-color: transparent;
+
+      .uc-spotlight-card-inner {
+        width: 100%;
+        height: 100%;
+        border-radius: 8px;
+        overflow: hidden;
+
+        .uc-spotlight-banner-img {
+          object-fit: contain;
+          height: 100%;
+          width: 100%;
+          border-radius: 8px;
+          display: block;
+          transition: transform 0.25s ease-in-out;
+        }
+      }
+
+      &:hover .uc-spotlight-banner-img {
+        transform: scale(1.02);
+      }
+
+      &:active .uc-spotlight-banner-img {
+        transform: scale(0.96);
+      }
+    }
+
+    .uc-card-spacer-wrap {
+      flex: 0 0 24px;
+      width: 24px;
+      min-width: 24px;
+      height: 219px;
+
+      .uc-card-spacer {
+        width: 24px;
+        min-width: 24px;
+        height: 219px;
+      }
+    }
+  }
+}
+
+/* Hide on Mobile */
+@media (max-width: 768px) {
+  .uc-beauty-desktop {
+    display: none !important;
+  }
+}

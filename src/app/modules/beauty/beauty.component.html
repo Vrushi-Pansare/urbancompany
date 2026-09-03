@@ -1,0 +1,210 @@
+<!-- ==========================================================================
+     BEAUTY COMPONENT (Desktop View)
+     ========================================================================== -->
+
+<div class="uc-beauty-desktop">
+  <div class="css-175oi2r r-1awozwy r-ndvcnb r-aci1zz r-6koalj r-eqz5dr r-p1pxzi r-1mnahxq r-wi6arp r-puj83k r-11g3r6m r-11nfnuw r-13qz1uu" id="categoryGridSection">
+    <div class="css-175oi2r uc-beauty-inner" style="max-width: 1217px; width: 100%; opacity: 1;">
+      <div data-fluid-table="" class="css-175oi2r r-1niwhzg r-6koalj r-18u37iz r-1xnpdrn r-13qz1uu uc-beauty-columns-row">
+        
+        <!-- Left Column: Category Grid + Trust Markers -->
+        <div class="css-175oi2r r-6koalj r-18u37iz r-13qz1uu uc-beauty-left-col">
+          <div class="css-175oi2r r-18u37iz r-1al8g4w" id="categoryGrid" style="padding-right: 32px; width: 100%;">
+            <div class="css-175oi2r" id="rowsContainer" style="flex-direction: column; flex: 1 1 0%; width: 100%; padding: 0px;">
+              
+              <!-- Content Block with Title + Category Card Box -->
+              <div class="css-175oi2r r-1awozwy r-ndvcnb r-aci1zz r-6koalj r-eqz5dr r-p1pxzi r-1mnahxq r-1mdbw0j r-gy4na3 r-9aemit r-wk8lta r-13qz1uu" id="categoryGridContent">
+                <div class="css-175oi2r" style="max-width: 100%; width: 100%; opacity: 1;">
+                  <div style="display: flex; flex-direction: column; height: 100%; width: 100%; min-height: inherit;">
+                    <div data-pulltorefresh="false" class="css-175oi2r" style="flex-grow: 1;">
+                      <div data-index="0" data-key="automated__grid_v2__grid" class="css-175oi2r">
+                        <div class="css-175oi2r">
+                          <div tabindex="0" class="css-175oi2r r-1i6wzkk r-1niwhzg r-13qz1uu r-wh77r2" style="padding-right: 0px; padding-left: 0px; user-select: inherit !important; cursor: inherit !important; touch-action: inherit !important; transition-duration: 0s;">
+                            
+                            <!-- Main Section Title -->
+                            <div class="css-175oi2r" style="width: 100%; overflow: visible;">
+                              <div aria-disabled="true" tabindex="-1" class="css-175oi2r r-1i6wzkk r-12vffkv" style="user-select: inherit !important; cursor: inherit !important; touch-action: inherit !important; transition-duration: 0s;">
+                                <div class="css-175oi2r r-13qz1uu">
+                                  <div class="css-175oi2r r-1awozwy r-18u37iz r-1wtj0ep r-13qz1uu">
+                                    <div class="css-175oi2r r-eqz5dr r-13qz1uu r-13awgt0" style="align-items: flex-start; justify-content: center;">
+                                      <h1 dir="auto" aria-level="1" role="heading" class="css-146c3p1 r-8akbws r-krxsd3 r-dnmrzs r-1udh08x r-1udbk01 r-13qz1uu" style="line-clamp: 2; -webkit-line-clamp: 2; font-family: os_semi_bold; font-size: 36px; line-height: 44px; color: rgb(15, 15, 15); text-decoration-line: none; text-transform: none; font-weight: 600; text-align: left;">Beauty services at your doorstep</h1>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="css-175oi2r r-h3s6tt r-rwqe4o" style="height: 24px; min-height: 24px;"></div>
+
+                            <!-- White Card Container for 6 Service Categories -->
+                            <div class="css-175oi2r" style="width: 100%; overflow: visible;">
+                              <div tabindex="0" class="css-175oi2r r-1i6wzkk r-14lw9ot r-1xfd6ze r-1phboty r-rs99b7 r-nsbfu8 r-wh77r2 uc-beauty-grid-card">
+                                <div class="css-175oi2r" style="width: 100%;">
+                                  
+                                  <!-- Row 1 (3 items) -->
+                                  <div class="css-175oi2r r-18u37iz r-1ssbvtb uc-grid-row">
+                                    <ng-container *ngFor="let svc of services | slice:0:3">
+                                      <div [attr.aria-label]="svc.name + ' button'" data-hover-animation="opacity80 underline" data-active-animation="sizeShrink5" tabindex="0" class="css-175oi2r r-1i6wzkk r-lrvibr r-1loqt21 r-1otgn73 r-16l9doz r-1udh08x r-13awgt0 r-eqz5dr uc-service-item">
+                                        <!-- Light Gray Tile Box -->
+                                        <div class="uc-icon-tile">
+                                          <!-- Service Icon Image -->
+                                          <div class="uc-icon-img-wrap">
+                                            <img [src]="svc.image" [alt]="svc.name" class="uc-service-icon-img" />
+                                          </div>
+                                          <!-- Green 44 mins Pill Badge at bottom of icon -->
+                                          <div *ngIf="svc.badge" class="uc-pill-badge">
+                                            <p dir="auto" role="paragraph" class="uc-pill-badge-text">{{ svc.badge }}</p>
+                                          </div>
+                                        </div>
+                                        <!-- Label -->
+                                        <div class="uc-label-wrap">
+                                          <p dir="auto" role="paragraph" class="uc-service-name">{{ svc.name }}</p>
+                                        </div>
+                                      </div>
+                                    </ng-container>
+                                  </div>
+
+                                  <!-- Row 2 (3 items) -->
+                                  <div class="css-175oi2r r-18u37iz r-1ssbvtb uc-grid-row">
+                                    <ng-container *ngFor="let svc of services | slice:3:6">
+                                      <div [attr.aria-label]="svc.name + ' button'" data-hover-animation="opacity80 underline" data-active-animation="sizeShrink5" tabindex="0" class="css-175oi2r r-1i6wzkk r-lrvibr r-1loqt21 r-1otgn73 r-16l9doz r-1udh08x r-13awgt0 r-eqz5dr uc-service-item">
+                                        <!-- Light Gray Tile Box -->
+                                        <div class="uc-icon-tile">
+                                          <!-- Service Icon Image -->
+                                          <div class="uc-icon-img-wrap">
+                                            <img [src]="svc.image" [alt]="svc.name" class="uc-service-icon-img" />
+                                          </div>
+                                          <!-- Green 44 mins Pill Badge at bottom of icon -->
+                                          <div *ngIf="svc.badge" class="uc-pill-badge">
+                                            <p dir="auto" role="paragraph" class="uc-pill-badge-text">{{ svc.badge }}</p>
+                                          </div>
+                                        </div>
+                                        <!-- Label -->
+                                        <div class="uc-label-wrap">
+                                          <p dir="auto" role="paragraph" class="uc-service-name">{{ svc.name }}</p>
+                                        </div>
+                                      </div>
+                                    </ng-container>
+                                  </div>
+
+                                </div>
+                              </div>
+                            </div>
+
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Trust Markers Row below Category Grid -->
+              <div class="css-175oi2r r-1awozwy r-ndvcnb r-aci1zz r-6koalj r-eqz5dr r-p1pxzi r-1mnahxq r-1mdbw0j r-gy4na3 r-9aemit r-fd4yh7 r-13qz1uu" id="categoryGridTrustMarkers" style="margin-top: 32px; width: 100%;">
+                <div class="css-175oi2r r-18u37iz uc-trust-markers-row" style="display: flex; flex-direction: row; gap: 48px; width: 100%;">
+                  
+                  <!-- 4.8 Rating Marker -->
+                  <div class="css-175oi2r r-18u37iz uc-trust-item" style="display: flex; flex-direction: row; align-items: center; gap: 12px;">
+                    <div class="uc-trust-img-box" style="width: 48px; height: 48px;">
+                      <img src="assets/beauty/trust-rating.jpeg" alt="4.8 Service Rating*" style="width: 100%; height: 100%; object-fit: contain;" />
+                    </div>
+                    <div class="uc-trust-text-box">
+                      <p class="uc-trust-val" style="font-family: os_semi_bold; font-size: 20px; line-height: 28px; color: rgb(15, 15, 15); font-weight: 600; margin: 0;">4.8</p>
+                      <p class="uc-trust-lbl" style="font-family: os_regular; font-size: 14px; line-height: 20px; color: rgb(84, 84, 84); margin: 0;">Service Rating*</p>
+                    </div>
+                  </div>
+
+                  <!-- 12M+ Customers Marker -->
+                  <div class="css-175oi2r r-18u37iz uc-trust-item" style="display: flex; flex-direction: row; align-items: center; gap: 12px;">
+                    <div class="uc-trust-img-box" style="width: 48px; height: 48px;">
+                      <img src="assets/beauty/trust-customers.jpeg" alt="12M+ Customers Globally*" style="width: 100%; height: 100%; object-fit: contain;" />
+                    </div>
+                    <div class="uc-trust-text-box">
+                      <p class="uc-trust-val" style="font-family: os_semi_bold; font-size: 20px; line-height: 28px; color: rgb(15, 15, 15); font-weight: 600; margin: 0;">12M+</p>
+                      <p class="uc-trust-lbl" style="font-family: os_regular; font-size: 14px; line-height: 20px; color: rgb(84, 84, 84); margin: 0;">Customers Globally*</p>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Hero Banner -->
+        <div class="css-175oi2r r-18u37iz r-1rud1jd uc-beauty-right-col" id="categoryGridMedia" style="flex: 1; display: flex; justify-content: flex-end;">
+          <div class="uc-hero-media-wrap" style="width: 100%; max-width: 580px; border-radius: 8px; overflow: hidden;">
+            <img [src]="heroImage" alt="Beauty services at your doorstep" class="uc-hero-img" style="width: 100%; height: auto; object-fit: cover; display: block; border-radius: 8px;" />
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- homescreenContent_5: In the spotlight -->
+  <div class="css-175oi2r r-1awozwy r-ndvcnb r-aci1zz r-6koalj r-eqz5dr r-p1pxzi r-1mnahxq r-wi6arp r-puj83k r-11g3r6m r-wk8lta r-13qz1uu" id="homescreenContent_5">
+    <div class="css-175oi2r uc-beauty-inner" style="max-width: 1217px; width: 100%; opacity: 1;">
+      <div style="display: flex; flex-direction: column; height: 100%; width: 100%; min-height: inherit;">
+        <div class="css-175oi2r r-gtdqiz r-ipm5af r-mhe3cw">
+          <div class="css-175oi2r r-q3muym r-109y4c4 r-1d2f490 r-zchlnj r-ipm5af r-mhe3cw" style="position: fixed; opacity: 0;"></div>
+        </div>
+        <div data-pulltorefresh="false" class="css-175oi2r" style="flex-grow: 1;">
+          <div data-index="0" data-key="marketing__banner_carousel__noraml_banner" class="css-175oi2r">
+            <div class="css-175oi2r">
+              <div tabindex="0" class="css-175oi2r r-1i6wzkk r-14lw9ot r-13qz1uu r-wh77r2" style="padding: 0px; user-select: inherit !important; cursor: inherit !important; touch-action: inherit !important; transition-duration: 0s;">
+                
+                <!-- Section Header: In the spotlight -->
+                <div aria-disabled="true" tabindex="-1" class="css-175oi2r r-1i6wzkk r-12vffkv" style="user-select: inherit !important; cursor: inherit !important; touch-action: inherit !important; transition-duration: 0s;">
+                  <div class="css-175oi2r r-13qz1uu">
+                    <div class="css-175oi2r r-1awozwy r-18u37iz r-1wtj0ep r-13qz1uu">
+                      <div class="css-175oi2r r-eqz5dr r-13qz1uu r-13awgt0" style="align-items: flex-start; justify-content: center;">
+                        <h2 dir="auto" aria-level="2" role="heading" class="css-146c3p1 r-8akbws r-krxsd3 r-dnmrzs r-1udh08x r-1udbk01 r-13qz1uu" style="line-clamp: 2; -webkit-line-clamp: 2; font-family: os_semi_bold; font-size: 36px; line-height: 44px; color: rgb(15, 15, 15); text-decoration-line: none; text-transform: none; font-weight: 600; text-align: left;">In the spotlight</h2>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="css-175oi2r r-h3s6tt r-rwqe4o"></div>
+
+                <!-- Horizontal Carousel Track -->
+                <div class="css-175oi2r uc-desktop-track-wrap" style="justify-content: center;">
+                  <div class="css-175oi2r r-150rngu r-18u37iz r-16y2uox r-1wbh5a2 r-lltvgl r-buy8e9 r-agouwx r-bztko3 r-iwh88d r-3pj75a r-2eszeu uc-spotlight-scroll">
+                    <div class="css-175oi2r r-18u37iz uc-spotlight-row">
+                      <ng-container *ngFor="let item of spotlightBanners; let idx = index; let last = last">
+                        <a
+                          [href]="item.link"
+                          data-hover-animation="sizeGrow5"
+                          data-active-animation="sizeShrink5"
+                          tabindex="0"
+                          class="css-175oi2r r-1loqt21 r-1otgn73 uc-spotlight-card"
+                          style="width: 389px; height: 219px; overflow: hidden; border: 0px; border-radius: 8px; opacity: 1; text-decoration: none; display: block;"
+                        >
+                          <div class="css-175oi2r r-1pi2tsx r-1udh08x r-13qz1uu uc-spotlight-card-inner" style="width: 100%; height: 100%;">
+                            <img
+                              [src]="item.image"
+                              [alt]="item.title"
+                              class="uc-spotlight-banner-img"
+                              style="object-fit: contain; height: 100%; width: 100%; background-color: transparent; border-radius: 8px; display: block;"
+                              loading="eager"
+                              fetchpriority="high"
+                            />
+                          </div>
+                        </a>
+                        <div *ngIf="!last" tabindex="0" class="css-175oi2r r-1i6wzkk uc-card-spacer-wrap" style="user-select: inherit !important; cursor: inherit !important; touch-action: inherit !important; transition-duration: 0s;">
+                          <div class="css-175oi2r r-1472mwg r-lrsllp uc-card-spacer" style="width: 24px; min-width: 24px; height: 219px;"></div>
+                        </div>
+                      </ng-container>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

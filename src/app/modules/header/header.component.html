@@ -3,7 +3,11 @@
   <div class="uc-header-inner">
     <!-- Logo Column -->
     <div class="uc-header-col uc-logo-col" id="logoColumn">
-      <a href="javascript:void(0)" (click)="setMobileTab('home')" class="uc-logo-link">
+      <a
+        href="javascript:void(0)"
+        (click)="setMobileTab('home')"
+        class="uc-logo-link"
+      >
         <img [src]="logoUrl" alt="Urban Company logo" class="uc-logo-img" />
       </a>
     </div>
@@ -11,17 +15,63 @@
     <!-- Navigation Tabs Column -->
     <div class="uc-header-col uc-nav-col" id="NavTabsColumn">
       <nav class="uc-nav-tabs">
-        <a href="javascript:void(0)" class="uc-nav-tab" [class.active]="activeMobileTab === 'wall-panels'" (click)="setMobileTab('wall-panels')">Wall Panels</a>
-        <a href="javascript:void(0)" class="uc-nav-tab">Native</a>
-        <a href="javascript:void(0)" class="uc-nav-tab">Beauty</a>
+        <a
+          href="javascript:void(0)"
+          class="uc-nav-tab"
+          [class.active]="activeMobileTab === 'wall-panels'"
+          (click)="setMobileTab('wall-panels')"
+          >Wall Panels</a
+        >
+        <a
+          href="javascript:void(0)"
+          class="uc-nav-tab"
+          [class.active]="activeMobileTab === 'native'"
+          (click)="setMobileTab('native')"
+          >Native</a
+        >
+        <a
+          href="javascript:void(0)"
+          class="uc-nav-tab"
+          [class.active]="activeMobileTab === 'beauty'"
+          (click)="setMobileTab('beauty')"
+          >Beauty</a
+        >
       </nav>
+    </div>
+
+    <!-- Location Box next to menu on Left (For Wall Panels, Native, Beauty) -->
+    <div
+      *ngIf="activeMobileTab !== 'home'"
+      class="uc-header-col uc-menu-location-col"
+    >
+      <div class="uc-search-box uc-location-box">
+        <svg class="uc-icon" viewBox="0 0 24 24" fill="#757575">
+          <path
+            d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
+          />
+        </svg>
+        <span class="uc-location-text" [title]="currentLocation">{{
+          currentLocation
+        }}</span>
+        <svg class="uc-dropdown-icon" viewBox="0 0 16 16" fill="#757575">
+          <path
+            fill-rule="evenodd"
+            d="M8 9.94L3.53 5.47 2.47 6.53l5 5a.75.75 0 001.06 0l5-5-1.06-1.06L8 9.94z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </div>
     </div>
 
     <!-- Spacer -->
     <div class="uc-spacer"></div>
 
-    <!-- Location & Search Column -->
-    <div class="uc-header-col uc-search-col" id="locationSearchColumn">
+    <!-- Location & Search Column (For Home page) -->
+    <div
+      *ngIf="activeMobileTab === 'home'"
+      class="uc-header-col uc-search-col"
+      id="locationSearchColumn"
+    >
       <!-- Location Picker Box -->
       <div class="uc-search-box uc-location-box">
         <svg class="uc-icon" viewBox="0 0 24 24" fill="#757575">
@@ -98,23 +148,58 @@
               <div
                 tabindex="0"
                 class="uc-login-dropdown-btn css-175oi2r r-lrvibr r-1awozwy r-1pz39u2 r-18u37iz r-1loqt21 r-1otgn73"
-                style="height: 36px; background-color: rgb(255, 255, 255); padding-right: 16px; padding-left: 16px; border-radius: 8px;"
+                style="
+                  height: 36px;
+                  background-color: rgb(255, 255, 255);
+                  padding-right: 16px;
+                  padding-left: 16px;
+                  border-radius: 8px;
+                "
                 (click)="openLoginModal()"
               >
-                <p dir="auto" role="paragraph" class="css-146c3p1 r-13awgt0" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13px; line-height: 16px; color: rgb(15, 15, 15); text-decoration-line: none; text-transform: none; font-weight: 500; text-align: left; margin: 0;">
+                <p
+                  dir="auto"
+                  role="paragraph"
+                  class="css-146c3p1 r-13awgt0"
+                  style="
+                    font-family:
+                      -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;,
+                      Roboto, sans-serif;
+                    font-size: 13px;
+                    line-height: 16px;
+                    color: rgb(15, 15, 15);
+                    text-decoration-line: none;
+                    text-transform: none;
+                    font-weight: 500;
+                    text-align: left;
+                    margin: 0;
+                  "
+                >
                   Login
                 </p>
               </div>
             </ng-container>
             <ng-template #loggedInUserView>
               <div class="uc-profile-menu-card">
-                <a href="javascript:void(0)" class="uc-profile-menu-item" (click)="showProfileDropdown = false">
+                <a
+                  href="javascript:void(0)"
+                  class="uc-profile-menu-item"
+                  (click)="showProfileDropdown = false"
+                >
                   Help Center
                 </a>
-                <a href="javascript:void(0)" class="uc-profile-menu-item" (click)="showProfileDropdown = false">
+                <a
+                  href="javascript:void(0)"
+                  class="uc-profile-menu-item"
+                  (click)="showProfileDropdown = false"
+                >
                   My Bookings
                 </a>
-                <a href="javascript:void(0)" class="uc-profile-menu-item uc-logout-item" (click)="logout()">
+                <a
+                  href="javascript:void(0)"
+                  class="uc-profile-menu-item uc-logout-item"
+                  (click)="logout()"
+                >
                   Log out
                 </a>
               </div>
@@ -127,10 +212,23 @@
 </header>
 
 <!-- Mobile Top Header Bar (Shown only on Home tab) -->
-<div class="uc-mobile-header" *ngIf="activeMobileTab === 'home'" [style.background-color]="activeCampaign.themeColor">
-  <div class="uc-mobile-location-row" (click)="toggleCampaign()" title="Tap to switch city/campaign">
+<div
+  class="uc-mobile-header"
+  *ngIf="activeMobileTab === 'home'"
+  [style.background-color]="activeCampaign.themeColor"
+>
+  <div
+    class="uc-mobile-location-row"
+    (click)="toggleCampaign()"
+    title="Tap to switch city/campaign"
+  >
     <div class="uc-mobile-loc-icon-badge">
-      <svg viewBox="0 0 24 24" [style.fill]="activeCampaign.themeColor" width="18" height="18">
+      <svg
+        viewBox="0 0 24 24"
+        [style.fill]="activeCampaign.themeColor"
+        width="18"
+        height="18"
+      >
         <path
           d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
         />
@@ -141,13 +239,27 @@
       <div class="uc-mobile-loc-title-row">
         <span class="uc-loc-in-text">In&nbsp;</span>
         <div class="uc-rolling-digit-box">
-          <div class="uc-rolling-digit-track" [style.transform]="'translateY(' + getDigitTransform(digit1) + 'px)'">
-            <span *ngFor="let n of digits" class="uc-rolling-digit">{{ n }}</span>
+          <div
+            class="uc-rolling-digit-track"
+            [style.transform]="
+              'translateY(' + getDigitTransform(digit1) + 'px)'
+            "
+          >
+            <span *ngFor="let n of digits" class="uc-rolling-digit">{{
+              n
+            }}</span>
           </div>
         </div>
         <div class="uc-rolling-digit-box">
-          <div class="uc-rolling-digit-track" [style.transform]="'translateY(' + getDigitTransform(digit2) + 'px)'">
-            <span *ngFor="let n of digits" class="uc-rolling-digit">{{ n }}</span>
+          <div
+            class="uc-rolling-digit-track"
+            [style.transform]="
+              'translateY(' + getDigitTransform(digit2) + 'px)'
+            "
+          >
+            <span *ngFor="let n of digits" class="uc-rolling-digit">{{
+              n
+            }}</span>
           </div>
         </div>
         <span class="uc-loc-in-text">&nbsp;minutes</span>
@@ -155,7 +267,13 @@
 
       <div class="uc-mobile-loc-address">
         <span class="uc-address-truncate">{{ currentLocation }}</span>
-        <svg class="uc-loc-chevron" viewBox="0 0 16 16" fill="#FFFFFF" width="14" height="14">
+        <svg
+          class="uc-loc-chevron"
+          viewBox="0 0 16 16"
+          fill="#FFFFFF"
+          width="14"
+          height="14"
+        >
           <path
             fill-rule="evenodd"
             d="M8 9.94L3.53 5.47 2.47 6.53l5 5a.75.75 0 001.06 0l5-5-1.06-1.06L8 9.94z"
@@ -167,12 +285,19 @@
   </div>
 
   <!-- Animated Search Bar with Changing Placeholder -->
-  <div
-    class="uc-mobile-search-row"
-    [class.sticky-active]="isScrolled"
-  >
+  <div class="uc-mobile-search-row" [class.sticky-active]="isScrolled">
     <div class="uc-mobile-search-box">
-      <svg class="uc-mobile-search-icon" viewBox="0 0 24 24" fill="none" stroke="#757575" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="19" height="19">
+      <svg
+        class="uc-mobile-search-icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#757575"
+        stroke-width="2.2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        width="19"
+        height="19"
+      >
         <circle cx="11" cy="11" r="8"></circle>
         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
       </svg>
@@ -187,7 +312,10 @@
   <div class="uc-mobile-search-placeholder" *ngIf="isScrolled"></div>
 
   <!-- Dynamic Campaign Hero Ad Section -->
-  <div class="uc-mobile-hero-banner-wrap" *ngIf="activeCampaign.bannerType === 'image'">
+  <div
+    class="uc-mobile-hero-banner-wrap"
+    *ngIf="activeCampaign.bannerType === 'image'"
+  >
     <a href="#" class="uc-mobile-hero-banner-link">
       <img
         [src]="activeCampaign.bannerImage"
@@ -199,21 +327,36 @@
   </div>
 
   <!-- InstaHelp Custom Purple Banner (Matching Screenshot) -->
-  <div class="uc-mobile-instahelp-banner-wrap" *ngIf="activeCampaign.bannerType === 'instahelp'">
+  <div
+    class="uc-mobile-instahelp-banner-wrap"
+    *ngIf="activeCampaign.bannerType === 'instahelp'"
+  >
     <div class="uc-instahelp-card">
       <div class="uc-instahelp-text-col">
-        <h2 class="uc-instahelp-brand">{{ activeCampaign.instahelp?.title }}</h2>
+        <h2 class="uc-instahelp-brand">
+          {{ activeCampaign.instahelp?.title }}
+        </h2>
         <p class="uc-instahelp-sub">{{ activeCampaign.instahelp?.subtitle }}</p>
         <div class="uc-instahelp-price-row">
-          <span class="uc-instahelp-orig-price">{{ activeCampaign.instahelp?.origPrice }}</span>
-          <span class="uc-instahelp-offer-price">{{ activeCampaign.instahelp?.offerPrice }}</span>
+          <span class="uc-instahelp-orig-price">{{
+            activeCampaign.instahelp?.origPrice
+          }}</span>
+          <span class="uc-instahelp-offer-price">{{
+            activeCampaign.instahelp?.offerPrice
+          }}</span>
         </div>
         <div class="uc-instahelp-badge-row">
-          <span class="uc-instahelp-badge">{{ activeCampaign.instahelp?.badge }}</span>
+          <span class="uc-instahelp-badge">{{
+            activeCampaign.instahelp?.badge
+          }}</span>
         </div>
       </div>
       <div class="uc-instahelp-img-col">
-        <img [src]="activeCampaign.instahelp?.image" alt="InstaHelp maid service" class="uc-instahelp-img" />
+        <img
+          [src]="activeCampaign.instahelp?.image"
+          alt="InstaHelp maid service"
+          class="uc-instahelp-img"
+        />
       </div>
     </div>
   </div>
@@ -224,16 +367,35 @@
 
 <!-- Mobile Bottom Navigation Bar (Matching Screenshot) -->
 <nav class="uc-mobile-bottom-nav">
-  <a href="javascript:void(0)" class="uc-bottom-nav-item" [class.active]="activeMobileTab === 'home'" (click)="setMobileTab('home')">
+  <a
+    href="javascript:void(0)"
+    class="uc-bottom-nav-item"
+    [class.active]="activeMobileTab === 'home'"
+    (click)="setMobileTab('home')"
+  >
     <div class="uc-bottom-icon-box">
       <span class="uc-bottom-logo-badge">uc</span>
     </div>
     <span class="uc-bottom-nav-label">UC</span>
   </a>
 
-  <a href="javascript:void(0)" class="uc-bottom-nav-item" [class.active]="activeMobileTab === 'wall-panels'" (click)="setMobileTab('wall-panels')">
+  <a
+    href="javascript:void(0)"
+    class="uc-bottom-nav-item"
+    [class.active]="activeMobileTab === 'wall-panels'"
+    (click)="setMobileTab('wall-panels')"
+  >
     <div class="uc-bottom-icon-box">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        width="20"
+        height="20"
+      >
         <rect x="3" y="3" width="8" height="18" rx="1"></rect>
         <rect x="13" y="3" width="8" height="18" rx="1"></rect>
       </svg>
@@ -242,7 +404,12 @@
     <span class="uc-bottom-nav-label">Wall Panels</span>
   </a>
 
-  <a href="javascript:void(0)" class="uc-bottom-nav-item" [class.active]="activeMobileTab === 'native'" (click)="setMobileTab('native')">
+  <a
+    href="javascript:void(0)"
+    class="uc-bottom-nav-item"
+    [class.active]="activeMobileTab === 'native'"
+    (click)="setMobileTab('native')"
+  >
     <div class="uc-bottom-icon-box">
       <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
         <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
@@ -252,7 +419,12 @@
     <span class="uc-bottom-nav-label">Native</span>
   </a>
 
-  <a href="javascript:void(0)" class="uc-bottom-nav-item" [class.active]="activeMobileTab === 'beauty'" (click)="setMobileTab('beauty')">
+  <a
+    href="javascript:void(0)"
+    class="uc-bottom-nav-item"
+    [class.active]="activeMobileTab === 'beauty'"
+    (click)="setMobileTab('beauty')"
+  >
     <div class="uc-bottom-icon-box">
       <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
         <path
@@ -263,7 +435,12 @@
     <span class="uc-bottom-nav-label">Beauty</span>
   </a>
 
-  <a href="javascript:void(0)" class="uc-bottom-nav-item" [class.active]="activeMobileTab === 'account'" (click)="setMobileTab('account')">
+  <a
+    href="javascript:void(0)"
+    class="uc-bottom-nav-item"
+    [class.active]="activeMobileTab === 'account'"
+    (click)="setMobileTab('account')"
+  >
     <div class="uc-bottom-icon-box">
       <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
         <path

@@ -87,6 +87,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     if (tab === 'wall-panels') {
       this.router.navigate(['/wall-panels']);
+    } else if (tab === 'native') {
+      this.router.navigate(['/native']);
+    } else if (tab === 'beauty') {
+      this.router.navigate(['/beauty']);
     } else if (tab === 'home') {
       this.router.navigate(['/']);
     }
@@ -195,11 +199,19 @@ export class HeaderComponent implements OnInit, OnDestroy {
     // Sync active mobile tab with current url
     if (this.router.url.includes('wall-panels')) {
       this.activeMobileTab = 'wall-panels';
+    } else if (this.router.url.includes('native')) {
+      this.activeMobileTab = 'native';
+    } else if (this.router.url.includes('beauty')) {
+      this.activeMobileTab = 'beauty';
     }
     this.authSub.add(
       this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe((event: any) => {
         if (event.url.includes('wall-panels')) {
           this.activeMobileTab = 'wall-panels';
+        } else if (event.url.includes('native')) {
+          this.activeMobileTab = 'native';
+        } else if (event.url.includes('beauty')) {
+          this.activeMobileTab = 'beauty';
         } else if (event.url === '/' || event.url === '') {
           if (this.activeMobileTab !== 'account') {
             this.activeMobileTab = 'home';
