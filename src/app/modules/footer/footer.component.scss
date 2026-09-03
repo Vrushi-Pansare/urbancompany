@@ -170,17 +170,18 @@
   }
 }
 
-/* ── Responsive Styling ─────────────────────────── */
+/* ── Responsive Styling on Mobile ─────────────────── */
 @media (max-width: 768px) {
   .uc-footer {
-    padding-bottom: 80px !important;
+    display: block !important;
+    padding-bottom: 85px !important;
 
     .uc-footer-logo-row {
-      padding: 16px 16px 36px 16px;
+      padding: 16px 16px 24px 16px;
     }
 
     .uc-footer-links-row {
-      padding: 12px 16px 36px 16px;
+      padding: 12px 16px 24px 16px;
 
       .uc-footer-col {
         min-width: 100%;

@@ -1,0 +1,247 @@
+<!-- Login Modal / Full Screen Container -->
+<div class="uc-login-overlay" *ngIf="isOpen" (click)="onBackdropClick($event)">
+  <div class="uc-login-wrapper" (click)="$event.stopPropagation()">
+    <!-- Top Navigation Header with Back Arrow on Mobile & Close Button on Desktop -->
+    <div class="uc-login-top-bar">
+      <!-- Mobile Back Arrow Button -->
+      <button
+        type="button"
+        class="uc-back-arrow-btn"
+        aria-label="Back"
+        (click)="currentStep === 'otp' ? goToPhoneStep() : close()"
+      >
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#0F0F0F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+      </button>
+
+      <!-- Desktop Floating Close 'X' Button -->
+      <button
+        type="button"
+        class="uc-modal-close-btn"
+        aria-label="Close"
+        (click)="close()"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#0F0F0F" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10.586 12l-6.043 6.043 1.414 1.414L12 13.414l6.043 6.043 1.414-1.414L13.414 12l6.043-6.043-1.414-1.414L12 10.586 5.957 4.543 4.543 5.957 10.586 12z" fill="#0F0F0F"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Modal Card Body -->
+    <div class="uc-modal-body">
+      <!-- STEP 1: Phone Number Input (Matching Screenshot 1) -->
+      <div class="uc-step-phone" *ngIf="currentStep === 'phone'">
+        <!-- Urban Company Brand Logo (Matching Header & Footer) -->
+        <div class="uc-brand-logo-row">
+          <img [src]="logoUrl" alt="Urban Company" class="uc-login-logo-img" />
+        </div>
+
+        <!-- Heading & Description -->
+        <h1 class="uc-modal-heading">Enter your phone number</h1>
+        <p class="uc-modal-subheading">We’ll send you a text with a verification code.</p>
+
+        <!-- Phone Input Group -->
+        <div class="uc-phone-input-group">
+          <!-- Country Selector Dropdown Box -->
+          <div class="uc-country-box">
+            <span class="uc-country-code-text">{{ countryCode }}</span>
+            <svg class="uc-country-chevron" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#0F0F0F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+
+          <!-- Phone Number Field -->
+          <div class="uc-phone-field-wrap">
+            <div class="uc-field-inner">
+              <span class="uc-floating-label" *ngIf="phoneNumber.length > 0">Enter your phone number</span>
+              <input
+                type="tel"
+                [(ngModel)]="phoneNumber"
+                (input)="onPhoneInput($event)"
+                placeholder="Enter your phone number"
+                [maxlength]="countryMaxLength"
+                class="uc-phone-field"
+                autofocus
+              />
+            </div>
+            <!-- Clear Button 'x' -->
+            <button
+              type="button"
+              class="uc-clear-btn"
+              *ngIf="phoneNumber.length > 0"
+              (click)="clearPhone()"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#757575" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12zm6.293 2.293L10.586 12 8.293 9.707l1.414-1.414L12 10.586l2.293-2.293 1.414 1.414L13.414 12l2.293 2.293-1.414 1.414L12 13.414l-2.293 2.293-1.414-1.414z" fill="#757575"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Cloudflare Turnstile Verification Widget (Desktop / Optional) -->
+        <div class="uc-turnstile-container" *ngIf="showCaptcha">
+          <div class="uc-turnstile-card" [class.verified]="isCaptchaVerified" (click)="toggleCaptcha()">
+            <div class="uc-turnstile-left">
+              <div *ngIf="isCaptchaLoading" class="uc-cf-dots-spinner">
+                <span class="uc-cf-dot dot-1"></span>
+                <span class="uc-cf-dot dot-2"></span>
+                <span class="uc-cf-dot dot-3"></span>
+                <span class="uc-cf-dot dot-4"></span>
+                <span class="uc-cf-dot dot-5"></span>
+                <span class="uc-cf-dot dot-6"></span>
+                <span class="uc-cf-dot dot-7"></span>
+                <span class="uc-cf-dot dot-8"></span>
+              </div>
+              <div *ngIf="isCaptchaVerified" class="uc-cf-check-wrap">
+                <svg class="uc-cf-check-svg" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <span class="uc-cf-status-text">
+                {{ isCaptchaVerified ? 'Success!' : 'Verifying...' }}
+              </span>
+            </div>
+            <div class="uc-turnstile-right">
+              <svg class="uc-cf-logo-cloud" width="38" height="20" viewBox="0 0 48 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M29.5 9.2c-.8-5.3-5.3-9.2-10.7-9.2-4.8 0-8.9 3.1-10.3 7.5C3.2 8 0 11.4 0 15.6 0 20.2 3.8 24 8.6 24h19.5c4.6 0 8.3-3.7 8.3-8.3 0-3.6-2.3-6.7-5.6-7.8-.4.4-.9.9-1.3 1.3z" fill="#F38020"/>
+                <path d="M30.5 8.9c-.3 0-.6 0-.9.1 2.9 1.1 4.9 3.9 4.9 7.2 0 4.2-3.4 7.6-7.6 7.6h-6.4l5.3-5.3c.4-.4.6-.9.6-1.5 0-1.1-.9-2.1-2.1-2.1H19l4.4-4.4c.8-.8.8-2.1 0-2.9-.8-.8-2.1-.8-2.9 0l-7.7 7.7c-.8.8-.8 2.1 0 2.9l7.7 7.7c.4.4.9.6 1.5.6h7.4c5.3 0 9.7-4.4 9.7-9.7 0-4.5-3.1-8.2-7.3-9.2-.4-.7-.8-1.5-1.3-2.1z" fill="#FAAD3F"/>
+              </svg>
+              <div class="uc-cf-brand-text">CLOUDFLARE</div>
+              <div class="uc-cf-legal-text">Privacy • Terms</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Continue Button -->
+        <div class="uc-action-btn-row">
+          <button
+            type="button"
+            class="uc-continue-btn"
+            [class.loading]="isLoading"
+            [disabled]="!isContinueEnabled"
+            (click)="onSendOtp()"
+          >
+            <span *ngIf="!isLoading">Continue</span>
+            <div *ngIf="isLoading" class="uc-dots-loader">
+              <span class="uc-dot"></span>
+              <span class="uc-dot"></span>
+              <span class="uc-dot"></span>
+            </div>
+          </button>
+        </div>
+
+        <!-- Terms and Policy Links (Exact Screenshot 1) -->
+        <div class="uc-policy-row">
+          <p class="uc-policy-text">
+            By continuing, you agree to our 
+            <a href="https://privacy.urbancompany.com/policies?policyType=terms_and_conditions&userType=customer&countryId=IND&language=en&boolWebView=true" target="_blank" class="uc-policy-link">T&C</a>
+            and
+            <a href="https://privacy.urbancompany.com/policies?policyType=privacy_policy&userType=customer&countryId=IND&language=en&boolWebView=true" target="_blank" class="uc-policy-link">Privacy</a>
+            policy.
+          </p>
+        </div>
+      </div>
+
+      <!-- STEP 2: OTP Verification (Matching Screenshot 2) -->
+      <div class="uc-step-otp" *ngIf="currentStep === 'otp'">
+        <!-- Phone Graphic with Blue Chat Bubble (Exact Screenshot 2) -->
+        <div class="uc-phone-icon-wrap">
+          <svg width="44" height="44" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="16" y="8" width="22" height="36" rx="4" fill="#0F0F0F"></rect>
+            <path fill="#ffffff" d="M18 12h18v26H18z"></path>
+            <rect x="25" y="39.5" width="4" height="3" rx="1" fill="#757575"></rect>
+            <!-- Blue Chat message bubble on top left -->
+            <path d="M6 8h16a3 3 0 013 3v8a3 3 0 01-3 3H12l-5 4v-4H6a3 3 0 01-3-3v-8a3 3 0 013-3z" fill="#2563EB"/>
+            <!-- 3 white dots in bubble -->
+            <circle cx="8" cy="15" r="1.3" fill="#ffffff"/>
+            <circle cx="13" cy="15" r="1.3" fill="#ffffff"/>
+            <circle cx="18" cy="15" r="1.3" fill="#ffffff"/>
+          </svg>
+        </div>
+
+        <h1 class="uc-modal-heading">Enter verification code</h1>
+        <p class="uc-modal-subheading">
+          A 6-digit verification code has been sent to {{ countryCode }}{{ phoneNumber }}
+        </p>
+
+        <!-- OTP 6-Box Input Row (Exact Screenshot 2) -->
+        <div class="uc-otp-input-wrapper" (click)="focusOtpInput()">
+          <div class="uc-otp-boxes-row">
+            <div
+              *ngFor="let i of [0, 1, 2, 3, 4, 5]"
+              class="uc-otp-digit-box"
+              [class.active]="isOtpFocused && (otpValue.length === i || (i === 5 && otpValue.length === 6))"
+              [class.filled]="otpValue.length > i"
+            >
+              <p dir="auto" class="uc-otp-val">{{ otpValue[i] || '' }}</p>
+            </div>
+          </div>
+          <!-- Real Numeric Input -->
+          <input
+            id="real-otp-input"
+            type="tel"
+            inputmode="numeric"
+            maxlength="6"
+            autocomplete="one-time-code"
+            [(ngModel)]="otpValue"
+            (input)="onOtpChange($event)"
+            (focus)="isOtpFocused = true"
+            (blur)="isOtpFocused = false"
+            class="uc-real-otp-hidden"
+            autofocus
+          />
+        </div>
+
+        <!-- Timer / Resend Section (Exact Screenshot 2) -->
+        <div class="uc-otp-resend-section">
+          <div *ngIf="countdown > 0" class="uc-timer-wrap">
+            <svg class="uc-clock-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0F0F0F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span class="uc-timer-text">{{ formattedCountdown }}</span>
+          </div>
+
+          <div class="uc-resend-options" *ngIf="countdown === 0">
+            <p class="uc-resend-label">Resend the code on</p>
+            <div class="uc-resend-buttons">
+              <button type="button" class="uc-resend-pill-btn" (click)="resendVia('sms')">SMS</button>
+              <button type="button" class="uc-resend-pill-btn" (click)="resendVia('whatsapp')">WhatsApp</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Login Button -->
+        <div class="uc-action-btn-row">
+          <button
+            type="button"
+            class="uc-continue-btn"
+            [class.loading]="isLoading"
+            [disabled]="!isOtpValid || isLoading"
+            (click)="onVerifyOtp()"
+          >
+            <span *ngIf="!isLoading">Login</span>
+            <div *ngIf="isLoading" class="uc-dots-loader">
+              <span class="uc-dot"></span>
+              <span class="uc-dot"></span>
+              <span class="uc-dot"></span>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 3: Login Success View -->
+      <div class="uc-step-success" *ngIf="currentStep === 'success'">
+        <div class="uc-success-circle">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="uc-success-check">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+        <h2 class="uc-modal-heading" style="text-align: center;">Logged in successfully!</h2>
+        <p class="uc-modal-subheading" style="text-align: center;">Welcome to Urban Company</p>
+      </div>
+    </div>
+  </div>
+</div>

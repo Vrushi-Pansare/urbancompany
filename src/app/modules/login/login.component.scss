@@ -1,0 +1,575 @@
+/* Login Modal / Full Screen Container */
+.uc-login-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  background-color: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+/* Modal Card Wrapper (Desktop by default) */
+.uc-login-wrapper {
+  width: 100%;
+  max-width: 500px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.22);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: visible;
+  animation: slideUpModal 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Top Navigation Bar */
+.uc-login-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px 0;
+
+  .uc-back-arrow-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    margin-left: -6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.15s ease;
+
+    &:active {
+      background-color: #f0f0f0;
+    }
+  }
+
+  .uc-modal-close-btn {
+    position: absolute;
+    top: -14px;
+    right: -14px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+    &:hover {
+      transform: scale(1.06);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.24);
+    }
+  }
+}
+
+/* Modal Body */
+.uc-modal-body {
+  padding: 20px 24px 32px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Urban Company Brand Logo */
+.uc-brand-logo-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+
+  .uc-login-logo-img {
+    height: 36px;
+    max-width: 140px;
+    object-fit: contain;
+    display: block;
+  }
+}
+
+/* Phone Graphic with Blue Chat Bubble (Screenshot 2) */
+.uc-phone-icon-wrap {
+  margin-bottom: 20px;
+  display: inline-flex;
+}
+
+/* Headings */
+.uc-modal-heading {
+  font-size: 21px;
+  line-height: 28px;
+  font-weight: 700;
+  color: #0f0f0f;
+  margin: 0 0 4px 0;
+  letter-spacing: -0.3px;
+}
+
+.uc-modal-subheading {
+  font-size: 13px;
+  line-height: 18px;
+  color: #757575;
+  margin: 0 0 22px 0;
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* Combined Phone Input Group */
+.uc-phone-input-group {
+  display: flex;
+  align-items: stretch;
+  height: 52px;
+  margin-bottom: 22px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #ffffff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:focus-within {
+    border-color: rgba(110, 66, 229, 1.00);
+    box-shadow: 0 0 0 1px rgba(110, 66, 229, 0.3);
+  }
+
+  .uc-country-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 16px;
+    border-right: 1px solid #e5e7eb;
+    background-color: #ffffff;
+    cursor: pointer;
+    user-select: none;
+    flex-shrink: 0;
+
+    .uc-country-code-text {
+      font-size: 15px;
+      font-weight: 600;
+      color: #0f0f0f;
+    }
+
+    .uc-country-chevron {
+      stroke: #0f0f0f;
+    }
+  }
+
+  .uc-phone-field-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    background-color: #ffffff;
+
+    .uc-field-inner {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      .uc-floating-label {
+        font-size: 11px;
+        line-height: 13px;
+        color: #757575;
+        font-weight: 400;
+      }
+
+      .uc-phone-field {
+        width: 100%;
+        border: none;
+        outline: none;
+        background: transparent;
+        font-size: 15px;
+        color: #0f0f0f;
+        font-weight: 600;
+        padding: 0;
+        font-family: inherit;
+
+        &::placeholder {
+          color: #757575;
+          font-weight: 400;
+        }
+      }
+    }
+
+    .uc-clear-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+  }
+}
+
+/* Cloudflare Turnstile Verification Widget */
+.uc-turnstile-container {
+  margin-bottom: 20px;
+}
+
+.uc-turnstile-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #fafafa;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 10px 14px;
+  cursor: pointer;
+  user-select: none;
+  min-height: 56px;
+
+  .uc-turnstile-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .uc-cf-dots-spinner {
+      width: 22px;
+      height: 22px;
+      position: relative;
+      animation: cfRotate 1.1s linear infinite;
+
+      .uc-cf-dot {
+        position: absolute;
+        width: 3.5px;
+        height: 3.5px;
+        background-color: #22c55e;
+        border-radius: 50%;
+
+        &.dot-1 { top: 0; left: 9px; }
+        &.dot-2 { top: 3px; right: 3px; }
+        &.dot-3 { top: 9px; right: 0; }
+        &.dot-4 { bottom: 3px; right: 3px; }
+        &.dot-5 { bottom: 0; left: 9px; }
+        &.dot-6 { bottom: 3px; left: 3px; }
+        &.dot-7 { top: 9px; left: 0; }
+        &.dot-8 { top: 3px; left: 3px; }
+      }
+    }
+
+    .uc-cf-check-wrap {
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .uc-cf-status-text {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: #374151;
+    }
+  }
+
+  .uc-turnstile-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    .uc-cf-brand-text {
+      font-size: 9.5px;
+      font-weight: 800;
+      color: #4b5563;
+      letter-spacing: 0.5px;
+    }
+
+    .uc-cf-legal-text {
+      font-size: 9px;
+      color: #9ca3af;
+    }
+  }
+}
+
+@keyframes cfRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Action / Continue / Login Buttons */
+.uc-action-btn-row {
+  margin-top: 18px;
+  margin-bottom: 16px;
+}
+
+.uc-continue-btn {
+  width: 100%;
+  height: 48px;
+  border-radius: 8px;
+  border: none;
+  background-color: rgba(110, 66, 229, 1.00);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  letter-spacing: -0.2px;
+
+  &:hover:not(:disabled) {
+    background-color: rgb(97, 54, 212);
+    box-shadow: 0 4px 14px rgba(110, 66, 229, 0.3);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.99);
+  }
+
+  &:disabled:not(.loading) {
+    background-color: #f0f0f0;
+    color: #a3a3a3;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  &.loading {
+    background-color: rgba(110, 66, 229, 1.00) !important;
+    cursor: wait;
+    box-shadow: 0 4px 16px rgba(110, 66, 229, 0.35);
+  }
+}
+
+.uc-dots-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  .uc-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    animation: bounceDot 0.8s infinite alternate;
+
+    &:nth-child(2) { animation-delay: 0.2s; }
+    &:nth-child(3) { animation-delay: 0.4s; }
+  }
+}
+
+@keyframes bounceDot {
+  from { opacity: 0.4; transform: translateY(0); }
+  to { opacity: 1; transform: translateY(-4px); }
+}
+
+/* Policy Row */
+.uc-policy-row {
+  margin-top: 14px;
+  text-align: left;
+
+  .uc-policy-text {
+    font-size: 12.5px;
+    line-height: 18px;
+    color: #262626;
+    margin: 0;
+
+    .uc-policy-link {
+      color: #0f0f0f;
+      font-weight: 700;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  }
+}
+
+/* STEP 2: OTP 6-Box Input */
+.uc-otp-input-wrapper {
+  margin-bottom: 20px;
+  position: relative;
+  cursor: text;
+
+  .uc-otp-boxes-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+
+    .uc-otp-digit-box {
+      flex: 1;
+      height: 52px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #ffffff;
+      transition: all 0.15s ease;
+
+      .uc-otp-val {
+        font-size: 20px;
+        font-weight: 700;
+        color: #0f0f0f;
+        margin: 0;
+      }
+
+      &.active {
+        border-color: rgba(110, 66, 229, 1.00);
+        box-shadow: 0 0 0 1px rgba(110, 66, 229, 0.3);
+      }
+
+      &.filled {
+        border-color: #0f0f0f;
+      }
+    }
+  }
+
+  .uc-real-otp-hidden {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: default;
+    z-index: 2;
+  }
+}
+
+/* Timer / Resend Section */
+.uc-otp-resend-section {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+
+  .uc-timer-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    .uc-clock-icon {
+      stroke: #0f0f0f;
+    }
+
+    .uc-timer-text {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: #0f0f0f;
+    }
+  }
+
+  .uc-resend-options {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .uc-resend-label {
+      font-size: 13.5px;
+      color: #545454;
+      margin: 0;
+    }
+
+    .uc-resend-buttons {
+      display: flex;
+      gap: 8px;
+
+      .uc-resend-pill-btn {
+        background-color: #f3f4f6;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        padding: 5px 12px;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: #0f0f0f;
+        cursor: pointer;
+        transition: all 0.15s ease;
+
+        &:hover {
+          background-color: #e5e7eb;
+        }
+      }
+    }
+  }
+}
+
+/* Success View */
+.uc-step-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 0 12px;
+
+  .uc-success-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #dcfce7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+
+    .uc-success-check {
+      width: 32px;
+      height: 32px;
+    }
+  }
+}
+
+/* Modal Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUpModal {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* =========================================================
+   MOBILE FULL SCREEN RESPONSIVENESS (< 768px)
+   Matches exact User Screenshots 1 & 2
+   ========================================================= */
+@media (max-width: 768px) {
+  .uc-login-overlay {
+    padding: 0;
+    background-color: #ffffff;
+    align-items: stretch;
+  }
+
+  .uc-login-wrapper {
+    max-width: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+    border-radius: 0;
+    box-shadow: none;
+    animation: none;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .uc-login-top-bar {
+    padding: 18px 20px 8px;
+
+    .uc-back-arrow-btn {
+      display: flex;
+    }
+
+    .uc-modal-close-btn {
+      display: none; /* Mobile uses top-left back arrow */
+    }
+  }
+
+  .uc-modal-body {
+    padding: 12px 20px 32px;
+  }
+}

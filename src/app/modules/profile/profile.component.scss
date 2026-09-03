@@ -1,0 +1,281 @@
+.uc-profile-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  z-index: 99998;
+  background-color: #ffffff;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 20px 20px 90px 20px;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  animation: profileFadeIn 0.18s ease-out;
+
+  /* Header Section */
+  .uc-profile-header {
+    margin-bottom: 16px;
+    padding-top: 6px;
+
+    .uc-profile-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #0f0f0f;
+      margin: 0;
+      letter-spacing: -0.3px;
+    }
+
+    &.logged-in-header {
+      margin-bottom: 14px;
+
+      .uc-profile-title-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .uc-profile-user-title {
+          font-size: 22px;
+          font-weight: 800;
+          color: #0f0f0f;
+          margin: 0;
+          letter-spacing: -0.4px;
+        }
+
+        .uc-edit-profile-btn {
+          background: transparent;
+          border: none;
+          cursor: pointer;
+          padding: 6px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 50%;
+          transition: background-color 0.15s ease;
+
+          &:active {
+            background-color: #f3f4f6;
+          }
+
+          svg {
+            stroke: #0f0f0f;
+          }
+        }
+      }
+
+      .uc-profile-user-subtitle {
+        font-size: 14px;
+        color: #545454;
+        margin: 4px 0 0 0;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .uc-profile-top-divider {
+    height: 1px;
+    background-color: #f3f4f6;
+    margin: 16px -20px 8px -20px;
+  }
+
+  .uc-profile-divider {
+    height: 8px;
+    background-color: #f7f7f7;
+    margin: 20px -20px 10px -20px;
+  }
+
+  /* Log In Auth Section (When Logged Out) */
+  .uc-profile-auth-section {
+    margin-bottom: 14px;
+
+    .uc-login-btn {
+      background-color: rgba(110, 66, 229, 1.00);
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 10px 20px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 3px 10px rgba(110, 66, 229, 0.25);
+      transition: background-color 0.2s ease, transform 0.15s ease;
+
+      &:hover {
+        background-color: rgb(97, 54, 212);
+      }
+
+      &:active {
+        transform: scale(0.98);
+      }
+    }
+  }
+
+  /* Menu Items List (Matching Screenshots 3 & 4) */
+  .uc-profile-menu-list {
+    display: flex;
+    flex-direction: column;
+
+    .uc-profile-menu-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 17px 0;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+
+      &:active {
+        opacity: 0.7;
+      }
+
+      .uc-menu-item-left {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+
+        .uc-menu-icon-wrap {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 24px;
+          height: 24px;
+          flex-shrink: 0;
+
+          .uc-menu-badge-icon {
+            font-weight: 800;
+            font-size: 11px;
+            border: 1.5px solid #0f0f0f;
+            color: #0f0f0f;
+            padding: 1px 3.5px;
+            border-radius: 4px;
+            line-height: 1;
+            text-transform: lowercase;
+          }
+
+          svg {
+            stroke: #0f0f0f;
+          }
+        }
+
+        .uc-menu-item-title {
+          font-size: 15px;
+          font-weight: 500;
+          color: #0f0f0f;
+          letter-spacing: -0.1px;
+        }
+      }
+
+      .uc-chevron-icon {
+        stroke: #757575;
+        flex-shrink: 0;
+      }
+    }
+  }
+
+  /* Refer & Earn Card (Exact Match to Screenshots 3 & 4) */
+  .uc-refer-card {
+    background-color: #f3eeff;
+    border-radius: 14px;
+    padding: 18px 18px;
+    margin: 22px 0 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+
+    .uc-refer-text-col {
+      flex: 1;
+
+      .uc-refer-title {
+        font-size: 16.5px;
+        font-weight: 800;
+        color: #0f0f0f;
+        margin: 0 0 4px 0;
+        letter-spacing: -0.3px;
+      }
+
+      .uc-refer-desc {
+        font-size: 13px;
+        line-height: 18px;
+        color: #374151;
+        margin: 0 0 14px 0;
+        font-weight: 400;
+      }
+
+      .uc-refer-btn {
+        background-color: rgba(110, 66, 229, 1.00);
+        color: #ffffff;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 18px;
+        font-size: 13.5px;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 3px 8px rgba(110, 66, 229, 0.25);
+        transition: background-color 0.15s ease, transform 0.15s ease;
+
+        &:active {
+          transform: scale(0.98);
+        }
+      }
+    }
+
+    .uc-refer-graphic-col {
+      width: 75px;
+      height: 75px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  /* Logout Button Card (Exact Match to Screenshot 4) */
+  .uc-logout-btn-wrap {
+    margin-top: 18px;
+    margin-bottom: 24px;
+
+    .uc-white-logout-btn {
+      width: 100%;
+      background-color: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 13px 20px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #b91c1c;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+
+      &:hover {
+        background-color: #fef2f2;
+        border-color: #fecaca;
+      }
+
+      &:active {
+        background-color: #fee2e2;
+      }
+    }
+  }
+}
+
+@keyframes profileFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

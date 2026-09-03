@@ -1,7 +1,10 @@
-import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { ASSET_URLS } from '../../constants/urls';
+import { AuthService, UserProfile } from '../../services/auth.service';
+import { ProfileComponent } from '../profile/profile.component';
 
 interface PromoBanner {
   id: string;
@@ -30,7 +33,7 @@ interface Campaign {
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ProfileComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
@@ -38,6 +41,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
   logoUrl = ASSET_URLS.LOGO;
 
   isScrolled = false;
+  showProfileDropdown = false;
+  currentUser: UserProfile | null = null;
+  activeMobileTab: 'home' | 'wall-panels' | 'native' | 'beauty' | 'account' = 'home';
+  private authSub = new Subscription();
+
+  constructor(
+    private authService: AuthService,
+    private elementRef: ElementRef
+  ) {}
 
   @HostListener('window:scroll', [])
   onWindowScroll(): void {
@@ -46,6 +58,41 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.isScrolled = scrollY > 40;
     }
   }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (!this.elementRef.nativeElement.contains(event.target)) {
+      this.showProfileDropdown = false;
+    }
+  }
+
+
+  toggleProfileDropdown(event: Event): void {
+    event.stopPropagation();
+    this.showProfileDropdown = !this.showProfileDropdown;
+  }
+
+  setMobileTab(tab: 'home' | 'wall-panels' | 'native' | 'beauty' | 'account'): void {
+    this.activeMobileTab = tab;
+    if (typeof document !== 'undefined') {
+      if (tab === 'account') {
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = '';
+      }
+    }
+  }
+
+  openLoginModal(): void {
+    this.showProfileDropdown = false;
+    this.authService.openLoginModal();
+  }
+
+  logout(): void {
+    this.showProfileDropdown = false;
+    this.authService.logout();
+  }
+
 
   // 0-9 digits for rolling ticker
   digits = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -128,9 +175,20 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     // Detect user's current live location
     this.detectUserLiveLocation();
+
+    // Subscribe to current user auth state
+    this.authSub.add(
+      this.authService.currentUser$.subscribe((user) => {
+        this.currentUser = user;
+      })
+    );
   }
 
   ngOnDestroy(): void {
+    this.authSub.unsubscribe();
+    if (typeof document !== 'undefined') {
+      document.body.style.overflow = '';
+    }
     if (this.typingTimer) {
       clearInterval(this.typingTimer);
     }
