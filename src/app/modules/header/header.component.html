@@ -3,7 +3,7 @@
   <div class="uc-header-inner">
     <!-- Logo Column -->
     <div class="uc-header-col uc-logo-col" id="logoColumn">
-      <a href="/" class="uc-logo-link">
+      <a href="javascript:void(0)" (click)="setMobileTab('home')" class="uc-logo-link">
         <img [src]="logoUrl" alt="Urban Company logo" class="uc-logo-img" />
       </a>
     </div>
@@ -11,9 +11,9 @@
     <!-- Navigation Tabs Column -->
     <div class="uc-header-col uc-nav-col" id="NavTabsColumn">
       <nav class="uc-nav-tabs">
-        <a href="#" class="uc-nav-tab">Wall Panels</a>
-        <a href="#" class="uc-nav-tab">Native</a>
-        <a href="#" class="uc-nav-tab">Beauty</a>
+        <a href="javascript:void(0)" class="uc-nav-tab" [class.active]="activeMobileTab === 'wall-panels'" (click)="setMobileTab('wall-panels')">Wall Panels</a>
+        <a href="javascript:void(0)" class="uc-nav-tab">Native</a>
+        <a href="javascript:void(0)" class="uc-nav-tab">Beauty</a>
       </nav>
     </div>
 
@@ -126,8 +126,8 @@
   </div>
 </header>
 
-<!-- Mobile Top Header Bar -->
-<div class="uc-mobile-header" [style.background-color]="activeCampaign.themeColor">
+<!-- Mobile Top Header Bar (Shown only on Home tab) -->
+<div class="uc-mobile-header" *ngIf="activeMobileTab === 'home'" [style.background-color]="activeCampaign.themeColor">
   <div class="uc-mobile-location-row" (click)="toggleCampaign()" title="Tap to switch city/campaign">
     <div class="uc-mobile-loc-icon-badge">
       <svg viewBox="0 0 24 24" [style.fill]="activeCampaign.themeColor" width="18" height="18">

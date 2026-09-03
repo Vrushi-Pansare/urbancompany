@@ -1,0 +1,646 @@
+<!-- DESKTOP / PC / LAPTOP VIEW (Screens > 768px) -->
+<div class="uc-wall-panels-desktop">
+  <!-- storeHSTopSpacing -->
+  <div class="css-175oi2r r-1awozwy r-ndvcnb r-aci1zz r-6koalj r-eqz5dr r-p1pxzi r-1mnahxq r-1mdbw0j r-puj83k r-11g3r6m r-11nfnuw r-13qz1uu" id="storeHSTopSpacing">
+    <div class="css-175oi2r" style="max-width:1232px;width:100%;opacity:1">
+      <div style="display:flex;flex-direction:column;height:100%;width:100%;min-height:inherit">
+        <div class="css-175oi2r r-gtdqiz r-ipm5af r-mhe3cw">
+          <div class="css-175oi2r r-q3muym r-109y4c4 r-1d2f490 r-zchlnj r-ipm5af r-mhe3cw" style="position:fixed;opacity:0"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- homescreenContent_0: Explore by Space Section 1 for Desktop -->
+  <div class="css-175oi2r r-1awozwy r-ndvcnb r-aci1zz r-6koalj r-eqz5dr r-p1pxzi r-1mnahxq r-wi6arp r-puj83k r-11g3r6m r-wk8lta r-13qz1uu" id="homescreenContent_0">
+    <div class="css-175oi2r" style="max-width:1232px;width:100%;opacity:1">
+      <div style="display:flex;flex-direction:column;height:100%;width:100%;min-height:inherit">
+        <div class="css-175oi2r r-gtdqiz r-ipm5af r-mhe3cw">
+          <div class="css-175oi2r r-q3muym r-109y4c4 r-1d2f490 r-zchlnj r-ipm5af r-mhe3cw" style="position:fixed;opacity:0"></div>
+        </div>
+        <div data-pulltorefresh="false" class="css-175oi2r" style="flex-grow:1">
+          <div data-index="0" data-key="marketing__banner_carousel__wall_panels" class="css-175oi2r">
+            <div class="css-175oi2r">
+              <div tabindex="0" class="css-175oi2r r-1i6wzkk r-14lw9ot r-13qz1uu r-wh77r2" style="padding-top:0px;padding-bottom:0px;padding-right:0px;padding-left:0px;user-select:inherit !important;cursor:inherit !important;touch-action:inherit !important;transition-duration:0s">
+                <!-- Section Header -->
+                <div aria-disabled="true" tabindex="-1" class="css-175oi2r r-1i6wzkk r-12vffkv" style="user-select:inherit !important;cursor:inherit !important;touch-action:inherit !important;transition-duration:0s">
+                  <div class="css-175oi2r r-13qz1uu">
+                    <div class="css-175oi2r r-1awozwy r-18u37iz r-1wtj0ep r-13qz1uu">
+                      <div class="css-175oi2r r-eqz5dr r-13qz1uu r-13awgt0" style="align-items:flex-start;justify-content:center">
+                        <h2 dir="auto" aria-level="2" role="heading" class="css-146c3p1 r-8akbws r-krxsd3 r-dnmrzs r-1udh08x r-1udbk01 r-13qz1uu" style="line-clamp:2;-webkit-line-clamp:2;font-family:os_semi_bold;font-size:36px;line-height:44px;color:rgba(15,15,15,1.00);text-decoration-line:none;text-transform:none;font-weight:600;text-align:left">Explore by space</h2>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="css-175oi2r r-h3s6tt r-rwqe4o"></div>
+
+                <!-- Horizontal Scroll Track with Arrow Controls -->
+                <div class="css-175oi2r uc-desktop-carousel-outer" style="justify-content:center; position: relative;">
+                  <div
+                    #desktopSpacesTrack
+                    class="uc-desktop-spaces-scroll"
+                    (scroll)="checkDesktopScroll()"
+                    (mousedown)="onMouseDown($event)"
+                    (mousemove)="onMouseMove($event)"
+                    (mouseup)="onMouseUp()"
+                    (mouseleave)="onMouseLeave()"
+                  >
+                    <div class="uc-desktop-row">
+                      <ng-container *ngFor="let space of spaces; let idx = index; let last = last">
+                        <div
+                          data-hover-animation="sizeGrow5"
+                          data-active-animation="sizeShrink5"
+                          tabindex="0"
+                          class="uc-desktop-space-card"
+                        >
+                          <div class="uc-desktop-space-img-box">
+                            <img
+                              [src]="space.image"
+                              [alt]="space.alt"
+                              class="uc-desktop-space-img"
+                              loading="eager"
+                              fetchpriority="high"
+                            />
+                          </div>
+                        </div>
+                        <div *ngIf="!last" class="uc-card-spacer"></div>
+                      </ng-container>
+                    </div>
+                  </div>
+
+                  <!-- Left Arrow -->
+                  <button
+                    *ngIf="canScrollLeft"
+                    class="uc-carousel-arrow uc-carousel-arrow--left"
+                    id="spacesArrowLeft"
+                    (click)="scrollDesktopSpaces('left')"
+                    aria-label="Scroll left"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="#0F0F0F"
+                      viewBox="0 0 16 16"
+                    >
+                      <path
+                        fill="#0F0F0F"
+                        fill-rule="evenodd"
+                        d="M6.47 2.97l-4.5 4.5a.75.75 0 000 1.06l4.5 4.5 1.06-1.06-3.22-3.22h9.19v-1.5H4.31l3.22-3.22-1.06-1.06z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                  </button>
+
+                  <!-- Right Arrow -->
+                  <button
+                    *ngIf="canScrollRight"
+                    class="uc-carousel-arrow uc-carousel-arrow--right"
+                    id="spacesArrowRight"
+                    (click)="scrollDesktopSpaces('right')"
+                    aria-label="Scroll right"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="#0F0F0F"
+                      viewBox="0 0 16 16"
+                    >
+                      <path
+                        fill="#0F0F0F"
+                        fill-rule="evenodd"
+                        d="M11.69 8.75H2.5v-1.5h9.19L8.47 4.03l1.06-1.06 4.5 4.5a.75.75 0 010 1.06l-4.5 4.5-1.06-1.06 3.22-3.22z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- homescreenContent_2: Beautiful walls for all your needs Section 2 for Desktop -->
+  <div class="css-175oi2r r-1awozwy r-ndvcnb r-aci1zz r-6koalj r-eqz5dr r-p1pxzi r-1mnahxq r-wi6arp r-puj83k r-11g3r6m r-wk8lta r-13qz1uu" id="homescreenContent_2">
+    <div class="css-175oi2r" style="max-width:1232px;width:100%;opacity:1">
+      <div style="display:flex;flex-direction:column;height:100%;width:100%;min-height:inherit">
+        <div class="css-175oi2r r-gtdqiz r-ipm5af r-mhe3cw">
+          <div class="css-175oi2r r-q3muym r-109y4c4 r-1d2f490 r-zchlnj r-ipm5af r-mhe3cw" style="position:fixed;opacity:0"></div>
+        </div>
+        <div data-pulltorefresh="false" class="css-175oi2r" style="flex-grow:1">
+          <div data-index="0" data-key="marketing__banner_carousel__living_room" class="css-175oi2r">
+            <div class="css-175oi2r">
+              <div tabindex="0" class="css-175oi2r r-1i6wzkk r-14lw9ot r-13qz1uu r-wh77r2" style="padding-top:0px;padding-bottom:0px;padding-right:0px;padding-left:0px;user-select:inherit !important;cursor:inherit !important;touch-action:inherit !important;transition-duration:0s">
+                <!-- Section Header -->
+                <div aria-disabled="true" tabindex="-1" class="css-175oi2r r-1i6wzkk r-12vffkv" style="user-select:inherit !important;cursor:inherit !important;touch-action:inherit !important;transition-duration:0s">
+                  <div class="css-175oi2r r-13qz1uu">
+                    <div class="css-175oi2r r-1awozwy r-18u37iz r-1wtj0ep r-13qz1uu">
+                      <div class="css-175oi2r r-eqz5dr r-13qz1uu r-13awgt0" style="align-items:flex-start;justify-content:center">
+                        <h2 dir="auto" aria-level="2" role="heading" class="css-146c3p1 r-8akbws r-krxsd3 r-dnmrzs r-1udh08x r-1udbk01 r-13qz1uu" style="line-clamp:2;-webkit-line-clamp:2;font-family:os_semi_bold;font-size:36px;line-height:44px;color:rgba(15,15,15,1.00);text-decoration-line:none;text-transform:none;font-weight:600;text-align:left">Beautiful walls for all your needs</h2>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="css-175oi2r r-h3s6tt r-rwqe4o"></div>
+
+                <!-- Horizontal Scroll Track with Arrow Controls -->
+                <div class="css-175oi2r uc-desktop-carousel-outer" style="justify-content:center; position: relative;">
+                  <div
+                    #desktopNeedsTrack
+                    class="uc-desktop-spaces-scroll"
+                    (scroll)="checkDesktopNeedsScroll()"
+                    (mousedown)="onNeedsMouseDown($event)"
+                    (mousemove)="onNeedsMouseMove($event)"
+                    (mouseup)="onNeedsMouseUp()"
+                    (mouseleave)="onNeedsMouseLeave()"
+                  >
+                    <div class="uc-desktop-row">
+                      <ng-container *ngFor="let need of needs; let idx = index; let last = last">
+                        <div
+                          data-hover-animation="sizeGrow5"
+                          data-active-animation="sizeShrink5"
+                          tabindex="0"
+                          class="uc-desktop-space-card"
+                        >
+                          <div class="uc-desktop-space-img-box">
+                            <img
+                              [src]="need.image"
+                              [alt]="need.alt"
+                              class="uc-desktop-space-img"
+                              loading="eager"
+                              fetchpriority="high"
+                            />
+                          </div>
+                        </div>
+                        <div *ngIf="!last" class="uc-card-spacer"></div>
+                      </ng-container>
+                    </div>
+                  </div>
+
+                  <!-- Left Arrow -->
+                  <button
+                    *ngIf="canScrollNeedsLeft"
+                    class="uc-carousel-arrow uc-carousel-arrow--left"
+                    id="needsArrowLeft"
+                    (click)="scrollDesktopNeeds('left')"
+                    aria-label="Scroll left"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="#0F0F0F"
+                      viewBox="0 0 16 16"
+                    >
+                      <path
+                        fill="#0F0F0F"
+                        fill-rule="evenodd"
+                        d="M6.47 2.97l-4.5 4.5a.75.75 0 000 1.06l4.5 4.5 1.06-1.06-3.22-3.22h9.19v-1.5H4.31l3.22-3.22-1.06-1.06z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                  </button>
+
+                  <!-- Right Arrow -->
+                  <button
+                    *ngIf="canScrollNeedsRight"
+                    class="uc-carousel-arrow uc-carousel-arrow--right"
+                    id="needsArrowRight"
+                    (click)="scrollDesktopNeeds('right')"
+                    aria-label="Scroll right"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="#0F0F0F"
+                      viewBox="0 0 16 16"
+                    >
+                      <path
+                        fill="#0F0F0F"
+                        fill-rule="evenodd"
+                        d="M11.69 8.75H2.5v-1.5h9.19L8.47 4.03l1.06-1.06 4.5 4.5a.75.75 0 010 1.06l-4.5 4.5-1.06-1.06 3.22-3.22z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MOBILE VIEW (Screens <= 768px) -->
+<div class="uc-wall-panels-mobile">
+  <!-- 1. Urban Company Mobile Spotlight Banner (Hero 1:1) -->
+  <div
+    data-hover-animation="sizeGrow5"
+    data-active-animation="sizeShrink5"
+    tabindex="0"
+    class="uc-spotlight-banner-wrap"
+  >
+    <div class="uc-spotlight-img-box">
+      <img
+        src="assets/wall-panels/spotlight-banner.jpeg"
+        alt="Urban Company Spotlight"
+        class="uc-spotlight-img"
+      />
+    </div>
+  </div>
+
+  <!-- 2. Explore by Space Section (5 Cards, 156px width, 0.75:1) -->
+  <section class="uc-explore-space-section">
+    <div class="uc-space-header">
+      <h3 class="uc-space-heading">Explore by space</h3>
+    </div>
+
+    <!-- Horizontal Scrollable Row (5 Cards) -->
+    <div class="uc-space-scroll-track">
+      <div
+        *ngFor="let space of spaces; let idx = index"
+        role="img"
+        data-hover-animation="sizeGrow5"
+        data-active-animation="sizeShrink5"
+        tabindex="0"
+        class="uc-space-card"
+      >
+        <div class="uc-space-img-wrap">
+          <img
+            [src]="space.image"
+            [alt]="space.alt"
+            class="uc-space-img"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Urban Company Promo 4:1 Strip Banner -->
+  <div
+    data-hover-animation="sizeGrow5"
+    data-active-animation="sizeShrink5"
+    tabindex="0"
+    class="uc-promo-strip-banner-wrap"
+  >
+    <div class="uc-promo-strip-img-box">
+      <img
+        src="assets/wall-panels/promo-strip-banner.jpeg"
+        alt="Urban Company Promo"
+        class="uc-promo-strip-img"
+      />
+    </div>
+  </div>
+
+  <!-- 4. Beautiful walls for all your needs Section (4 Cards, 216px width) -->
+  <section class="uc-needs-carousel-section">
+    <div class="uc-needs-header">
+      <h3 class="uc-needs-heading">Beautiful walls for all your needs</h3>
+    </div>
+
+    <!-- Horizontal Scrollable Row (4 Cards) -->
+    <div class="uc-needs-scroll-track" (scroll)="onNeedsScroll($event)">
+      <div
+        *ngFor="let need of needs; let idx = index"
+        role="img"
+        data-hover-animation="sizeGrow5"
+        data-active-animation="sizeShrink5"
+        tabindex="0"
+        class="uc-need-card"
+      >
+        <div class="uc-need-img-wrap">
+          <img
+            [src]="need.image"
+            [alt]="need.alt"
+            class="uc-need-img"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Scroll Indicator (Exact Urban Company Style) -->
+    <div class="uc-scroll-indicator-wrap" data-testid="scrollIndicator">
+      <div class="uc-indicator-track">
+        <div
+          class="uc-indicator-thumb"
+          [style.transform]="'translateX(' + scrollProgress + 'px)'"
+        ></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Full Width Feature Banner 1 -->
+  <div
+    data-hover-animation="sizeGrow5"
+    data-active-animation="sizeShrink5"
+    tabindex="0"
+    class="uc-feature-banner-wrap"
+  >
+    <div class="uc-feature-banner-box">
+      <img
+        src="assets/wall-panels/feature-banner-426.jpeg"
+        alt="Urban Company"
+        class="uc-feature-banner-img"
+      />
+    </div>
+  </div>
+
+  <!-- 6. Full Width Feature Banner 2 -->
+  <div
+    data-hover-animation="sizeGrow5"
+    data-active-animation="sizeShrink5"
+    tabindex="0"
+    class="uc-feature-banner-wrap"
+  >
+    <div class="uc-feature-banner-box">
+      <img
+        src="assets/wall-panels/feature-banner-2.jpeg"
+        alt="Urban Company"
+        class="uc-feature-banner-img"
+      />
+    </div>
+  </div>
+
+  <!-- 7. Full Width Feature Banner 3 -->
+  <div
+    data-hover-animation="sizeGrow5"
+    data-active-animation="sizeShrink5"
+    tabindex="0"
+    class="uc-feature-banner-wrap"
+  >
+    <div class="uc-feature-banner-box">
+      <img
+        src="assets/wall-panels/feature-banner-3.jpeg"
+        alt="Urban Company Spotlight"
+        class="uc-feature-banner-img"
+      />
+    </div>
+  </div>
+
+  <!-- 8. Full Width Feature Banner 4 -->
+  <div
+    data-hover-animation="sizeGrow5"
+    data-active-animation="sizeShrink5"
+    tabindex="0"
+    class="uc-feature-banner-wrap"
+  >
+    <div class="uc-feature-banner-box">
+      <img
+        src="assets/wall-panels/feature-banner-4.jpeg"
+        alt="Urban Company"
+        class="uc-feature-banner-img"
+      />
+    </div>
+  </div>
+
+  <!-- 9. Full Width Feature Banner 5 (Seepage Spotlight) -->
+  <div
+    data-hover-animation="sizeGrow5"
+    data-active-animation="sizeShrink5"
+    tabindex="0"
+    class="uc-feature-banner-wrap"
+  >
+    <div class="uc-feature-banner-box">
+      <img
+        src="assets/wall-panels/feature-banner-5.jpeg"
+        alt="Urban Company Spotlight"
+        class="uc-feature-banner-img"
+      />
+    </div>
+  </div>
+
+  <!-- 10. Process Section (marketing__image_or__process) -->
+  <div
+    data-hover-animation="sizeGrow5"
+    data-active-animation="sizeShrink5"
+    tabindex="0"
+    class="uc-feature-banner-wrap"
+  >
+    <div class="uc-feature-banner-box">
+      <img
+        src="assets/wall-panels/process-banner.jpeg"
+        alt="Urban Company Process"
+        class="uc-feature-banner-img"
+      />
+    </div>
+  </div>
+
+  <!-- 11. How It Works Section (marketing__image_or__how_it_works) -->
+  <div
+    data-hover-animation="sizeGrow5"
+    data-active-animation="sizeShrink5"
+    tabindex="0"
+    class="uc-feature-banner-wrap"
+  >
+    <div class="uc-feature-banner-box">
+      <img
+        src="assets/wall-panels/how-it-works-banner.jpeg"
+        alt="Urban Company How It Works"
+        class="uc-feature-banner-img"
+      />
+    </div>
+  </div>
+
+  <!-- 12. Consultation Section (marketing__image_or__consultation) -->
+  <div
+    data-hover-animation="sizeGrow5"
+    data-active-animation="sizeShrink5"
+    tabindex="0"
+    class="uc-feature-banner-wrap"
+  >
+    <div class="uc-feature-banner-box">
+      <img
+        src="assets/wall-panels/consultation-banner.jpeg"
+        alt="Urban Company Consultation"
+        class="uc-feature-banner-img"
+      />
+    </div>
+  </div>
+
+  <!-- 13. Testimonial 1 (marketing__spotlight_or__testimonial_1) -->
+  <div
+    data-hover-animation="sizeGrow5"
+    data-active-animation="sizeShrink5"
+    tabindex="0"
+    class="uc-feature-banner-wrap"
+  >
+    <div class="uc-feature-banner-box">
+      <img
+        src="assets/wall-panels/testimonial-1.jpeg"
+        alt="Urban Company Testimonial 1"
+        class="uc-feature-banner-img"
+      />
+    </div>
+  </div>
+
+  <!-- 14. Testimonial 2 (marketing__spotlight_or__testimonial_2) -->
+  <div
+    data-hover-animation="sizeGrow5"
+    data-active-animation="sizeShrink5"
+    tabindex="0"
+    class="uc-feature-banner-wrap"
+  >
+    <div class="uc-feature-banner-box">
+      <img
+        src="assets/wall-panels/testimonial-2.jpeg"
+        alt="Urban Company Testimonial 2"
+        class="uc-feature-banner-img"
+      />
+    </div>
+  </div>
+
+  <!-- 15. Testimonial 3 (marketing__spotlight_or__testimonial_3) -->
+  <div
+    data-hover-animation="sizeGrow5"
+    data-active-animation="sizeShrink5"
+    tabindex="0"
+    class="uc-feature-banner-wrap"
+  >
+    <div class="uc-feature-banner-box">
+      <img
+        src="assets/wall-panels/testimonial-3.jpeg"
+        alt="Urban Company Testimonial 3"
+        class="uc-feature-banner-img"
+      />
+    </div>
+  </div>
+
+  <!-- 16. Customer Look CTA (marketing__image_or__customer_look_cta) -->
+  <div
+    data-hover-animation="sizeGrow5"
+    data-active-animation="sizeShrink5"
+    tabindex="0"
+    class="uc-promo-strip-banner-wrap"
+  >
+    <div class="uc-promo-strip-img-box">
+      <img
+        src="assets/wall-panels/customer-look-cta.jpeg"
+        alt="Urban Company Customer Look CTA"
+        class="uc-promo-strip-img"
+      />
+    </div>
+  </div>
+
+  <!-- 17. Footer Spotlight (marketing__spotlight_or__footer) -->
+  <div
+    data-hover-animation="sizeGrow5"
+    data-active-animation="sizeShrink5"
+    tabindex="0"
+    class="uc-spotlight-banner-wrap"
+  >
+    <div class="uc-spotlight-img-box">
+      <img
+        src="assets/wall-panels/footer-spotlight.jpeg"
+        alt="Urban Company Footer Spotlight"
+        class="uc-spotlight-img"
+      />
+    </div>
+  </div>
+
+  <!-- 18. Urban Company Brand Logo (ucImage) -->
+  <div class="uc-brand-badge-wrap">
+    <img
+      src="assets/wall-panels/uc-brand-badge.png"
+      alt="Urban Company logo"
+      class="uc-brand-badge-img"
+    />
+  </div>
+
+  <!-- 19. Company Links Section (companySection) -->
+  <div class="uc-footer-links-section">
+    <p class="uc-footer-heading">Company</p>
+    <div class="uc-footer-links-list">
+      <a href="/about" class="uc-footer-link">About us</a>
+      <a href="https://investorrelations.urbancompany.com/" target="_blank" rel="noopener noreferrer" class="uc-footer-link">Investor Relations</a>
+      <a href="/terms" class="uc-footer-link">Terms &amp; conditions</a>
+      <a href="/privacy-policy" class="uc-footer-link">Privacy policy</a>
+      <a href="/anti-discrimination-policy" class="uc-footer-link">Anti-discrimination policy</a>
+      <a href="https://careers.urbancompany.com/" target="_blank" rel="noopener noreferrer" class="uc-footer-link">Careers</a>
+    </div>
+  </div>
+
+  <!-- 20. For Customers Section (customerSection) -->
+  <div class="uc-footer-links-section">
+    <p class="uc-footer-heading">For customers</p>
+    <div class="uc-footer-links-list">
+      <a href="/reviews" class="uc-footer-link">UC reviews</a>
+      <a href="/near-me" class="uc-footer-link">Categories near you</a>
+      <a href="/contact-us" class="uc-footer-link">Contact us</a>
+    </div>
+  </div>
+
+  <!-- 21. For Professionals Section (partnerSection) -->
+  <div class="uc-footer-links-section">
+    <p class="uc-footer-heading">For professionals</p>
+    <div class="uc-footer-links-list">
+      <a href="https://partner.urbancompany.com" target="_blank" rel="noopener noreferrer" class="uc-footer-link">Register as a professional</a>
+    </div>
+  </div>
+
+  <!-- 22. Social Links & App Downloads (followUs) -->
+  <div class="uc-footer-links-section uc-social-section">
+    <p class="uc-footer-heading">Social links</p>
+    
+    <!-- Social Round Buttons -->
+    <div class="uc-social-icons-row">
+      <!-- Twitter/X -->
+      <a href="https://twitter.com/urbancompany_UC" target="_blank" rel="noopener noreferrer" class="uc-social-btn" aria-label="Twitter">
+        <svg width="20" height="20" viewBox="0 0 30 30" fill="#0F0F0F">
+          <path d="M21.317 5h3.358l-7.334 8.489L26 25h-6.803l-5.301-6.978L7.799 25H4.442l7.863-9.067L4 5h6.98l4.815 6.4L21.317 5zm-1.192 17.956h1.855L9.964 6.91H7.932l12.193 16.044z"></path>
+        </svg>
+      </a>
+
+      <!-- Facebook -->
+      <a href="https://facebook.com/UrbanCompany" target="_blank" rel="noopener noreferrer" class="uc-social-btn" aria-label="Facebook">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#0F0F0F">
+          <path d="M18.354 5.624C16.604 3.883 14.466 3 12 3c-2.489 0-4.633.884-6.373 2.625C3.884 7.366 3 9.512 3 12c0 2.465.883 4.603 2.624 6.354C7.365 20.11 9.51 21 12 21c2.467 0 4.605-.89 6.356-2.643C20.111 16.604 21 14.465 21 12c0-2.488-.89-4.634-2.646-6.376zm-1.412 11.319c-1.137 1.139-2.436 1.788-3.942 1.985V14h2v-2h-2v-1.4a.6.6 0 01.601-.6H15V8h-1.397c-.742 0-1.361.273-1.857.822-.496.547-.746 1.215-.746 2.008V12H9v2h2v4.93c-1.522-.195-2.826-.845-3.957-1.984C5.668 15.562 5 13.944 5 12c0-1.966.667-3.588 2.042-4.96C8.412 5.667 10.034 5 12 5c1.945 0 3.562.668 4.945 2.043C18.328 8.415 19 10.037 19 12c0 1.941-.673 3.559-2.058 4.943z"></path>
+        </svg>
+      </a>
+
+      <!-- Instagram -->
+      <a href="https://instagram.com/urbancompany" target="_blank" rel="noopener noreferrer" class="uc-social-btn" aria-label="Instagram">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#0F0F0F">
+          <path d="M17.34 5.46a1.2 1.2 0 100 2.4 1.2 1.2 0 000-2.4zm4.6 2.42a7.588 7.588 0 00-.46-2.43 4.94 4.94 0 00-1.16-1.77 4.7 4.7 0 00-1.77-1.15 7.3 7.3 0 00-2.43-.47C15.06 2 14.72 2 12 2s-3.06 0-4.12.06a7.3 7.3 0 00-2.43.47 4.78 4.78 0 00-1.77 1.15 4.7 4.7 0 00-1.15 1.77 7.3 7.3 0 00-.47 2.43C2 8.94 2 9.28 2 12s0 3.06.06 4.12a7.3 7.3 0 00.47 2.43 4.7 4.7 0 001.15 1.77 4.78 4.78 0 001.77 1.15 7.3 7.3 0 002.43.47C8.94 22 9.28 22 12 22s3.06 0 4.12-.06a7.3 7.3 0 002.43-.47 4.7 4.7 0 001.77-1.15 4.85 4.85 0 001.16-1.77c.285-.78.44-1.6.46-2.43 0-1.06.06-1.4.06-4.12s0-3.06-.06-4.12zM20.14 16a5.61 5.61 0 01-.34 1.86 3.06 3.06 0 01-.75 1.15c-.324.33-.717.586-1.15.75a5.61 5.61 0 01-1.86.34c-1 .05-1.37.06-4 .06s-3 0-4-.06a5.73 5.73 0 01-1.94-.3 3.27 3.27 0 01-1.1-.75 3 3 0 01-.74-1.15 5.54 5.54 0 01-.4-1.9c0-1-.06-1.37-.06-4s0-3 .06-4a5.54 5.54 0 01.35-1.9A3 3 0 015 5a3.14 3.14 0 011.1-.8A5.73 5.73 0 018 3.86c1 0 1.37-.06 4-.06s3 0 4 .06a5.61 5.61 0 011.86.34 3.06 3.06 0 011.19.8c.328.307.584.683.75 1.1.222.609.337 1.252.34 1.9.05 1 .06 1.37.06 4s-.01 3-.06 4zM12 6.87A5.13 5.13 0 1017.14 12 5.12 5.12 0 0012 6.87zm0 8.46a3.33 3.33 0 110-6.66 3.33 3.33 0 010 6.66z"></path>
+        </svg>
+      </a>
+
+      <!-- LinkedIn -->
+      <a href="https://linkedin.com/company/urbancompany" target="_blank" rel="noopener noreferrer" class="uc-social-btn" aria-label="LinkedIn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#0F0F0F">
+          <path d="M17 16.827V13.13c0-1.98-1.058-2.902-2.468-2.902-1.139 0-1.647.626-1.932 1.066v.02h-.014l.014-.02v-.914h-2.144c.029.605 0 6.447 0 6.447H12.6v-3.601c0-.192.015-.384.071-.522.155-.386.508-.784 1.1-.784.776 0 1.086.591 1.086 1.457v3.45H17zM7 8.385c0-.632.48-1.114 1.213-1.114.734 0 1.185.482 1.199 1.114 0 .619-.465 1.115-1.213 1.115h-.014C7.466 9.5 7 9.005 7 8.385zM9.271 10.38v6.447H7.127V10.38h2.144z"></path>
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M2 12c0 5.523 4.477 10 10 10s10-4.477 10-10S17.523 2 12 2 2 6.477 2 12zm15.657 5.657A8 8 0 116.343 6.342a8 8 0 0111.314 11.315z"></path>
+        </svg>
+      </a>
+    </div>
+
+    <!-- App Store & Play Store Badges -->
+    <div class="uc-app-badges-col">
+      <a href="https://apps.apple.com/app/urban-company/id981297594" target="_blank" rel="noopener noreferrer" class="uc-app-badge-link">
+        <img src="assets/wall-panels/app-store.png" alt="Apple App Store" class="uc-app-badge-img" />
+      </a>
+      <a href="https://play.google.com/store/apps/details?id=com.urbanclap.urbanclap" target="_blank" rel="noopener noreferrer" class="uc-app-badge-link">
+        <img src="assets/wall-panels/play-store.jpeg" alt="Google Play Store" class="uc-app-badge-img" />
+      </a>
+    </div>
+  </div>
+
+  <!-- 23. Copyright & Legal Info (copyright) -->
+  <div class="uc-footer-legal-section">
+    <p class="uc-legal-date">* As on December 31, 2024</p>
+    <p class="uc-legal-copyright">
+      © Copyright 2026 Urban Company Limited (formerly known as UrbanClap Technologies India Limited and UrbanClap Technologies India Private Limited) All rights reserved. | CIN: L74140DL2014PLC274413
+    </p>
+  </div>
+
+  <!-- 24. Bottom Spacer -->
+  <div class="uc-bottom-spacer"></div>
+</div>

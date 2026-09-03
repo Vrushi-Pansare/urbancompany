@@ -1,7 +1,9 @@
 import { Component, OnInit, OnDestroy, HostListener, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { ASSET_URLS } from '../../constants/urls';
 import { AuthService, UserProfile } from '../../services/auth.service';
 import { ProfileComponent } from '../profile/profile.component';
@@ -48,7 +50,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   constructor(
     private authService: AuthService,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private router: Router
   ) {}
 
   @HostListener('window:scroll', [])
@@ -80,6 +83,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
       } else {
         document.body.style.overflow = '';
       }
+    }
+
+    if (tab === 'wall-panels') {
+      this.router.navigate(['/wall-panels']);
+    } else if (tab === 'home') {
+      this.router.navigate(['/']);
     }
   }
 
@@ -180,6 +189,22 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.authSub.add(
       this.authService.currentUser$.subscribe((user) => {
         this.currentUser = user;
+      })
+    );
+
+    // Sync active mobile tab with current url
+    if (this.router.url.includes('wall-panels')) {
+      this.activeMobileTab = 'wall-panels';
+    }
+    this.authSub.add(
+      this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe((event: any) => {
+        if (event.url.includes('wall-panels')) {
+          this.activeMobileTab = 'wall-panels';
+        } else if (event.url === '/' || event.url === '') {
+          if (this.activeMobileTab !== 'account') {
+            this.activeMobileTab = 'home';
+          }
+        }
       })
     );
   }
