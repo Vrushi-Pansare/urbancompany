@@ -21,7 +21,14 @@ interface NativeAdvantage {
   styleUrl: './native.component.scss'
 })
 export class NativeComponent implements OnInit {
-  // Desktop Section 1 (Frame 2 Banners)
+  // Mobile Top Marketing Banner
+  marketingBanner = {
+    key: 'marketing__image_or__m2',
+    image: 'assets/native/marketing-banner-m2.jpeg',
+    alt: 'Urban Company'
+  };
+
+  // Desktop & Mobile Section 1 (Frame 2 Banners)
   banners: NativeBanner[] = [
     {
       id: 'banner-0',

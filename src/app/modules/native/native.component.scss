@@ -135,23 +135,416 @@
   }
 }
 
+/* React Native Web Core Classes */
+.css-175oi2r {
+  align-items: stretch;
+  background-color: rgba(0, 0, 0, 0);
+  border: 0 solid black;
+  box-sizing: border-box;
+  display: flex;
+  flex-basis: auto;
+  flex-direction: column;
+  flex-shrink: 0;
+  list-style: none;
+  margin: 0px;
+  min-height: 0px;
+  min-width: 0px;
+  padding: 0px;
+  position: relative;
+  text-decoration: none;
+  z-index: 0;
+}
+
+.r-lrvibr {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.r-1loqt21 {
+  cursor: pointer;
+}
+
+.r-1otgn73 {
+  touch-action: manipulation;
+}
+
+.r-1pi2tsx {
+  height: 100%;
+}
+
+.r-1udh08x {
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+.r-13qz1uu {
+  width: 100%;
+}
+
+.r-lltvgl {
+  overflow-x: auto;
+}
+
+.r-buy8e9 {
+  overflow-y: hidden;
+}
+
+.r-agouwx {
+  transform: translateZ(0);
+}
+
+.r-2eszeu {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.r-1wbh5a2 {
+  flex-shrink: 1;
+}
+
+.r-18u37iz {
+  display: flex;
+  flex-direction: row;
+}
+
+.r-16y2uox {
+  flex-grow: 1;
+}
+
+.r-150rngu {
+  -webkit-overflow-scrolling: touch;
+}
+
+.r-iwh88d {
+  margin-left: -16px;
+  margin-right: -16px;
+}
+
+.r-3pj75a {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.r-bztko3 {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
 /* Mobile View (<= 768px) */
 .uc-native-mobile {
   display: none;
   background-color: #ffffff;
   min-height: 100vh;
   width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
   margin: 0;
   padding: 0;
-  padding-bottom: 70px; /* Offset for Mobile Bottom Navigation */
   box-sizing: border-box;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Oxygen-Sans, Ubuntu, Cantarell, Arial, sans-serif !important;
 
-  .uc-native-mobile-container {
+  /* Strip Banner Containers (Part 1, Part 3: 80px height) */
+  [data-key="marketing__image_or__m2"] .r-1loqt21.r-1otgn73,
+  .css-175oi2r:not([data-key="marketing__image_or__frame_8"]) > .r-1loqt21.r-1otgn73 {
     width: 100%;
-    margin: 0 auto;
+    overflow: hidden;
+    border: 0px;
+    border-radius: 0px;
+    opacity: 1;
+    height: 80px;
+    cursor: pointer;
+
+    img {
+      object-fit: fill;
+      height: 100%;
+      width: 100%;
+      background-color: transparent;
+      aspect-ratio: 4 / 1;
+      display: block;
+    }
+  }
+
+  /* Part 4 & 6: Frame 8 and Frame 10b Full Width Banners (320px height / 1:1) */
+  [data-key="marketing__image_or__frame_8"],
+  [data-key="marketing__image_or__frame10b"] {
+    width: 100%;
+    margin: 0;
     padding: 0;
+    background-color: #ffffff;
+
+    .r-1loqt21.r-1otgn73 {
+      width: 100%;
+      height: 320px;
+      overflow: hidden;
+      border: 0px;
+      border-radius: 0px;
+      opacity: 1;
+      cursor: pointer;
+
+      img {
+        object-fit: fill;
+        height: 100%;
+        width: 100%;
+        background-color: transparent;
+        aspect-ratio: 1 / 1;
+        display: block;
+      }
+    }
+  }
+
+  /* Part 7: Frame 11 Banner (410px height / 0.78:1) */
+  [data-key="marketing__image_or__frame_11"] {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #ffffff;
+
+    .r-1loqt21.r-1otgn73 {
+      width: 100%;
+      height: 410px;
+      overflow: hidden;
+      border: 0px;
+      border-radius: 0px;
+      opacity: 1;
+      cursor: pointer;
+
+      img {
+        object-fit: fill;
+        height: 100%;
+        width: 100%;
+        background-color: transparent;
+        aspect-ratio: 0.78 / 1;
+        display: block;
+      }
+    }
+  }
+
+  /* Global mobile hover/active animations */
+  [data-hover-animation~="sizeGrow5"] img {
+    transition: transform 0.2s ease-in-out;
+  }
+
+  [data-active-animation~="sizeShrink5"] img {
+    transition: transform 0.2s ease-in-out;
+  }
+
+  [data-hover-animation~="sizeGrow5"]:hover img,
+  [data-hover-animation~="sizeGrow5"] img:hover {
+    transform: scale(1.02);
+  }
+
+  [data-active-animation~="sizeShrink5"]:active img,
+  [data-active-animation~="sizeShrink5"] img:active {
+    transform: scale(0.96);
+  }
+
+  /* Part 2: Frame 2 Mobile Cards (Exact 128px x 128px) */
+  [data-key="marketing__banner_carousel__frame_2"] {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #ffffff;
     box-sizing: border-box;
+
+    > .css-175oi2r {
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    .r-150rngu {
+      display: block;
+      width: calc(100% + 32px);
+      max-width: calc(100% + 32px);
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      box-sizing: border-box;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+
+    .r-18u37iz {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      align-items: center;
+      width: max-content;
+    }
+
+    .r-18u37iz > [role="img"],
+    .r-5qlx7g {
+      flex: 0 0 128px !important;
+      width: 128px !important;
+      min-width: 128px !important;
+      max-width: 128px !important;
+      height: 128px !important;
+      aspect-ratio: 1 / 1 !important;
+      border-radius: 8px !important;
+      overflow: hidden !important;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+
+      .r-1pi2tsx {
+        width: 100% !important;
+        height: 100% !important;
+        border-radius: 8px !important;
+        overflow: hidden !important;
+      }
+
+      img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: contain !important;
+        aspect-ratio: 1 / 1 !important;
+        background-color: transparent !important;
+        border-radius: 8px !important;
+        display: block !important;
+        opacity: 1 !important;
+      }
+    }
+
+    /* Animation rules */
+    [data-hover-animation~="sizeGrow5"] img {
+      transition: transform 0.2s ease-in-out;
+    }
+
+    [data-active-animation~="sizeShrink5"] img {
+      transition: transform 0.2s ease-in-out;
+    }
+
+    [data-hover-animation~="sizeGrow5"]:hover img,
+    [data-hover-animation~="sizeGrow5"] img:hover {
+      transform: scale(1.02);
+    }
+
+    [data-active-animation~="sizeShrink5"]:active img,
+    [data-active-animation~="sizeShrink5"] img:active {
+      transform: scale(0.96);
+    }
+
+    /* Spacer between cards */
+    .r-10ptun7 {
+      flex: 0 0 16px !important;
+      width: 16px !important;
+      min-width: 16px !important;
+      height: 128px !important;
+    }
+  }
+
+  /* Part 5: RO Advantages Banners (Exact 216px x 216px) */
+  [data-key="marketing__banner_carousel__ro_banners"] {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-sizing: border-box;
+
+    > .css-175oi2r {
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    h3,
+    .css-146c3p1 {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Oxygen-Sans, Ubuntu, Cantarell, Arial, sans-serif !important;
+      font-size: 20px !important;
+      line-height: 28px !important;
+      color: rgb(15, 15, 15) !important;
+      font-weight: 700 !important;
+      text-align: left !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    .r-1472mwg.r-lrsllp {
+      height: 16px;
+      min-height: 16px;
+      width: 100%;
+    }
+
+    .r-150rngu {
+      display: block;
+      width: calc(100% + 32px);
+      max-width: calc(100% + 32px);
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      box-sizing: border-box;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+
+    .r-18u37iz {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      align-items: center;
+      width: max-content;
+    }
+
+    /* Advantages Mobile Cards (Exact 216px x 216px) */
+    .r-18u37iz > [role="img"],
+    .r-k79w25,
+    .r-1b1obt9 {
+      flex: 0 0 216px !important;
+      width: 216px !important;
+      min-width: 216px !important;
+      max-width: 216px !important;
+      height: 216px !important;
+      aspect-ratio: 1 / 1 !important;
+      border-radius: 8px !important;
+      overflow: hidden !important;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+
+      .r-1pi2tsx {
+        width: 100% !important;
+        height: 100% !important;
+        border-radius: 8px !important;
+        overflow: hidden !important;
+      }
+
+      img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: contain !important;
+        aspect-ratio: 1 / 1 !important;
+        background-color: transparent !important;
+        border-radius: 8px !important;
+        display: block !important;
+        opacity: 1 !important;
+      }
+    }
+
+    /* Spacer between cards */
+    .r-10ptun7 {
+      flex: 0 0 16px !important;
+      width: 16px !important;
+      min-width: 16px !important;
+      height: 216px !important;
+    }
   }
 }
 
