@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 interface BeautyService {
@@ -30,7 +30,31 @@ interface SpotlightBanner {
   templateUrl: './beauty.component.html',
   styleUrl: './beauty.component.scss'
 })
-export class BeautyComponent implements OnInit {
+export class BeautyComponent implements OnInit, OnDestroy {
+  isScrolled: boolean = false;
+  displayedSearchText: string = "Search for 'Pedicure'";
+  private searchTexts: string[] = [
+    "Search for 'Pedicure'",
+    "Search for 'Waxing'",
+    "Search for 'Facial'",
+    "Search for 'Hair Spa'",
+    "Search for 'Manicure'"
+  ];
+  private searchInterval: any;
+
+  spotlightIndicatorOffset: number = 0;
+
+  onSpotlightScroll(event: Event): void {
+    const el = event.target as HTMLElement;
+    if (el) {
+      const maxScroll = el.scrollWidth - el.clientWidth;
+      if (maxScroll > 0) {
+        const progress = el.scrollLeft / maxScroll;
+        this.spotlightIndicatorOffset = Math.min(27, Math.max(0, progress * 27));
+      }
+    }
+  }
+
   services: BeautyService[] = [
     {
       id: 'salon-women',
@@ -110,6 +134,17 @@ export class BeautyComponent implements OnInit {
   ngOnInit(): void {
     if (typeof window !== 'undefined') {
       window.scrollTo(0, 0);
+      let index = 0;
+      this.searchInterval = setInterval(() => {
+        index = (index + 1) % this.searchTexts.length;
+        this.displayedSearchText = this.searchTexts[index];
+      }, 3000);
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.searchInterval) {
+      clearInterval(this.searchInterval);
     }
   }
 }

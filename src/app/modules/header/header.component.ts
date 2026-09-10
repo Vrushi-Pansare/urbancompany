@@ -58,7 +58,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   onWindowScroll(): void {
     if (typeof window !== 'undefined') {
       const scrollY = window.scrollY || document.documentElement.scrollTop || 0;
-      this.isScrolled = scrollY > 40;
+      this.isScrolled = scrollY > 20;
     }
   }
 

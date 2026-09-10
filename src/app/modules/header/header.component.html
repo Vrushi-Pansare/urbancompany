@@ -362,6 +362,58 @@
   </div>
 </div>
 
+<!-- Mobile Top Header Bar (Shown on Beauty tab) -->
+<div class="uc-mobile-beauty-header" *ngIf="activeMobileTab === 'beauty'">
+  <!-- Personal grooming title row with mirror icon (scrolls naturally out of view) -->
+  <div class="uc-grooming-title-row">
+    <div class="uc-grooming-icon-wrap">
+      <svg class="uc-mirror-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Sparkle top-left -->
+        <path d="M3 5.5H5.5M4.25 4.25V6.75" stroke="#DE5353" stroke-width="1.3" stroke-linecap="round"/>
+        <!-- Sparkle bottom-right -->
+        <path d="M18.5 17.5H21M19.75 16.25V18.75" stroke="#DE5353" stroke-width="1.3" stroke-linecap="round"/>
+        <!-- Mirror frame -->
+        <rect x="5.5" y="3.5" width="11" height="12.5" rx="3.5" stroke="#DE5353" stroke-width="1.8"/>
+        <!-- Mirror glass streak -->
+        <path d="M9 6.5L13 12.5" stroke="#DE5353" stroke-width="1.3" stroke-linecap="round"/>
+        <!-- Handle -->
+        <path d="M11 16V20.5" stroke="#DE5353" stroke-width="2.2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <h1 class="uc-grooming-title">
+      <span class="uc-grooming-bold">Personal</span>
+      <span class="uc-grooming-light"> grooming</span>
+    </h1>
+  </div>
+
+  <!-- Search Bar (Fixed at top when scrolled) -->
+  <div class="uc-beauty-search-row" [class.sticky-active]="isScrolled">
+    <div class="uc-beauty-search-box">
+      <svg
+        class="uc-beauty-search-icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#757575"
+        stroke-width="2.2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        width="18"
+        height="18"
+      >
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input
+        type="text"
+        [placeholder]="displayedSearchText"
+        class="uc-beauty-search-input"
+        aria-label="Search for beauty services"
+      />
+    </div>
+  </div>
+  <div class="uc-beauty-search-placeholder" *ngIf="isScrolled"></div>
+</div>
+
 <!-- Mobile Profile Component Screen -->
 <app-profile *ngIf="activeMobileTab === 'account'"></app-profile>
 
