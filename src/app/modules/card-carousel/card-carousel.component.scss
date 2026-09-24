@@ -1,0 +1,164 @@
+/* Card Carousel (centered, looping — active card raised, neighbours faded). Card content is styled by the page. */
+:host {
+  display: block;
+}
+
+.uc-carousel-section {
+  --card-width: 400px;
+  --card-gap: 40px;
+
+  background-color: #ffffff;
+  padding: 0 24px 96px;
+  overflow: hidden;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+}
+
+.uc-carousel-container {
+  max-width: 1232px;
+  margin: 0 auto;
+}
+
+.uc-carousel-heading {
+  font-size: 36px;
+  line-height: 44px;
+  font-weight: 600;
+  color: #0f0f0f;
+  margin: 0 0 32px 0;
+}
+
+.uc-carousel-heading:has(+ .uc-carousel-subheading) {
+  margin-bottom: 8px;
+}
+
+.uc-carousel-subheading {
+  margin: 0 0 32px;
+  font-size: 16px;
+  line-height: 24px;
+  color: #545454;
+}
+
+/* All cards share one grid cell, so the stage is as tall as the tallest card */
+.uc-carousel-stage {
+  display: grid;
+  justify-content: center;
+  padding: 24px 0;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.uc-carousel-card {
+  grid-area: 1 / 1;
+  width: var(--card-width);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 32px 28px 28px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 6px 24px rgba(15, 15, 15, 0.08);
+  transform: translateX(calc(var(--offset) * (var(--card-width) + var(--card-gap)))) scale(0.9);
+  opacity: 0.4;
+  transition:
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.6s ease,
+    box-shadow 0.6s ease;
+  cursor: pointer;
+
+  &.is-active {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+    z-index: 2;
+    cursor: default;
+    box-shadow: 0 16px 40px rgba(15, 15, 15, 0.14);
+  }
+
+  &.is-side {
+    z-index: 1;
+  }
+
+  &.is-hidden {
+    opacity: 0;
+    pointer-events: none;
+    // Park far cards just beyond the sides so they slide in from the right direction
+    transform: translateX(calc(clamp(-2, var(--offset), 2) * (var(--card-width) + var(--card-gap)))) scale(0.85);
+  }
+
+  &:not(.is-active):hover {
+    opacity: 0.6;
+  }
+}
+
+/* Pagination dots */
+.uc-carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.uc-carousel-dot {
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background-color: #e3e3e3;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+
+  &.active {
+    background-color: #6e42e5;
+    transform: scale(1.2);
+  }
+
+  &:hover:not(.active) {
+    background-color: #c4c4c4;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .uc-carousel-card {
+    transition: opacity 0.2s ease;
+  }
+}
+
+/* Tablet */
+@media (max-width: 1100px) {
+  .uc-carousel-section {
+    --card-width: 360px;
+    --card-gap: 24px;
+  }
+}
+
+/* Mobile: one card centered, neighbours peeking at the edges */
+@media (max-width: 768px) {
+  .uc-carousel-section {
+    --card-width: calc(100vw - 64px);
+    --card-gap: 12px;
+    padding: 20px 0 35px;
+  }
+
+  .uc-carousel-heading {
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: 700;
+    margin: 0 0 4px 16px;
+  }
+
+  .uc-carousel-subheading {
+    margin: 0 0 4px 16px;
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  .uc-carousel-stage {
+    padding: 16px 0 20px;
+  }
+
+  .uc-carousel-card {
+    padding: 24px 18px 18px;
+  }
+}

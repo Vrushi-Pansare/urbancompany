@@ -1,0 +1,176 @@
+<!-- Mobile Top Bar (replaces the home mobile header on this page) -->
+<div class="uc-sl-mobile-bar">
+  <button type="button" class="uc-sl-back-btn" aria-label="Back" (click)="goBack()">
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#0F0F0F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="19" y1="12" x2="5" y2="12"></line>
+      <polyline points="12 19 5 12 12 5"></polyline>
+    </svg>
+  </button>
+  <span class="uc-sl-mobile-bar-title" *ngIf="!notFound && !isLoading">{{ categoryName }}</span>
+</div>
+
+<!-- Loading -->
+<div class="uc-sl-state" *ngIf="isLoading">
+  <div class="uc-dots-loader">
+    <span class="uc-dot"></span>
+    <span class="uc-dot"></span>
+    <span class="uc-dot"></span>
+  </div>
+</div>
+
+<!-- Not Found -->
+<div class="uc-sl-state" *ngIf="!isLoading && notFound">
+  <h1 class="uc-sl-state-title">Service not found</h1>
+  <p class="uc-sl-state-text">This service isn't available right now.</p>
+  <a routerLink="/" class="uc-sl-primary-btn">Back to home</a>
+</div>
+
+<!-- Page -->
+<div class="uc-sl-page" *ngIf="!isLoading && !notFound">
+  <div class="uc-sl-container">
+    <!-- ── Left: title + Select a service ─────────────────── -->
+    <aside class="uc-sl-left">
+      <h1 class="uc-sl-title">{{ groupName }}</h1>
+      <p class="uc-sl-meta">
+        {{ categoryName }} · {{ services.length }} {{ services.length === 1 ? 'service' : 'services' }}
+      </p>
+
+      <div class="uc-sl-select-card" *ngIf="siblings.length > 1">
+        <div class="uc-sl-select-label"><span>Select a service</span></div>
+        <div class="uc-sl-select-grid">
+          <a
+            *ngFor="let sibling of siblings"
+            class="uc-sl-select-tile"
+            [class.active]="sibling.code === groupCode"
+            [routerLink]="['/services', categoryCode, sibling.code]"
+            [attr.aria-current]="sibling.code === groupCode ? 'page' : null"
+          >
+            <span class="uc-sl-select-img">
+              <img *ngIf="sibling.image; else siblingIcon" [src]="sibling.image" [alt]="sibling.name" loading="lazy" decoding="async" />
+              <ng-template #siblingIcon>
+                <app-service-icon [code]="categoryCode"></app-service-icon>
+              </ng-template>
+            </span>
+            <span class="uc-sl-select-name">{{ sibling.name }}</span>
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ── Middle: banner + services list ─────────────────── -->
+    <main class="uc-sl-main">
+      <div class="uc-sl-banner">
+        <div class="uc-sl-banner-text">
+          <span class="uc-sl-banner-kicker">{{ categoryName }}</span>
+          <span class="uc-sl-banner-title">Expert {{ groupName }} service</span>
+          <span class="uc-sl-banner-sub">Verified professionals at your doorstep</span>
+        </div>
+        <div class="uc-sl-banner-media">
+          <img *ngIf="groupImage; else bannerIcon" [src]="groupImage" [alt]="groupName" />
+          <ng-template #bannerIcon>
+            <app-service-icon [code]="categoryCode"></app-service-icon>
+          </ng-template>
+        </div>
+      </div>
+
+      <section class="uc-sl-section">
+        <h2 class="uc-sl-section-title">Services</h2>
+
+        <div
+          class="uc-sl-service"
+          *ngFor="let service of services; let last = last"
+          [id]="'svc-' + service.id"
+          [class.last]="last"
+          [class.highlighted]="service.id === highlightedId"
+        >
+          <div class="uc-sl-service-info">
+            <h3 class="uc-sl-service-title">{{ service.title }}</h3>
+            <p class="uc-sl-service-price">{{ formatPrice(service.price) }}</p>
+            <ul class="uc-sl-service-notes" *ngIf="service.note">
+              <li>{{ service.note }}</li>
+            </ul>
+          </div>
+
+          <div class="uc-sl-service-action" [class.has-image]="service.image">
+            <img
+              *ngIf="service.image"
+              [src]="service.image"
+              [alt]="service.title"
+              class="uc-sl-service-img"
+              loading="lazy"
+              decoding="async"
+            />
+            <button
+              *ngIf="!qty(service.id); else stepper"
+              type="button"
+              class="uc-sl-add-btn"
+              (click)="add(service)"
+            >Add</button>
+            <ng-template #stepper>
+              <div class="uc-sl-stepper" role="group" [attr.aria-label]="'Quantity of ' + service.title">
+                <button type="button" aria-label="Remove one" (click)="remove(service)">−</button>
+                <span>{{ qty(service.id) }}</span>
+                <button type="button" aria-label="Add one" (click)="add(service)">+</button>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ── Right: cart + UC Promise ───────────────────────── -->
+    <aside class="uc-sl-right">
+      <div class="uc-sl-box uc-sl-cart">
+        <ng-container *ngIf="cartRows.length; else emptyCart">
+          <h3 class="uc-sl-box-title">Cart</h3>
+          <div class="uc-sl-cart-row" *ngFor="let row of cartRows">
+            <span class="uc-sl-cart-name">{{ row.service.title }}</span>
+            <div class="uc-sl-stepper small">
+              <button type="button" aria-label="Remove one" (click)="remove(row.service)">−</button>
+              <span>{{ row.qty }}</span>
+              <button type="button" aria-label="Add one" (click)="add(row.service)">+</button>
+            </div>
+            <span class="uc-sl-cart-price">{{ formatPrice(row.service.price * row.qty) }}</span>
+          </div>
+          <div class="uc-sl-cart-total">
+            <span>Total</span>
+            <span>{{ formatPrice(cartTotal) }}</span>
+          </div>
+        </ng-container>
+        <ng-template #emptyCart>
+          <div class="uc-sl-cart-empty">
+            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="9" cy="20" r="1.3" />
+              <circle cx="18" cy="20" r="1.3" />
+              <path d="M2.5 3.5h2.8l2.4 11.2a1.5 1.5 0 001.5 1.2h8.4a1.5 1.5 0 001.5-1.1l1.6-6.3H6.2" />
+            </svg>
+            <span>No items in your cart</span>
+          </div>
+        </ng-template>
+      </div>
+
+      <div class="uc-sl-box uc-sl-promise">
+        <div class="uc-sl-promise-text">
+          <h3 class="uc-sl-box-title">UC Promise</h3>
+          <ul>
+            <li>Verified Professionals</li>
+            <li>Hassle Free Booking</li>
+            <li>Transparent Pricing</li>
+          </ul>
+        </div>
+        <div class="uc-sl-promise-badge" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#6e42e5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2.5l7.5 3v5.7c0 4.6-3.2 8.8-7.5 10.3-4.3-1.5-7.5-5.7-7.5-10.3V5.5z" />
+            <path d="M8.5 12.2l2.4 2.4 4.6-4.8" />
+          </svg>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Mobile cart bar -->
+  <div class="uc-sl-mobile-cart" *ngIf="cartCount">
+    <span class="uc-sl-mobile-cart-total">{{ formatPrice(cartTotal) }}</span>
+    <span class="uc-sl-mobile-cart-count">{{ cartCount }} {{ cartCount === 1 ? 'item' : 'items' }} added</span>
+  </div>
+</div>

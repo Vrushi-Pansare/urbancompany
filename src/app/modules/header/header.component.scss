@@ -160,23 +160,7 @@
     gap: 12px;
     margin-right: 16px;
 
-    /* Service Search Box */
-    .uc-service-box {
-      width: 260px;
-
-      .uc-search-input {
-        border: none;
-        outline: none;
-        background: transparent;
-        width: 100%;
-        font-size: 13.5px;
-        color: #0f0f0f;
-
-        &::placeholder {
-          color: #757575;
-        }
-      }
-    }
+    /* Service search box: see modules/service-search */
   }
 
   /* Actions Group (Cart & Profile) */
@@ -458,6 +442,7 @@
         }
 
         .uc-mobile-search-input {
+          cursor: pointer;
           border: none;
           outline: none;
           background: transparent;

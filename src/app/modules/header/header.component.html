@@ -91,22 +91,8 @@
         </svg>
       </div>
 
-      <!-- Service Search Box -->
-      <div class="uc-search-box uc-service-box">
-        <svg class="uc-icon" viewBox="0 0 24 24" fill="#757575">
-          <path
-            fill-rule="evenodd"
-            clip-rule="evenodd"
-            d="M10.875 2a8.875 8.875 0 105.528 15.818l3.89 3.89 1.414-1.415-3.89-3.889A8.875 8.875 0 0010.875 2zM4 10.875a6.875 6.875 0 1113.75 0 6.875 6.875 0 01-13.75 0z"
-          />
-        </svg>
-        <input
-          type="text"
-          [placeholder]="displayedSearchText"
-          class="uc-search-input"
-          aria-label="Search for services"
-        />
-      </div>
+      <!-- Service Search (results dropdown) -->
+      <app-service-search mode="inline" [placeholder]="displayedSearchText"></app-service-search>
     </div>
 
     <!-- Right Actions Column (Cart & Profile Buttons) -->
@@ -214,7 +200,7 @@
 <!-- Mobile Top Header Bar (Shown only on Home tab) -->
 <div
   class="uc-mobile-header"
-  *ngIf="activeMobileTab === 'home'"
+  *ngIf="activeMobileTab === 'home' && !isServicePage"
   [style.background-color]="activeCampaign.themeColor"
 >
   <div
@@ -301,11 +287,15 @@
         <circle cx="11" cy="11" r="8"></circle>
         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
       </svg>
+      <!-- Opens the full-screen search -->
       <input
         type="text"
+        readonly
         [placeholder]="displayedSearchText"
         class="uc-mobile-search-input"
         aria-label="Search for services"
+        (click)="mobileSearchOpen = true"
+        (keydown.enter)="mobileSearchOpen = true"
       />
     </div>
   </div>
@@ -366,7 +356,7 @@
 <app-profile *ngIf="activeMobileTab === 'account'"></app-profile>
 
 <!-- Mobile Bottom Navigation Bar (Matching Screenshot) -->
-<nav class="uc-mobile-bottom-nav">
+<nav class="uc-mobile-bottom-nav" *ngIf="!isServicePage">
   <a
     href="javascript:void(0)"
     class="uc-bottom-nav-item"
@@ -451,3 +441,6 @@
     <span class="uc-bottom-nav-label">Account</span>
   </a>
 </nav>
+
+<!-- Mobile full-screen search -->
+<app-service-search mode="overlay" [open]="mobileSearchOpen" (closed)="mobileSearchOpen = false"></app-service-search>

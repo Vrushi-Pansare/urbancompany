@@ -1,0 +1,53 @@
+<section
+  class="uc-carousel-section"
+  [attr.id]="sectionId"
+  *ngIf="items.length"
+  aria-roledescription="carousel"
+  [attr.aria-label]="heading"
+>
+  <div class="uc-carousel-container">
+    <h2 class="uc-carousel-heading" *ngIf="heading">{{ heading }}</h2>
+    <p class="uc-carousel-subheading" *ngIf="subheading">{{ subheading }}</p>
+
+    <div
+      class="uc-carousel-stage"
+      (mouseenter)="pause()"
+      (mouseleave)="resume()"
+      (focusin)="pause()"
+      (focusout)="resume()"
+      (pointerdown)="onPointerDown($event)"
+      (pointerup)="onPointerUp($event)"
+      (keydown.arrowleft)="prev()"
+      (keydown.arrowright)="next()"
+    >
+      <article
+        *ngFor="let item of items; let i = index"
+        class="uc-carousel-card"
+        [class.is-active]="offset(i) === 0"
+        [class.is-side]="offset(i) === -1 || offset(i) === 1"
+        [class.is-hidden]="offset(i) < -1 || offset(i) > 1"
+        [style.--offset]="offset(i)"
+        [attr.aria-hidden]="offset(i) !== 0"
+        [attr.aria-label]="(i + 1) + ' of ' + items.length"
+        (click)="onCardClick(i)"
+      >
+        <ng-container
+          *ngTemplateOutlet="cardTemplate ?? null; context: { $implicit: item, active: offset(i) === 0 }"
+        ></ng-container>
+      </article>
+    </div>
+
+    <!-- Pagination dots -->
+    <div class="uc-carousel-dots" *ngIf="items.length > 1">
+      <button
+        *ngFor="let item of items; let i = index"
+        type="button"
+        class="uc-carousel-dot"
+        [class.active]="i === active"
+        [attr.aria-label]="'Show card ' + (i + 1)"
+        [attr.aria-current]="i === active ? 'true' : null"
+        (click)="goTo(i)"
+      ></button>
+    </div>
+  </div>
+</section>

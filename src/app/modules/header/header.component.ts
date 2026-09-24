@@ -6,7 +6,9 @@ import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ASSET_URLS } from '../../constants/urls';
 import { AuthService, UserProfile } from '../../services/auth.service';
+import { LocationService } from '../../services/location.service';
 import { ProfileComponent } from '../profile/profile.component';
+import { ServiceSearchComponent } from '../service-search/service-search.component';
 
 interface PromoBanner {
   id: string;
@@ -35,7 +37,7 @@ interface Campaign {
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProfileComponent],
+  imports: [CommonModule, FormsModule, ProfileComponent, ServiceSearchComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
@@ -46,10 +48,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
   showProfileDropdown = false;
   currentUser: UserProfile | null = null;
   activeMobileTab: 'home' | 'wall-panels' | 'native' | 'beauty' | 'account' = 'home';
+  // Service listing pages have their own mobile top bar
+  isServicePage = false;
   private authSub = new Subscription();
 
   constructor(
     private authService: AuthService,
+    private locationService: LocationService,
     private elementRef: ElementRef,
     private router: Router
   ) {}
@@ -153,16 +158,19 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   // Dynamic rotating search terms
   searchKeywords: string[] = [
-    "'AC service'",
-    "'Bathroom cleaning'",
-    "'Facial'",
-    "'Salon for women'",
-    "'Electrician'",
-    "'Native Water Purifier'",
-    "'Full home painting'"
+    "'AC repair'",
+    "'Washing machine'",
+    "'Refrigerator'",
+    "'RO purifier'",
+    "'Geyser'",
+    "'Microwave'",
+    "'LED TV'"
   ];
   currentKeywordIndex = 0;
-  displayedSearchText = "Search for 'AC service'";
+  displayedSearchText = "Search for 'AC repair'";
+
+  // Mobile full-screen search
+  mobileSearchOpen = false;
   private typingTimer: any;
 
   promoBanners: PromoBanner[] = [
@@ -197,6 +205,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     );
 
     // Sync active mobile tab with current url
+    this.isServicePage = this.router.url.startsWith('/services/');
     if (this.router.url.includes('wall-panels')) {
       this.activeMobileTab = 'wall-panels';
     } else if (this.router.url.includes('native')) {
@@ -206,6 +215,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
     this.authSub.add(
       this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe((event: any) => {
+        this.isServicePage = event.urlAfterRedirects.startsWith('/services/');
         if (event.url.includes('wall-panels')) {
           this.activeMobileTab = 'wall-panels';
         } else if (event.url.includes('native')) {
@@ -257,48 +267,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
       console.log('IP geocode fallback running...');
     }
 
-    // 2. High precision GPS browser Geolocation
-    if (typeof window !== 'undefined' && 'geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          try {
-            const lat = position.coords.latitude;
-            const lon = position.coords.longitude;
-            
-            // Fast reverse geocoding via bigdatacloud
-            const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`);
-            if (res.ok) {
-              const data = await res.json();
-              const locality = data.locality || data.principalSubdivision || data.city;
-              const city = data.city || data.principalSubdivision || 'Pune';
-              if (locality && city) {
-                const locStr = locality !== city ? `${locality}, ${city}` : city;
-                this.liveUserLocation = locStr;
-                this.campaigns.forEach(c => c.location = locStr);
-                return;
-              }
-            }
-
-            // Fallback to OpenStreetMap Nominatim
-            const nomRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
-            if (nomRes.ok) {
-              const nomData = await nomRes.json();
-              const area = nomData.address?.suburb || nomData.address?.neighbourhood || nomData.address?.residential || nomData.address?.road;
-              const city = nomData.address?.city || nomData.address?.town || nomData.address?.state_district || 'Pune';
-              const locStr = area ? `${area}, ${city}` : (nomData.display_name?.split(',').slice(0, 2).join(',') || city);
-              this.liveUserLocation = locStr;
-              this.campaigns.forEach(c => c.location = locStr);
-            }
-          } catch (e) {
-            console.warn('GPS reverse geocode error:', e);
-          }
-        },
-        (error) => {
-          console.log('Location GPS notice:', error.message);
-        },
-        { timeout: 10000, enableHighAccuracy: true }
-      );
-    }
+    // 2. Precise area from GPS (permission + reverse geocoding handled by LocationService)
+    this.authSub.add(
+      this.locationService.area$
+        .pipe(filter((area) => !!area))
+        .subscribe((area) => {
+          this.liveUserLocation = area!.label;
+          this.campaigns.forEach(c => c.location = area!.label);
+        })
+    );
   }
 
   // Calculate transform for rolling digit slot

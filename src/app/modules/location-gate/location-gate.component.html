@@ -1,0 +1,182 @@
+<!-- Blocking Location Permission Sheet (no close / backdrop dismiss) -->
+<div class="uc-location-overlay" *ngIf="isVisible">
+  <div
+    class="uc-location-sheet"
+    role="alertdialog"
+    aria-modal="true"
+    aria-labelledby="uc-location-heading"
+    aria-describedby="uc-location-desc"
+  >
+    <!-- Mobile drag handle (visual only) -->
+    <div class="uc-sheet-handle"></div>
+
+    <!-- Urban Company Brand Logo -->
+    <div class="uc-brand-logo-row">
+      <img [src]="logoUrl" alt="Urban Company" class="uc-location-logo-img" />
+    </div>
+
+    <!-- Location Pin Illustration -->
+    <div class="uc-pin-illustration" [class.is-off]="status === 'denied' || status === 'unavailable' || status === 'verify-failed'">
+      <span class="uc-pin-pulse" *ngIf="status === 'requesting' || status === 'prompt' || isBackgroundState"></span>
+      <span class="uc-pin-circle">
+        <svg viewBox="0 0 24 24" width="30" height="30">
+          <path
+            d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
+            fill="currentColor"
+          />
+        </svg>
+        <!-- Slash for "off" states -->
+        <svg *ngIf="status === 'denied' || status === 'unavailable' || status === 'verify-failed'" class="uc-pin-slash" viewBox="0 0 24 24" width="30" height="30">
+          <line x1="4" y1="3" x2="20" y2="21" stroke="#ffffff" stroke-width="4.5" stroke-linecap="round" />
+          <line x1="4" y1="3" x2="20" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </span>
+    </div>
+
+    <!-- STATE: Getting position / checking serviceable area -->
+    <ng-container *ngIf="isBackgroundState">
+      <h1 id="uc-location-heading" class="uc-location-heading">
+        {{ status === 'checking' ? 'Getting your location' : 'Checking your area' }}
+      </h1>
+      <p id="uc-location-desc" class="uc-location-subheading">
+        {{ status === 'checking'
+          ? 'This usually takes a few seconds.'
+          : 'Making sure Urban Company is available at your address.' }}
+      </p>
+      <div class="uc-action-btn-row">
+        <button type="button" class="uc-primary-btn loading" disabled>
+          <div class="uc-dots-loader">
+            <span class="uc-dot"></span>
+            <span class="uc-dot"></span>
+            <span class="uc-dot"></span>
+          </div>
+        </button>
+      </div>
+    </ng-container>
+
+    <!-- STATE: Browser prompt is open / prompt was dismissed -->
+    <ng-container *ngIf="status === 'requesting' || status === 'prompt'">
+      <h1 id="uc-location-heading" class="uc-location-heading">
+        {{ status === 'requesting' ? 'Allow location access' : 'Location access is required' }}
+      </h1>
+      <p id="uc-location-desc" class="uc-location-subheading">
+        Urban Company uses your location to show services available at your address.
+        You'll need to turn it on to continue.
+      </p>
+
+      <ul class="uc-benefit-list">
+        <li *ngFor="let benefit of benefits" class="uc-benefit-item">
+          <svg class="uc-benefit-check" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          <span>{{ benefit }}</span>
+        </li>
+      </ul>
+
+      <div class="uc-info-strip" *ngIf="status === 'requesting'">
+        Choose <strong>Allow</strong> when {{ browserName }} asks for your location.
+      </div>
+
+      <div class="uc-action-btn-row">
+        <button
+          type="button"
+          class="uc-primary-btn"
+          [class.loading]="status === 'requesting'"
+          [disabled]="status === 'requesting'"
+          (click)="onEnableLocation()"
+        >
+          <span *ngIf="status === 'prompt'">Enable location</span>
+          <div *ngIf="status === 'requesting'" class="uc-dots-loader">
+            <span class="uc-dot"></span>
+            <span class="uc-dot"></span>
+            <span class="uc-dot"></span>
+          </div>
+        </button>
+      </div>
+    </ng-container>
+
+    <!-- STATE: Location blocked for this site -->
+    <ng-container *ngIf="status === 'denied'">
+      <h1 id="uc-location-heading" class="uc-location-heading">Location permission is off</h1>
+      <p id="uc-location-desc" class="uc-location-subheading">
+        Location is blocked for this site. Turn it on in {{ browserName }} to continue using Urban Company.
+      </p>
+
+      <div class="uc-steps-card">
+        <p class="uc-steps-title">How to turn it on</p>
+        <ol class="uc-steps-list">
+          <li *ngFor="let step of blockedSteps; let i = index" class="uc-step-item">
+            <span class="uc-step-num">{{ i + 1 }}</span>
+            <span class="uc-step-text" [innerHTML]="step"></span>
+          </li>
+        </ol>
+      </div>
+
+      <p class="uc-error-note" *ngIf="retryFailed" role="status">
+        Location is still blocked. Follow the steps above, then try again.
+      </p>
+
+      <div class="uc-action-btn-row">
+        <button type="button" class="uc-primary-btn" (click)="onEnableLocation()">Try again</button>
+        <button type="button" class="uc-secondary-btn" (click)="onReload()">Reload page</button>
+      </div>
+    </ng-container>
+
+    <!-- STATE: Permission granted but device location is off / no signal -->
+    <ng-container *ngIf="status === 'unavailable'">
+      <h1 id="uc-location-heading" class="uc-location-heading">We couldn't find your location</h1>
+      <p id="uc-location-desc" class="uc-location-subheading">
+        Location services may be turned off on your {{ deviceName }}, or the signal is weak.
+      </p>
+
+      <div class="uc-steps-card">
+        <p class="uc-steps-title">Turn on location services</p>
+        <ol class="uc-steps-list">
+          <li *ngFor="let step of deviceSteps; let i = index" class="uc-step-item">
+            <span class="uc-step-num">{{ i + 1 }}</span>
+            <span class="uc-step-text" [innerHTML]="step"></span>
+          </li>
+        </ol>
+      </div>
+
+      <p class="uc-error-note" *ngIf="retryFailed" role="status">
+        Still can't find your location. Check that location services are on, then try again.
+      </p>
+
+      <div class="uc-action-btn-row">
+        <button type="button" class="uc-primary-btn" (click)="onEnableLocation()">Try again</button>
+      </div>
+    </ng-container>
+
+    <!-- STATE: Area lookup failed (network / geocoder error) -->
+    <ng-container *ngIf="status === 'verify-failed'">
+      <h1 id="uc-location-heading" class="uc-location-heading">We couldn't check your area</h1>
+      <p id="uc-location-desc" class="uc-location-subheading">
+        We found your location but couldn't confirm if we serve it. Check your internet connection and try again.
+      </p>
+      <div class="uc-action-btn-row">
+        <button type="button" class="uc-primary-btn" (click)="onRetryVerify()">Try again</button>
+      </div>
+    </ng-container>
+
+    <!-- STATE: Browser has no geolocation support -->
+    <ng-container *ngIf="status === 'unsupported'">
+      <h1 id="uc-location-heading" class="uc-location-heading">Your browser doesn't support location</h1>
+      <p id="uc-location-desc" class="uc-location-subheading">
+        Urban Company needs your location to show services near you.
+        Please open this site in the latest version of Chrome, Safari, Edge or Firefox.
+      </p>
+    </ng-container>
+
+    <!-- Privacy note -->
+    <p class="uc-privacy-note" *ngIf="status !== 'unsupported'">
+      Your location is used only to show services near you. See our
+      <a
+        href="https://privacy.urbancompany.com/policies?policyType=privacy_policy&userType=customer&countryId=IND&language=en&boolWebView=true"
+        target="_blank"
+        rel="noopener"
+        class="uc-policy-link"
+      >Privacy policy</a>.
+    </p>
+  </div>
+</div>
