@@ -20,9 +20,9 @@ import { NotifyService } from './services/notify.service';
 export class AppComponent implements OnInit, OnDestroy {
   title = 'MyGenie';
   area$ = this.locationService.area$;
-  // Inert only while the gate is deciding — an unserviceable area is browsable.
-  isResolving$ = this.locationService.isResolving$;
+  // Location is optional — the app is always interactive. These only drive soft banners/prompts.
   isUnserviceable$ = this.locationService.isUnserviceable$;
+  needsLocation$ = this.locationService.needsLocation$;
   toast$ = this.notify.message$;
   // The checkout route uses its own minimal chrome, so hide the site header/footer there.
   hideChrome = false;
@@ -63,5 +63,10 @@ export class AppComponent implements OnInit, OnDestroy {
   checkAgain(): void {
     // Fresh position; the banner clears automatically if the new area is serviceable.
     this.locationService.requestLocation(false, true);
+  }
+
+  enableLocation(): void {
+    // Reopen the location sheet (and re-ask the browser) so the user can turn it on.
+    this.locationService.promptEnable();
   }
 }

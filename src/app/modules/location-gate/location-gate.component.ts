@@ -18,6 +18,8 @@ export class LocationGateComponent implements OnInit, OnDestroy {
   logoUrl = ASSET_URLS.LOGO;
   status: LocationStatus = 'checking';
   retryFailed = false;
+  // Location is optional: once the user closes the sheet it stays hidden until they ask again.
+  dismissed = false;
 
   benefits = [
     'See services and offers available in your area',
@@ -53,11 +55,28 @@ export class LocationGateComponent implements OnInit, OnDestroy {
         const wasVisible = this.isVisible;
         this.status = status;
         this.updateSlowState(wasVisible);
-        // Lock page scroll until the area is confirmed (unserviceable page scrolls normally)
-        document.body.style.overflow = status === 'serviceable' || status === 'unserviceable' ? '' : 'hidden';
+        // A confirmed area closes the sheet for good; otherwise let the user reopen it later.
+        if (status === 'serviceable' || status === 'unserviceable') {
+          this.dismissed = false;
+        }
       })
     );
+
+    // Reopen the sheet when the app asks (e.g. "Enable location" banner / add-to-cart).
+    this.sub.add(
+      this.locationService.openGate$.subscribe(() => {
+        this.dismissed = false;
+        this.retryFailed = false;
+        this.retrying = false;
+      })
+    );
+
     this.locationService.init();
+  }
+
+  /** Close the (optional) location sheet — the app stays fully browsable. */
+  dismiss(): void {
+    this.dismissed = true;
   }
 
   ngOnDestroy(): void {
@@ -71,6 +90,7 @@ export class LocationGateComponent implements OnInit, OnDestroy {
   }
 
   get isVisible(): boolean {
+    if (this.dismissed) return false;
     if (this.status === 'serviceable' || this.status === 'unserviceable') return false;
     return !this.isBackgroundState || this.showSlowState;
   }

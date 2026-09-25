@@ -54,6 +54,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   isServicePage = false;
   cartCount = 0;
   private canTransact = false;
+  private isUnserviceable = false;
   private authSub = new Subscription();
 
   constructor(
@@ -66,9 +67,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ) {}
 
   onCartClick(): void {
-    // No cart outside a serviceable area — surface the "expanding" notice.
+    // No cart outside a serviceable area.
     if (!this.canTransact) {
-      this.notify.show("MyGenie isn't available in your area yet — we're expanding soon!");
+      if (this.isUnserviceable) {
+        this.notify.show("MyGenie isn't available in your area yet — we're expanding soon!");
+      } else {
+        this.notify.show('Enable location to book services near you.');
+        this.locationService.promptEnable();
+      }
       return;
     }
     this.router.navigate(['/checkout']);
@@ -209,6 +215,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
     // Track whether the current area can transact (show/allow prices & cart)
     this.authSub.add(
       this.locationService.canTransact$.subscribe((can) => (this.canTransact = can))
+    );
+    this.authSub.add(
+      this.locationService.isUnserviceable$.subscribe((v) => (this.isUnserviceable = v))
     );
 
     // Keep the cart badge in sync

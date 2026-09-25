@@ -43,7 +43,7 @@
     width: 9px;
     height: 9px;
     border-radius: 50%;
-    background-color: #6e42e5;
+    background-color: #8342fe;
     animation: bounceDot 0.6s ease-in-out infinite alternate;
 
     &:nth-child(2) { animation-delay: 0.2s; }
@@ -58,7 +58,7 @@
   height: 44px;
   padding: 0 24px;
   border-radius: 8px;
-  background-color: #6e42e5;
+  background-color: #8342fe;
   color: #ffffff;
   font-size: 15px;
   font-weight: 700;
@@ -185,7 +185,7 @@
 
   &.active {
     .uc-sl-select-img {
-      border-color: #6e42e5;
+      border-color: #8342fe;
     }
 
     .uc-sl-select-name {
@@ -353,7 +353,7 @@
   border-radius: 8px;
   border: 1px solid #e3e3e3;
   background-color: #ffffff;
-  color: #6e42e5;
+  color: #8342fe;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -361,7 +361,7 @@
 
   &:hover {
     background-color: #f7f5ff;
-    border-color: #6e42e5;
+    border-color: #8342fe;
   }
 }
 
@@ -371,10 +371,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border: 1px solid #6e42e5;
+  border: 1px solid #8342fe;
   border-radius: 8px;
   background-color: #f7f5ff;
-  color: #6e42e5;
+  color: #8342fe;
   font-size: 14px;
   font-weight: 600;
 
@@ -383,7 +383,7 @@
     height: 100%;
     border: none;
     background: transparent;
-    color: #6e42e5;
+    color: #8342fe;
     font-size: 18px;
     line-height: 1;
     cursor: pointer;
@@ -466,7 +466,7 @@
   padding: 12px;
   border: none;
   border-radius: 10px;
-  background-color: #6e42e5;
+  background-color: #8342fe;
   color: #ffffff;
   font-size: 14.5px;
   font-weight: 600;
@@ -505,8 +505,8 @@
       width: 14px;
       height: 8px;
       margin-top: -4px;
-      border-left: 2px solid #0f0f0f;
-      border-bottom: 2px solid #0f0f0f;
+      border-left: 2px solid #8342fe;
+      border-bottom: 2px solid #8342fe;
       transform: rotate(-45deg);
       flex-shrink: 0;
     }
@@ -704,11 +704,11 @@
     padding: 0 20px;
     border: none;
     border-radius: 12px;
-    background-color: #6e42e5;
+    background-color: #8342fe;
     color: #ffffff;
     font-family: inherit;
     cursor: pointer;
-    box-shadow: 0 6px 20px rgba(110, 66, 229, 0.35);
+    box-shadow: 0 6px 20px rgba(131, 66, 254, 0.35);
 
     .uc-sl-mobile-cart-info {
       display: flex;

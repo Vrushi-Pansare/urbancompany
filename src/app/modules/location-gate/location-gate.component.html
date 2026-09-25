@@ -1,14 +1,22 @@
-<!-- Blocking Location Permission Sheet (no close / backdrop dismiss) -->
-<div class="uc-location-overlay" *ngIf="isVisible">
+<!-- Optional Location Permission Sheet (dismissible — the app stays browsable) -->
+<div class="uc-location-overlay" *ngIf="isVisible" (click)="dismiss()">
   <div
     class="uc-location-sheet"
-    role="alertdialog"
-    aria-modal="true"
+    role="dialog"
+    aria-modal="false"
     aria-labelledby="uc-location-heading"
     aria-describedby="uc-location-desc"
+    (click)="$event.stopPropagation()"
   >
     <!-- Mobile drag handle (visual only) -->
     <div class="uc-sheet-handle"></div>
+
+    <!-- Close: location is optional, so the sheet can always be dismissed -->
+    <button type="button" class="uc-location-close" aria-label="Not now" (click)="dismiss()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="#0F0F0F" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10.586 12l-6.043 6.043 1.414 1.414L12 13.414l6.043 6.043 1.414-1.414L13.414 12l6.043-6.043-1.414-1.414L12 10.586 5.957 4.543 4.543 5.957 10.586 12z"/>
+      </svg>
+    </button>
 
     <!-- MyGenie Brand Logo -->
     <div class="uc-brand-logo-row">
@@ -57,11 +65,11 @@
     <!-- STATE: Browser prompt is open / prompt was dismissed -->
     <ng-container *ngIf="status === 'requesting' || status === 'prompt'">
       <h1 id="uc-location-heading" class="uc-location-heading">
-        {{ status === 'requesting' ? 'Allow location access' : 'Location access is required' }}
+        {{ status === 'requesting' ? 'Allow location access' : 'Enable location' }}
       </h1>
       <p id="uc-location-desc" class="uc-location-subheading">
         MyGenie uses your location to show services available at your address.
-        You'll need to turn it on to continue.
+        Turn it on to book near you — or keep browsing and enable it later.
       </p>
 
       <ul class="uc-benefit-list">

@@ -135,8 +135,8 @@
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
   &:focus-within {
-    border-color: rgba(110, 66, 229, 1.00);
-    box-shadow: 0 0 0 1px rgba(110, 66, 229, 0.3);
+    border-color: rgba(131, 66, 254, 1.00);
+    box-shadow: 0 0 0 1px rgba(131, 66, 254, 0.3);
   }
 
   .uc-country-box {
@@ -308,7 +308,7 @@
   height: 48px;
   border-radius: 8px;
   border: none;
-  background-color: rgba(110, 66, 229, 1.00);
+  background-color: rgba(131, 66, 254, 1.00);
   color: #ffffff;
   font-size: 15px;
   font-weight: 700;
@@ -321,7 +321,7 @@
 
   &:hover:not(:disabled) {
     background-color: rgb(97, 54, 212);
-    box-shadow: 0 4px 14px rgba(110, 66, 229, 0.3);
+    box-shadow: 0 4px 14px rgba(131, 66, 254, 0.3);
   }
 
   &:active:not(:disabled) {
@@ -336,9 +336,9 @@
   }
 
   &.loading {
-    background-color: rgba(110, 66, 229, 1.00) !important;
+    background-color: rgba(131, 66, 254, 1.00) !important;
     cursor: wait;
-    box-shadow: 0 4px 16px rgba(110, 66, 229, 0.35);
+    box-shadow: 0 4px 16px rgba(131, 66, 254, 0.35);
   }
 }
 
@@ -416,12 +416,12 @@
       }
 
       &.active {
-        border-color: rgba(110, 66, 229, 1.00);
-        box-shadow: 0 0 0 1px rgba(110, 66, 229, 0.3);
+        border-color: rgba(131, 66, 254, 1.00);
+        box-shadow: 0 0 0 1px rgba(131, 66, 254, 0.3);
       }
 
       &.filled {
-        border-color: #0f0f0f;
+        border-color: #8342fe;
       }
     }
   }

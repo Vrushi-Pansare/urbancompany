@@ -1,5 +1,12 @@
-<app-header *ngIf="!hideChrome" [attr.inert]="(isResolving$ | async) ? '' : null"></app-header>
-<main class="app-main" [class.no-chrome]="hideChrome" [attr.inert]="(isResolving$ | async) ? '' : null">
+<app-header *ngIf="!hideChrome"></app-header>
+<main class="app-main" [class.no-chrome]="hideChrome">
+  <!-- Location is optional: invite the user to turn it on so they can book near them -->
+  <div class="app-browse-banner" *ngIf="(needsLocation$ | async) && !hideChrome">
+    <span class="app-browse-banner-text">
+      Turn on location to see services and book near you.
+    </span>
+    <button type="button" class="app-browse-banner-btn" (click)="enableLocation()">Enable location</button>
+  </div>
   <!-- Browse-only notice: area isn't serviceable, but the user can still explore -->
   <div class="app-browse-banner" *ngIf="(isUnserviceable$ | async) && !hideChrome">
     <span class="app-browse-banner-text">
@@ -10,8 +17,8 @@
   </div>
   <router-outlet></router-outlet>
 </main>
-<app-footer *ngIf="!hideChrome" [attr.inert]="(isResolving$ | async) ? '' : null"></app-footer>
-<app-login [attr.inert]="(isResolving$ | async) ? '' : null"></app-login>
+<app-footer *ngIf="!hideChrome"></app-footer>
+<app-login></app-login>
 
 <app-location-gate></app-location-gate>
 

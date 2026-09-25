@@ -50,6 +50,7 @@ export class ServiceListingComponent implements OnInit, OnDestroy {
   private sub = new Subscription();
 
   private canTransact = false;
+  private isUnserviceable = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -62,6 +63,7 @@ export class ServiceListingComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.sub.add(this.locationService.canTransact$.subscribe((can) => (this.canTransact = can)));
+    this.sub.add(this.locationService.isUnserviceable$.subscribe((v) => (this.isUnserviceable = v)));
     this.sub.add(
       this.route.paramMap.subscribe(async (params) => {
         this.categoryCode = params.get('category') ?? '';
@@ -114,9 +116,16 @@ export class ServiceListingComponent implements OnInit, OnDestroy {
   }
 
   add(service: ServiceRow): void {
-    // Booking is disabled outside serviceable areas — tell the user instead.
+    // Adding to cart needs a serviceable location.
     if (!this.canTransact) {
-      this.notify.show("MyGenie isn't available in your area yet — we're expanding soon!");
+      if (this.isUnserviceable) {
+        // We know the city — it's just not served yet.
+        this.notify.show("MyGenie isn't available in your area yet — we're expanding soon!");
+      } else {
+        // No location yet — invite the user to turn it on and reopen the location sheet.
+        this.notify.show('Enable location to add services to your cart.');
+        this.locationService.promptEnable();
+      }
       return;
     }
     this.cartService.add({ ...service, groupName: this.groupName, categoryName: this.categoryName });

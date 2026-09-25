@@ -159,7 +159,7 @@
   cursor: pointer;
 
   .uc-more-tile {
-    background-color: #6e42e5;
+    background-color: #8342fe;
     transition: background-color 0.2s ease, box-shadow 0.2s ease;
   }
 
@@ -176,7 +176,7 @@
 
   &:hover .uc-more-tile {
     background-color: rgb(97, 54, 212);
-    box-shadow: 0 4px 14px rgba(110, 66, 229, 0.3);
+    box-shadow: 0 4px 14px rgba(131, 66, 254, 0.3);
   }
 }
 

@@ -94,7 +94,7 @@
         bottom: 0;
         left: 10%;
         right: 10%;
-        background-color: #000000;
+        background-color: #8342fe;
         transform-origin: bottom right;
         transition: transform 0.2s ease-in-out;
       }
@@ -223,42 +223,68 @@
     }
   }
 
-  /* Mobile Responsiveness (< 768px) */
+  /* Mobile: same content as desktop (heading, card, video, trust markers), just stacked and scaled */
   @media (max-width: 768px) {
-    padding: 20px 0 35px 0 !important;
+    padding: 24px 16px 35px !important;
     background-color: #ffffff;
     border-bottom: 8px solid rgba(245, 245, 245, 1.00);
 
     .uc-category-grid-container {
       display: flex;
       flex-direction: column;
-      gap: 0;
+      gap: 20px;
       width: 100%;
     }
 
+    /* Promote the card + trust markers to flex items so they can be ordered around the video */
     .uc-category-grid-content {
-      display: block;
-      width: 100%;
+      display: contents;
     }
 
     .uc-main-heading {
-      display: none;
-    }
-
-    .uc-category-grid-media {
-      display: none;
-    }
-
-    .uc-trust-markers {
-      display: none;
+      display: block;
+      font-size: 24px;
+      line-height: 32px;
+      margin: 0 0 20px;
+      text-align: center;
     }
 
     .uc-unified-card {
-      border: none;
-      box-shadow: none;
-      padding: 0 16px;
-      border-radius: 0;
-      background: transparent;
+      order: 1;
+      width: 100%;
+      padding: 20px 16px 24px;
+    }
+
+    .uc-category-grid-media {
+      order: 2;
+      display: block;
+      position: relative;
+      width: 100%;
+      min-height: 0;
+      aspect-ratio: 16 / 10;
+      border-radius: 16px;
+      overflow: hidden;
+
+      .uc-hero-video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 16px;
+      }
+    }
+
+    .uc-trust-markers {
+      order: 3;
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      margin: 0;
+
+      .uc-trust-item:last-child {
+        margin-left: 0;
+      }
     }
 
     .uc-services-grid {
@@ -550,7 +576,7 @@
           font-size: 14px;
           line-height: 20px;
           font-weight: 600;
-          color: rgba(110, 66, 229, 1);
+          color: rgba(131, 66, 254, 1);
           white-space: nowrap;
         }
       }
@@ -617,7 +643,7 @@
           top: 6px;
           left: 6px;
           z-index: 2;
-          background-color: rgba(110, 66, 229, 1);
+          background-color: rgba(131, 66, 254, 1);
           color: #ffffff;
           font-size: 10px;
           line-height: 14px;
@@ -743,7 +769,7 @@
       font-size: 14px;
       line-height: 20px;
       font-weight: 600;
-      color: #6e42e5;
+      color: #8342fe;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -754,7 +780,7 @@
 
       &:hover {
         background-color: #f7f5ff;
-        border-color: #6e42e5;
+        border-color: #8342fe;
       }
     }
   }
@@ -812,7 +838,7 @@
         top: 8px;
         left: 8px;
         z-index: 2;
-        background-color: #6e42e5;
+        background-color: #8342fe;
         color: #ffffff;
         font-size: 11px;
         line-height: 14px;
@@ -969,7 +995,7 @@
           font-size: 14px;
           line-height: 20px;
           font-weight: 600;
-          color: rgba(110, 66, 229, 1);
+          color: rgba(131, 66, 254, 1);
           white-space: nowrap;
         }
       }
@@ -1030,7 +1056,7 @@
         .uc-appliance-badge {
           top: 6px;
           left: 6px;
-          background-color: rgba(110, 66, 229, 1);
+          background-color: rgba(131, 66, 254, 1);
           color: #ffffff;
           font-size: 10px;
           line-height: 14px;
@@ -1155,7 +1181,7 @@
       font-size: 14px;
       line-height: 20px;
       font-weight: 600;
-      color: #6e42e5;
+      color: #8342fe;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -1166,7 +1192,7 @@
 
       &:hover {
         background-color: #f7f5ff;
-        border-color: #6e42e5;
+        border-color: #8342fe;
       }
     }
   }
@@ -1224,7 +1250,7 @@
         top: 8px;
         left: 8px;
         z-index: 2;
-        background-color: #6e42e5;
+        background-color: #8342fe;
         color: #ffffff;
         font-size: 11px;
         line-height: 14px;
@@ -1387,7 +1413,7 @@
           font-size: 14px;
           line-height: 20px;
           font-weight: 600;
-          color: rgba(110, 66, 229, 1);
+          color: rgba(131, 66, 254, 1);
           white-space: nowrap;
         }
       }
@@ -1442,7 +1468,7 @@
         .uc-home-repairs-badge {
           top: 6px;
           left: 6px;
-          background-color: rgba(110, 66, 229, 1);
+          background-color: rgba(131, 66, 254, 1);
           color: #ffffff;
           font-size: 10px;
           line-height: 14px;
@@ -1605,8 +1631,8 @@
 
 }
 
-/* Mobile Responsiveness */
-@media (max-width: 1024px) {
+/* Tablet: stack the card and video (mobile is handled by the <=768px block above) */
+@media (min-width: 769px) and (max-width: 1024px) {
   .uc-category-grid-section {
     .uc-category-grid-container {
       flex-direction: column;
@@ -1719,7 +1745,7 @@
 
   &.active {
     .uc-review-avatar {
-      border-color: #6e42e5;
+      border-color: #8342fe;
 
       svg {
         fill: #0f0f0f;
@@ -1727,7 +1753,7 @@
     }
 
     .uc-review-name {
-      color: #6e42e5;
+      color: #8342fe;
     }
   }
 

@@ -78,11 +78,10 @@
       </div>
     </div>
 
-    <!-- Right Side Hero Video (same top + height as the card) -->
+    <!-- Right Side Hero Video (same top + height as the card; stacks below the card on mobile) -->
     <div class="uc-category-grid-media">
-      <!-- Desktop only (hidden on mobile, so don't download it there). Muted + playsinline are required for autoplay; [muted] sets the DOM property -->
+      <!-- Muted + playsinline are required for autoplay; [muted] sets the DOM property -->
       <video
-        *ngIf="!isMobile"
         class="uc-hero-video"
         [src]="heroVideo"
         autoplay
