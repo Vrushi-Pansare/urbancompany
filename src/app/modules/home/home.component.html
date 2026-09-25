@@ -1,42 +1,38 @@
 <section class="uc-category-grid-section" id="categoryGridSection">
+  <!-- Main Title (centered above the card and video) -->
+  <h1 class="uc-main-heading">Home services at your doorstep</h1>
+
   <div class="uc-category-grid-container">
     <div class="uc-category-grid-content">
-      <!-- Main Title (Above Card) -->
-      <h1 class="uc-main-heading">Home services at your doorstep</h1>
-
       <!-- Single Unified White Card Container (Matches 1st Image) -->
       <div class="uc-unified-card">
         <!-- Services Grid (4x2) -->
         <div class="uc-services-grid">
-          <div *ngFor="let item of categories" class="uc-service-card">
+          <div
+            *ngFor="let item of displayCategories"
+            class="uc-service-card"
+            role="button"
+            tabindex="0"
+            (click)="openCategory(item)"
+            (keydown.enter)="openCategory(item)"
+          >
             <div class="uc-service-img-wrap">
               <span *ngIf="item.timeBadge" class="uc-time-badge">
                 {{ item.timeBadge }}
               </span>
               <img
+                *ngIf="item.image; else categoryIcon"
                 [src]="item.image"
                 [alt]="item.name"
                 class="uc-service-img"
               />
+
+              <!-- Line icon for listing categories without an image -->
+              <ng-template #categoryIcon>
+                <app-service-icon [code]="item.id"></app-service-icon>
+              </ng-template>
             </div>
             <span class="uc-service-name">{{ item.name }}</span>
-          </div>
-        </div>
-
-        <!-- Native Smart Products Inside Same Card -->
-        <div class="uc-smart-products-section">
-          <h2 class="uc-sub-heading">Native Smart Products</h2>
-          <div class="uc-smart-products-grid">
-            <div *ngFor="let prod of smartProducts" class="uc-smart-card">
-              <div class="uc-smart-img-wrap">
-                <img
-                  [src]="prod.image"
-                  [alt]="prod.name"
-                  class="uc-smart-img"
-                />
-              </div>
-              <span class="uc-smart-name">{{ prod.name }}</span>
-            </div>
           </div>
         </div>
       </div>
@@ -82,999 +78,88 @@
       </div>
     </div>
 
-    <!-- Right Side Hero Media Image Collage -->
+    <!-- Right Side Hero Video (same top + height as the card) -->
     <div class="uc-category-grid-media">
-      <img
-        [src]="heroMediaImage"
-        alt="Home services at your doorstep"
-        class="uc-hero-media-img"
-      />
+      <!-- Desktop only (hidden on mobile, so don't download it there). Muted + playsinline are required for autoplay; [muted] sets the DOM property -->
+      <video
+        *ngIf="!isMobile"
+        class="uc-hero-video"
+        [src]="heroVideo"
+        autoplay
+        muted
+        [muted]="true"
+        loop
+        playsinline
+        preload="auto"
+        aria-label="Urban Company professionals at work"
+      ></video>
     </div>
   </div>
 </section>
 
-<!-- In the Spotlight Banner Carousel -->
-<section class="uc-spotlight-section" id="spotlightSection">
-  <div class="uc-spotlight-container">
-    <h2 class="uc-spotlight-heading">In the spotlight</h2>
-    <div class="uc-spotlight-carousel-wrap">
-      <!-- Left Arrow -->
-      <button
-        *ngIf="canScrollLeft"
-        class="uc-carousel-arrow uc-carousel-arrow--left"
-        id="spotlightArrowLeft"
-        (click)="scrollCarousel('left')"
-        aria-label="Scroll left"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          fill="#0F0F0F"
-          viewBox="0 0 16 16"
-        >
-          <path
-            fill="#0F0F0F"
-            fill-rule="evenodd"
-            d="M6.47 2.97l-4.5 4.5a.75.75 0 000 1.06l4.5 4.5 1.06-1.06-3.22-3.22h9.19v-1.5H4.31l3.22-3.22-1.06-1.06z"
-            clip-rule="evenodd"
-          />
-        </svg>
-      </button>
+<!-- Popular Categories (unique categories of items tagged "popular") -->
+<section class="uc-popular-section" id="popularCategoriesSection" *ngIf="popularCategories.length">
+  <div class="uc-popular-container">
+    <h2 class="uc-popular-heading">Popular Categories</h2>
 
-      <!-- Track -->
-      <div
-        class="uc-spotlight-track-wrap"
-        #spotlightTrack
-        (scroll)="onCarouselScroll()"
+    <div class="uc-popular-grid">
+      <button
+        *ngFor="let item of popularCategories"
+        type="button"
+        class="uc-popular-card"
+        (click)="openCategory(item)"
       >
-        <div class="uc-spotlight-track">
-          <ng-container *ngFor="let banner of displaySpotlightBanners">
-            <a
-              *ngIf="banner.link; else noLink"
-              [href]="banner.link"
-              class="uc-spotlight-card"
-              [id]="banner.id"
-              target="_blank"
-              rel="noopener"
-            >
-              <img
-                [src]="banner.image"
-                [alt]="banner.alt"
-                class="uc-spotlight-img"
-              />
-            </a>
-            <ng-template #noLink>
-              <div class="uc-spotlight-card" [id]="banner.id">
-                <img
-                  [src]="banner.image"
-                  [alt]="banner.alt"
-                  class="uc-spotlight-img"
-                />
-              </div>
-            </ng-template>
-          </ng-container>
+        <div class="uc-popular-img-wrap">
+          <img *ngIf="item.image; else popularIcon" [src]="item.image" [alt]="item.name" class="uc-popular-img" />
+          <ng-template #popularIcon>
+            <app-service-icon [code]="item.id"></app-service-icon>
+          </ng-template>
         </div>
-      </div>
-
-      <!-- Right Arrow -->
-      <button
-        *ngIf="canScrollRight"
-        class="uc-carousel-arrow uc-carousel-arrow--right"
-        id="spotlightArrowRight"
-        (click)="scrollCarousel('right')"
-        aria-label="Scroll right"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          fill="#0F0F0F"
-          viewBox="0 0 16 16"
-        >
-          <path
-            fill="#0F0F0F"
-            fill-rule="evenodd"
-            d="M11.69 8.75H2.5v-1.5h9.19L8.47 4.03l1.06-1.06 4.5 4.5a.75.75 0 010 1.06l-4.5 4.5-1.06-1.06 3.22-3.22z"
-            clip-rule="evenodd"
-          />
-        </svg>
-      </button>
-    </div>
-
-    <!-- Mobile Scroll Indicator Bar -->
-    <div class="uc-scroll-indicator-wrap" data-testid="scrollIndicator">
-      <div class="uc-scroll-indicator-track">
-        <div
-          class="uc-scroll-indicator-thumb"
-          [style.transform]="'translateX(' + spotlightScrollProgress + 'px)'"
-        ></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- New and Noteworthy Section -->
-<section class="uc-noteworthy-section" id="noteworthySection">
-  <div class="uc-noteworthy-container">
-    <h2 class="uc-noteworthy-heading">New and noteworthy</h2>
-
-    <div class="uc-noteworthy-carousel-wrap">
-      <!-- Left Arrow -->
-      <button
-        *ngIf="canScrollLeftNoteworthy"
-        class="uc-carousel-arrow uc-carousel-arrow--left"
-        id="noteworthyArrowLeft"
-        (click)="scrollNoteworthyCarousel('left')"
-        aria-label="Scroll left"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          fill="#0F0F0F"
-          viewBox="0 0 16 16"
-        >
-          <path
-            fill="#0F0F0F"
-            fill-rule="evenodd"
-            d="M6.47 2.97l-4.5 4.5a.75.75 0 000 1.06l4.5 4.5 1.06-1.06-3.22-3.22h9.19v-1.5H4.31l3.22-3.22-1.06-1.06z"
-            clip-rule="evenodd"
-          />
-        </svg>
-      </button>
-
-      <!-- Track -->
-      <div
-        class="uc-noteworthy-track-wrap"
-        #noteworthyTrack
-        (scroll)="onNoteworthyScroll()"
-      >
-        <div class="uc-noteworthy-track">
-          <div
-            *ngFor="let item of displayNoteworthyItems"
-            class="uc-noteworthy-card"
-            [id]="item.id"
-          >
-            <a
-              *ngIf="item.link; else noLinkCard"
-              [href]="item.link"
-              class="uc-noteworthy-card-link"
-              target="_blank"
-              rel="noopener"
-            >
-              <div class="uc-noteworthy-img-wrap">
-                <span *ngIf="item.badge" class="uc-noteworthy-badge">{{
-                  item.badge
-                }}</span>
-                <img
-                  [src]="item.image"
-                  [alt]="item.title"
-                  class="uc-noteworthy-img"
-                />
-              </div>
-              <div class="uc-noteworthy-title-wrap">
-                <span class="uc-noteworthy-title">{{ item.title }}</span>
-                <div *ngIf="item.timeInfo" class="uc-noteworthy-time-info">
-                  <svg
-                    width="12"
-                    height="12"
-                    viewBox="0 0 12 12"
-                    fill="#07794C"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M1.576 7.77a.2.2 0 01-.16-.32L6.609.546a.2.2 0 01.36.11l.19 3.384a.2.2 0 00.2.19h3.067a.2.2 0 01.16.32l-5.192 6.903a.2.2 0 01-.36-.109l-.19-3.385a.2.2 0 00-.199-.189H1.576z"
-                      fill="#07794C"
-                    />
-                  </svg>
-                  <span>{{ item.timeInfo }}</span>
-                </div>
-              </div>
-            </a>
-            <ng-template #noLinkCard>
-              <div class="uc-noteworthy-card-inner">
-                <div class="uc-noteworthy-img-wrap">
-                  <span *ngIf="item.badge" class="uc-noteworthy-badge">{{
-                    item.badge
-                  }}</span>
-                  <img
-                    [src]="item.image"
-                    [alt]="item.title"
-                    class="uc-noteworthy-img"
-                  />
-                </div>
-                <div class="uc-noteworthy-title-wrap">
-                  <span class="uc-noteworthy-title">{{ item.title }}</span>
-                  <div *ngIf="item.timeInfo" class="uc-noteworthy-time-info">
-                    <svg
-                      width="12"
-                      height="12"
-                      viewBox="0 0 12 12"
-                      fill="#07794C"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M1.576 7.77a.2.2 0 01-.16-.32L6.609.546a.2.2 0 01.36.11l.19 3.384a.2.2 0 00.2.19h3.067a.2.2 0 01.16.32l-5.192 6.903a.2.2 0 01-.36-.109l-.19-3.385a.2.2 0 00-.199-.189H1.576z"
-                        fill="#07794C"
-                      />
-                    </svg>
-                    <span>{{ item.timeInfo }}</span>
-                  </div>
-                </div>
-              </div>
-            </ng-template>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right Arrow -->
-      <button
-        *ngIf="canScrollRightNoteworthy"
-        class="uc-carousel-arrow uc-carousel-arrow--right"
-        id="noteworthyArrowRight"
-        (click)="scrollNoteworthyCarousel('right')"
-        aria-label="Scroll right"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          fill="#0F0F0F"
-          viewBox="0 0 16 16"
-        >
-          <path
-            fill="#0F0F0F"
-            fill-rule="evenodd"
-            d="M11.69 8.75H2.5v-1.5h9.19L8.47 4.03l1.06-1.06 4.5 4.5a.75.75 0 010 1.06l-4.5 4.5-1.06-1.06 3.22-3.22z"
-            clip-rule="evenodd"
-          />
-        </svg>
+        <span class="uc-popular-name">{{ item.name }}</span>
       </button>
     </div>
   </div>
 </section>
 
-<!-- Most Booked Services Section -->
-<section class="uc-most-booked-section" id="mostBookedSection">
-  <div class="uc-most-booked-container">
-    <h2 class="uc-most-booked-heading">Most booked services</h2>
-
-    <div class="uc-most-booked-carousel-wrap">
-      <!-- Left Arrow -->
-      <button
-        *ngIf="canScrollLeftMostBooked"
-        class="uc-carousel-arrow uc-carousel-arrow--left"
-        id="mostBookedArrowLeft"
-        (click)="scrollMostBookedCarousel('left')"
-        aria-label="Scroll left"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          fill="#0F0F0F"
-          viewBox="0 0 16 16"
-        >
-          <path
-            fill="#0F0F0F"
-            fill-rule="evenodd"
-            d="M6.47 2.97l-4.5 4.5a.75.75 0 000 1.06l4.5 4.5 1.06-1.06-3.22-3.22h9.19v-1.5H4.31l3.22-3.22-1.06-1.06z"
-            clip-rule="evenodd"
-          />
-        </svg>
-      </button>
-
-      <!-- Track -->
-      <div
-        class="uc-most-booked-track-wrap"
-        #mostBookedTrack
-        (scroll)="onMostBookedScroll()"
-      >
-        <div class="uc-most-booked-track">
-          <div
-            *ngFor="let item of displayMostBookedServices"
-            class="uc-most-booked-card"
-            [id]="item.id"
-          >
-            <a
-              *ngIf="item.link; else noLinkCard"
-              [href]="item.link"
-              class="uc-most-booked-card-link"
-              target="_blank"
-              rel="noopener"
-            >
-              <div class="uc-most-booked-img-wrap">
-                <img
-                  [src]="item.image"
-                  [alt]="item.title"
-                  class="uc-most-booked-img"
-                />
-              </div>
-              <div class="uc-most-booked-info">
-                <span class="uc-most-booked-title">{{ item.title }}</span>
-
-                <div class="uc-most-booked-rating-row">
-                  <svg
-                    class="uc-star-icon"
-                    width="12"
-                    height="12"
-                    viewBox="0 0 24 24"
-                    fill="#545454"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M12.923 2.616a1 1 0 00-1.846 0l-2.41 5.795-6.257.502a1 1 0 00-.571 1.756l4.767 4.084-1.457 6.105a1 1 0 001.494 1.086L12 18.672l5.357 3.272a1 1 0 001.494-1.086l-1.457-6.105 4.767-4.084a1 1 0 00-.57-1.756l-6.257-.502-2.41-5.795z"
-                      fill="#545454"
-                    />
-                  </svg>
-                  <span class="uc-rating-num">{{ item.rating }}</span>
-
-                  <ng-container *ngIf="item.isInstant">
-                    <span class="uc-rating-dot">•</span>
-                    <svg
-                      width="12"
-                      height="12"
-                      viewBox="0 0 12 12"
-                      fill="#07794C"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M1.576 7.77a.2.2 0 01-.16-.32L6.609.546a.2.2 0 01.36.11l.19 3.384a.2.2 0 00.2.19h3.067a.2.2 0 01.16.32l-5.192 6.903a.2.2 0 01-.36-.109l-.19-3.385a.2.2 0 00-.199-.189H1.576z"
-                        fill="#07794C"
-                      />
-                    </svg>
-                    <span class="uc-instant-badge">Instant</span>
-                  </ng-container>
-                </div>
-
-                <div class="uc-most-booked-price-row">
-                  <span class="uc-price-val">{{ item.price }}</span>
-                  <span *ngIf="item.originalPrice" class="uc-orig-price-val">{{
-                    item.originalPrice
-                  }}</span>
-                </div>
-              </div>
-            </a>
-
-            <ng-template #noLinkCard>
-              <div class="uc-most-booked-card-inner">
-                <div class="uc-most-booked-img-wrap">
-                  <img
-                    [src]="item.image"
-                    [alt]="item.title"
-                    class="uc-most-booked-img"
-                  />
-                </div>
-                <div class="uc-most-booked-info">
-                  <span class="uc-most-booked-title">{{ item.title }}</span>
-
-                  <div class="uc-most-booked-rating-row">
-                    <svg
-                      class="uc-star-icon"
-                      width="12"
-                      height="12"
-                      viewBox="0 0 24 24"
-                      fill="#545454"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M12.923 2.616a1 1 0 00-1.846 0l-2.41 5.795-6.257.502a1 1 0 00-.571 1.756l4.767 4.084-1.457 6.105a1 1 0 001.494 1.086L12 18.672l5.357 3.272a1 1 0 001.494-1.086l-1.457-6.105 4.767-4.084a1 1 0 00-.57-1.756l-6.257-.502-2.41-5.795z"
-                        fill="#545454"
-                      />
-                    </svg>
-                    <span class="uc-rating-num">{{ item.rating }}</span>
-
-                    <ng-container *ngIf="item.isInstant">
-                      <span class="uc-rating-dot">•</span>
-                      <svg
-                        width="12"
-                        height="12"
-                        viewBox="0 0 12 12"
-                        fill="#07794C"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M1.576 7.77a.2.2 0 01-.16-.32L6.609.546a.2.2 0 01.36.11l.19 3.384a.2.2 0 00.2.19h3.067a.2.2 0 01.16.32l-5.192 6.903a.2.2 0 01-.36-.109l-.19-3.385a.2.2 0 00-.199-.189H1.576z"
-                          fill="#07794C"
-                        />
-                      </svg>
-                      <span class="uc-instant-badge">Instant</span>
-                    </ng-container>
-                  </div>
-
-                  <div class="uc-most-booked-price-row">
-                    <span class="uc-price-val">{{ item.price }}</span>
-                    <span
-                      *ngIf="item.originalPrice"
-                      class="uc-orig-price-val"
-                      >{{ item.originalPrice }}</span
-                    >
-                  </div>
-                </div>
-              </div>
-            </ng-template>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right Arrow -->
-      <button
-        *ngIf="canScrollRightMostBooked"
-        class="uc-carousel-arrow uc-carousel-arrow--right"
-        id="mostBookedArrowRight"
-        (click)="scrollMostBookedCarousel('right')"
-        aria-label="Scroll right"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          fill="#0F0F0F"
-          viewBox="0 0 16 16"
-        >
-          <path
-            fill="#0F0F0F"
-            fill-rule="evenodd"
-            d="M11.69 8.75H2.5v-1.5h9.19L8.47 4.03l1.06-1.06 4.5 4.5a.75.75 0 010 1.06l-4.5 4.5-1.06-1.06 3.22-3.22z"
-            clip-rule="evenodd"
-          />
-        </svg>
-      </button>
-    </div>
-
-    <!-- Mobile Banner below Most Booked Cards -->
-    <div class="uc-most-booked-mobile-banner">
-      <img
-        src="assets/clean.jpeg"
-        alt="Bathroom Cleaning"
-        class="uc-most-booked-banner-img"
-      />
-    </div>
+<!-- Popular Services (listing items tagged "popular") -->
+<section class="uc-popular-section uc-popular-services" id="popularServicesSection" *ngIf="popularServices.length">
+  <div class="uc-popular-container">
+    <h2 class="uc-popular-heading">Popular Services</h2>
+    <ng-container *ngTemplateOutlet="serviceCards; context: { $implicit: popularServices }"></ng-container>
   </div>
 </section>
 
-<!-- Salon for Women Section -->
-<section class="uc-salon-women-section" id="salonWomenSection">
-  <div class="uc-salon-women-container">
-    <div class="uc-salon-women-header">
-      <div class="uc-salon-women-title-group">
-        <h2 class="uc-salon-women-heading">Salon for Women</h2>
-        <p class="uc-salon-women-subheading">Pamper yourself at home</p>
-      </div>
-      <button
-        class="uc-see-all-btn"
-        aria-label="See all Salon for Women services"
-      >
-        <span>See all</span>
-      </button>
-    </div>
+<!-- Recommended Services (listing items tagged "recommended") -->
+<section class="uc-popular-section uc-popular-services" id="recommendedServicesSection" *ngIf="recommendedServices.length">
+  <div class="uc-popular-container">
+    <h2 class="uc-popular-heading">Recommended Services</h2>
+    <ng-container *ngTemplateOutlet="serviceCards; context: { $implicit: recommendedServices }"></ng-container>
+  </div>
+</section>
 
-    <div class="uc-salon-women-carousel-wrap">
-      <!-- Left Arrow -->
-      <button
-        *ngIf="canScrollLeftSalonWomen"
-        class="uc-carousel-arrow uc-carousel-arrow--left"
-        id="salonWomenArrowLeft"
-        (click)="scrollSalonWomenCarousel('left')"
-        aria-label="Scroll left"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          fill="#0F0F0F"
-          viewBox="0 0 16 16"
-        >
-          <path
-            fill="#0F0F0F"
-            fill-rule="evenodd"
-            d="M6.47 2.97l-4.5 4.5a.75.75 0 000 1.06l4.5 4.5 1.06-1.06-3.22-3.22h9.19v-1.5H4.31l3.22-3.22-1.06-1.06z"
-            clip-rule="evenodd"
-          />
-        </svg>
-      </button>
-
-      <!-- Track -->
-      <div
-        class="uc-salon-women-track-wrap"
-        #salonWomenTrack
-        (scroll)="onSalonWomenScroll()"
-      >
-        <div class="uc-salon-women-track">
-          <div
-            *ngFor="let item of salonWomenServices"
-            class="uc-salon-women-card"
-            [id]="item.id"
-          >
-            <a
-              *ngIf="item.link; else noLinkSalonWomen"
-              [href]="item.link"
-              class="uc-salon-women-card-link"
-              target="_blank"
-              rel="noopener"
-            >
-              <div class="uc-salon-women-img-wrap">
-                <span *ngIf="item.badge" class="uc-salon-women-badge">{{
-                  item.badge
-                }}</span>
-                <img
-                  [src]="item.image"
-                  [alt]="item.title"
-                  class="uc-salon-women-img"
-                />
-              </div>
-              <div class="uc-salon-women-info">
-                <span class="uc-salon-women-title">{{ item.title }}</span>
-
-                <div class="uc-salon-women-rating-row">
-                  <svg
-                    class="uc-star-icon"
-                    width="12"
-                    height="12"
-                    viewBox="0 0 24 24"
-                    fill="#545454"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M12.923 2.616a1 1 0 00-1.846 0l-2.41 5.795-6.257.502a1 1 0 00-.571 1.756l4.767 4.084-1.457 6.105a1 1 0 001.494 1.086L12 18.672l5.357 3.272a1 1 0 001.494-1.086l-1.457-6.105 4.767-4.084a1 1 0 00-.57-1.756l-6.257-.502-2.41-5.795z"
-                      fill="#545454"
-                    />
-                  </svg>
-                  <span class="uc-rating-num">{{ item.rating }}</span>
-
-                  <ng-container *ngIf="item.isInstant">
-                    <span class="uc-rating-dot">•</span>
-                    <svg
-                      width="12"
-                      height="12"
-                      viewBox="0 0 12 12"
-                      fill="#07794C"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M1.576 7.77a.2.2 0 01-.16-.32L6.609.546a.2.2 0 01.36.11l.19 3.384a.2.2 0 00.2.19h3.067a.2.2 0 01.16.32l-5.192 6.903a.2.2 0 01-.36-.109l-.19-3.385a.2.2 0 00-.199-.189H1.576z"
-                        fill="#07794C"
-                      />
-                    </svg>
-                    <span class="uc-instant-badge">Instant</span>
-                  </ng-container>
-                </div>
-
-                <div class="uc-salon-women-price-row">
-                  <span class="uc-price-val">{{ item.price }}</span>
-                  <span *ngIf="item.originalPrice" class="uc-orig-price-val">{{
-                    item.originalPrice
-                  }}</span>
-                </div>
-              </div>
-            </a>
-
-            <ng-template #noLinkSalonWomen>
-              <div class="uc-salon-women-card-inner">
-                <div class="uc-salon-women-img-wrap">
-                  <span *ngIf="item.badge" class="uc-salon-women-badge">{{
-                    item.badge
-                  }}</span>
-                  <img
-                    [src]="item.image"
-                    [alt]="item.title"
-                    class="uc-salon-women-img"
-                  />
-                </div>
-                <div class="uc-salon-women-info">
-                  <span class="uc-salon-women-title">{{ item.title }}</span>
-
-                  <div class="uc-salon-women-rating-row">
-                    <svg
-                      class="uc-star-icon"
-                      width="12"
-                      height="12"
-                      viewBox="0 0 24 24"
-                      fill="#545454"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M12.923 2.616a1 1 0 00-1.846 0l-2.41 5.795-6.257.502a1 1 0 00-.571 1.756l4.767 4.084-1.457 6.105a1 1 0 001.494 1.086L12 18.672l5.357 3.272a1 1 0 001.494-1.086l-1.457-6.105 4.767-4.084a1 1 0 00-.57-1.756l-6.257-.502-2.41-5.795z"
-                        fill="#545454"
-                      />
-                    </svg>
-                    <span class="uc-rating-num">{{ item.rating }}</span>
-
-                    <ng-container *ngIf="item.isInstant">
-                      <span class="uc-rating-dot">•</span>
-                      <svg
-                        width="12"
-                        height="12"
-                        viewBox="0 0 12 12"
-                        fill="#07794C"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M1.576 7.77a.2.2 0 01-.16-.32L6.609.546a.2.2 0 01.36.11l.19 3.384a.2.2 0 00.2.19h3.067a.2.2 0 01.16.32l-5.192 6.903a.2.2 0 01-.36-.109l-.19-3.385a.2.2 0 00-.199-.189H1.576z"
-                          fill="#07794C"
-                        />
-                      </svg>
-                      <span class="uc-instant-badge">Instant</span>
-                    </ng-container>
-                  </div>
-
-                  <div class="uc-salon-women-price-row">
-                    <span class="uc-price-val">{{ item.price }}</span>
-                    <span *ngIf="item.originalPrice" class="uc-orig-price-val">{{
-                      item.originalPrice
-                    }}</span>
-                  </div>
-                </div>
-              </div>
-            </ng-template>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right Arrow -->
-      <button
-        *ngIf="canScrollRightSalonWomen"
-        class="uc-carousel-arrow uc-carousel-arrow--right"
-        id="salonWomenArrowRight"
-        (click)="scrollSalonWomenCarousel('right')"
-        aria-label="Scroll right"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          fill="#0F0F0F"
-          viewBox="0 0 16 16"
-        >
-          <path
-            fill="#0F0F0F"
-            fill-rule="evenodd"
-            d="M11.69 8.75H2.5v-1.5h9.19L8.47 4.03l1.06-1.06 4.5 4.5a.75.75 0 010 1.06l-4.5 4.5-1.06-1.06 3.22-3.22z"
-            clip-rule="evenodd"
-          />
-        </svg>
-      </button>
-    </div>
-
-    <!-- Mobile Banners below Salon for Women Cards (Only Mobile) -->
-    <div class="uc-salon-women-mobile-banners" *ngIf="isMobile">
-      <div class="uc-salon-women-banner-item">
+<!-- Service card grid shared by Popular / Recommended Services -->
+<ng-template #serviceCards let-services>
+  <div class="uc-popular-grid">
+    <a *ngFor="let service of services" class="uc-popular-card uc-service-card-link" [routerLink]="service.link">
+      <div class="uc-popular-img-wrap">
         <img
-          src="https://www.urbancompany.com/img/images/supply/customer-app-supply/1784538559119-38bddb.jpeg?bucket=urbanclap-prod&quality=90&format=auto&width=600&dpr=2"
-          alt="Urban Company Spotlight"
-          class="uc-salon-women-banner-img"
+          *ngIf="service.image; else serviceIcon"
+          [src]="service.image"
+          [alt]="service.title"
+          class="uc-popular-img"
+          loading="lazy"
+          decoding="async"
         />
+        <ng-template #serviceIcon>
+          <app-service-icon [code]="service.link[1]"></app-service-icon>
+        </ng-template>
       </div>
-      <div class="uc-salon-women-banner-item">
-        <img
-          src="https://www.urbancompany.com/img/images/supply/customer-app-supply/1784720038770-ca85af.jpeg?bucket=urbanclap-prod&quality=90&format=auto&width=600&dpr=2"
-          alt="Full Home/ By Room Cleaning"
-          class="uc-salon-women-banner-img"
-        />
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Revamp your space with Section -->
-<section class="uc-revamp-section" id="revampSection">
-  <div class="uc-revamp-container">
-    <h2 class="uc-revamp-heading">Revamp your space with</h2>
-
-    <div class="uc-revamp-carousel-wrap">
-      <!-- Left Arrow -->
-      <button
-        *ngIf="canScrollLeftRevamp"
-        class="uc-carousel-arrow uc-carousel-arrow--left"
-        id="revampArrowLeft"
-        (click)="scrollRevampCarousel('left')"
-        aria-label="Scroll left"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          fill="#0F0F0F"
-          viewBox="0 0 16 16"
-        >
-          <path
-            fill="#0F0F0F"
-            fill-rule="evenodd"
-            d="M6.47 2.97l-4.5 4.5a.75.75 0 000 1.06l4.5 4.5 1.06-1.06-3.22-3.22h9.19v-1.5H4.31l3.22-3.22-1.06-1.06z"
-            clip-rule="evenodd"
-          />
-        </svg>
-      </button>
-
-      <!-- Track -->
-      <div
-        class="uc-revamp-track-wrap"
-        #revampTrack
-        (scroll)="onRevampScroll()"
-      >
-        <div class="uc-revamp-track">
-          <ng-container *ngFor="let banner of revampBanners">
-            <a
-              *ngIf="banner.link; else noLinkBanner"
-              [href]="banner.link"
-              class="uc-revamp-card"
-              [id]="banner.id"
-              target="_blank"
-              rel="noopener"
-            >
-              <img
-                [src]="banner.image"
-                [alt]="banner.alt"
-                class="uc-revamp-img"
-              />
-            </a>
-            <ng-template #noLinkBanner>
-              <div class="uc-revamp-card" [id]="banner.id">
-                <img
-                  [src]="banner.image"
-                  [alt]="banner.alt"
-                  class="uc-revamp-img"
-                />
-              </div>
-            </ng-template>
-          </ng-container>
-        </div>
-      </div>
-
-      <!-- Right Arrow -->
-      <button
-        *ngIf="canScrollRightRevamp"
-        class="uc-carousel-arrow uc-carousel-arrow--right"
-        id="revampArrowRight"
-        (click)="scrollRevampCarousel('right')"
-        aria-label="Scroll right"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          fill="#0F0F0F"
-          viewBox="0 0 16 16"
-        >
-          <path
-            fill="#0F0F0F"
-            fill-rule="evenodd"
-            d="M11.69 8.75H2.5v-1.5h9.19L8.47 4.03l1.06-1.06 4.5 4.5a.75.75 0 010 1.06l-4.5 4.5-1.06-1.06 3.22-3.22z"
-            clip-rule="evenodd"
-          />
-        </svg>
-      </button>
-    </div>
-  </div>
-</section>
-
-<!-- Full Width Spotlight Massage Banner Section -->
-<section class="uc-spotlight-banner-section" id="spotlightMassageSection">
-  <div class="uc-spotlight-banner-container">
-    <div class="uc-spotlight-banner-card">
-      <img
-        [src]="spotlightMassageBanner.image"
-        [alt]="spotlightMassageBanner.alt"
-        class="uc-spotlight-banner-img"
-      />
-    </div>
-  </div>
-</section>
-
-<!-- Full Width Spotlight Cleaning Banner Section -->
-<section class="uc-spotlight-banner-section" id="spotlightCleaningSection">
-  <div class="uc-spotlight-banner-container">
-    <a
-      [href]="spotlightCleaningBanner.link"
-      class="uc-spotlight-banner-card"
-      target="_blank"
-      rel="noopener"
-    >
-      <img
-        [src]="spotlightCleaningBanner.image"
-        [alt]="spotlightCleaningBanner.alt"
-        class="uc-spotlight-banner-img"
-      />
+      <span class="uc-popular-name">{{ service.title }}</span>
+      <span class="uc-popular-meta">{{ service.groupName }}</span>
+      <span class="uc-popular-price">{{ service.price }}</span>
     </a>
   </div>
-</section>
-
-<!-- Spa for Women Section -->
-<section class="uc-spa-section" id="spaWomenSection">
-  <div class="uc-spa-container">
-    <div class="uc-spa-header">
-      <h2 class="uc-spa-heading">Spa for Women</h2>
-      <button
-        class="uc-see-all-btn"
-        aria-label="See all Spa for Women services"
-      >
-        <span>See all</span>
-      </button>
-    </div>
-
-    <div class="uc-spa-carousel-wrap">
-      <!-- Left Arrow -->
-      <button
-        *ngIf="canScrollLeftSpa"
-        class="uc-carousel-arrow uc-carousel-arrow--left"
-        id="spaArrowLeft"
-        (click)="scrollSpaCarousel('left')"
-        aria-label="Scroll left"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          fill="#0F0F0F"
-          viewBox="0 0 16 16"
-        >
-          <path
-            fill="#0F0F0F"
-            fill-rule="evenodd"
-            d="M6.47 2.97l-4.5 4.5a.75.75 0 000 1.06l4.5 4.5 1.06-1.06-3.22-3.22h9.19v-1.5H4.31l3.22-3.22-1.06-1.06z"
-            clip-rule="evenodd"
-          />
-        </svg>
-      </button>
-
-      <!-- Track -->
-      <div class="uc-spa-track-wrap" #spaTrack (scroll)="onSpaScroll()">
-        <div class="uc-spa-track">
-          <div
-            *ngFor="let item of displaySpaServices"
-            class="uc-spa-card"
-            [id]="item.id"
-          >
-            <a
-              *ngIf="item.link; else noLinkCard"
-              [href]="item.link"
-              class="uc-spa-card-link"
-              target="_blank"
-              rel="noopener"
-            >
-              <div class="uc-spa-img-wrap">
-                <span *ngIf="item.badge" class="uc-spa-badge">{{
-                  item.badge
-                }}</span>
-                <img [src]="item.image" [alt]="item.title" class="uc-spa-img" />
-              </div>
-              <div class="uc-spa-info">
-                <span class="uc-spa-title">{{ item.title }}</span>
-
-                <div class="uc-spa-rating-row">
-                  <svg
-                    class="uc-star-icon"
-                    width="12"
-                    height="12"
-                    viewBox="0 0 24 24"
-                    fill="#545454"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M12.923 2.616a1 1 0 00-1.846 0l-2.41 5.795-6.257.502a1 1 0 00-.571 1.756l4.767 4.084-1.457 6.105a1 1 0 001.494 1.086L12 18.672l5.357 3.272a1 1 0 001.494-1.086l-1.457-6.105 4.767-4.084a1 1 0 00-.57-1.756l-6.257-.502-2.41-5.795z"
-                      fill="#545454"
-                    />
-                  </svg>
-                  <span class="uc-rating-num">{{ item.rating }}</span>
-
-                  <ng-container *ngIf="item.isInstant">
-                    <span class="uc-rating-dot">•</span>
-                    <svg
-                      width="12"
-                      height="12"
-                      viewBox="0 0 12 12"
-                      fill="#07794C"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M1.576 7.77a.2.2 0 01-.16-.32L6.609.546a.2.2 0 01.36.11l.19 3.384a.2.2 0 00.2.19h3.067a.2.2 0 01.16.32l-5.192 6.903a.2.2 0 01-.36-.109l-.19-3.385a.2.2 0 00-.199-.189H1.576z"
-                        fill="#07794C"
-                      />
-                    </svg>
-                    <span class="uc-instant-badge">Instant</span>
-                  </ng-container>
-                </div>
-
-                <div class="uc-spa-price-row">
-                  <span class="uc-price-val">{{ item.price }}</span>
-                  <span *ngIf="item.originalPrice" class="uc-orig-price-val">{{
-                    item.originalPrice
-                  }}</span>
-                </div>
-              </div>
-            </a>
-
-            <ng-template #noLinkCard>
-              <div class="uc-spa-card-inner">
-                <div class="uc-spa-img-wrap">
-                  <span *ngIf="item.badge" class="uc-spa-badge">{{
-                    item.badge
-                  }}</span>
-                  <img
-                    [src]="item.image"
-                    [alt]="item.title"
-                    class="uc-spa-img"
-                  />
-                </div>
-                <div class="uc-spa-info">
-                  <span class="uc-spa-title">{{ item.title }}</span>
-
-                  <div class="uc-spa-rating-row">
-                    <svg
-                      class="uc-star-icon"
-                      width="12"
-                      height="12"
-                      viewBox="0 0 24 24"
-                      fill="#545454"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M12.923 2.616a1 1 0 00-1.846 0l-2.41 5.795-6.257.502a1 1 0 00-.571 1.756l4.767 4.084-1.457 6.105a1 1 0 001.494 1.086L12 18.672l5.357 3.272a1 1 0 001.494-1.086l-1.457-6.105 4.767-4.084a1 1 0 00-.57-1.756l-6.257-.502-2.41-5.795z"
-                        fill="#545454"
-                      />
-                    </svg>
-                    <span class="uc-rating-num">{{ item.rating }}</span>
-
-                    <ng-container *ngIf="item.isInstant">
-                      <span class="uc-rating-dot">•</span>
-                      <svg
-                        width="12"
-                        height="12"
-                        viewBox="0 0 12 12"
-                        fill="#07794C"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M1.576 7.77a.2.2 0 01-.16-.32L6.609.546a.2.2 0 01.36.11l.19 3.384a.2.2 0 00.2.19h3.067a.2.2 0 01.16.32l-5.192 6.903a.2.2 0 01-.36-.109l-.19-3.385a.2.2 0 00-.199-.189H1.576z"
-                          fill="#07794C"
-                        />
-                      </svg>
-                      <span class="uc-instant-badge">Instant</span>
-                    </ng-container>
-                  </div>
-
-                  <div class="uc-spa-price-row">
-                    <span class="uc-price-val">{{ item.price }}</span>
-                    <span
-                      *ngIf="item.originalPrice"
-                      class="uc-orig-price-val"
-                      >{{ item.originalPrice }}</span
-                    >
-                  </div>
-                </div>
-              </div>
-            </ng-template>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right Arrow -->
-      <button
-        *ngIf="canScrollRightSpa"
-        class="uc-carousel-arrow uc-carousel-arrow--right"
-        id="spaArrowRight"
-        (click)="scrollSpaCarousel('right')"
-        aria-label="Scroll right"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          fill="#0F0F0F"
-          viewBox="0 0 16 16"
-        >
-          <path
-            fill="#0F0F0F"
-            fill-rule="evenodd"
-            d="M11.69 8.75H2.5v-1.5h9.19L8.47 4.03l1.06-1.06 4.5 4.5a.75.75 0 010 1.06l-4.5 4.5-1.06-1.06 3.22-3.22z"
-            clip-rule="evenodd"
-          />
-        </svg>
-      </button>
-    </div>
-  </div>
-</section>
+</ng-template>
 
 <!-- Cleaning Essentials Section (Mobile Only) -->
 <section class="uc-cleaning-essentials-section" id="cleaningEssentialsSection">
@@ -1280,20 +365,11 @@
         </svg>
       </button>
     </div>
-
-    <!-- Mobile Banner below Cleaning Essentials Cards -->
-    <div class="uc-cleaning-essentials-mobile-banner">
-      <img
-        src="assets/cleaning/walls-rooms-painting.jpeg"
-        alt="Walls &amp; Rooms Painting"
-        class="uc-cleaning-essentials-banner-img"
-      />
-    </div>
   </div>
 </section>
 
 <!-- Appliance repair & service Section -->
-<section class="uc-appliance-section" id="applianceRepairSection">
+<section class="uc-appliance-section" id="applianceRepairSection" *ngIf="applianceServices.length">
   <div class="uc-appliance-container">
     <div class="uc-appliance-header">
       <h2 class="uc-appliance-heading">Appliance repair &amp; service</h2>
@@ -1338,16 +414,14 @@
       >
         <div class="uc-appliance-track">
           <div
-            *ngFor="let item of displayApplianceServices"
+            *ngFor="let item of applianceServices"
             class="uc-appliance-card"
             [id]="item.id"
           >
             <a
-              *ngIf="item.link; else noLinkCard"
-              [href]="item.link"
+              *ngIf="item.route; else noLinkCard"
+              [routerLink]="item.route"
               class="uc-appliance-card-link"
-              target="_blank"
-              rel="noopener"
             >
               <div class="uc-appliance-img-wrap">
                 <span *ngIf="item.badge" class="uc-appliance-badge">{{
@@ -1362,7 +436,7 @@
               <div class="uc-appliance-info">
                 <span class="uc-appliance-title">{{ item.title }}</span>
 
-                <div class="uc-appliance-rating-row">
+                <div class="uc-appliance-rating-row" *ngIf="item.rating">
                   <svg
                     class="uc-star-icon"
                     width="12"
@@ -1420,7 +494,7 @@
                 <div class="uc-appliance-info">
                   <span class="uc-appliance-title">{{ item.title }}</span>
 
-                  <div class="uc-appliance-rating-row">
+                  <div class="uc-appliance-rating-row" *ngIf="item.rating">
                     <svg
                       class="uc-star-icon"
                       width="12"
@@ -1497,7 +571,7 @@
 </section>
 
 <!-- Home repair & installation Section -->
-<section class="uc-home-repairs-section" id="homeRepairsSection">
+<section class="uc-home-repairs-section" id="homeRepairsSection" *ngIf="homeRepairsServices.length">
   <div class="uc-home-repairs-container">
     <div class="uc-home-repairs-header">
       <h2 class="uc-home-repairs-heading">Home repair &amp; installation</h2>
@@ -1539,16 +613,14 @@
       >
         <div class="uc-home-repairs-track">
           <div
-            *ngFor="let item of displayHomeRepairsServices"
+            *ngFor="let item of homeRepairsServices"
             class="uc-home-repairs-card"
             [id]="item.id"
           >
             <a
-              *ngIf="item.link; else noLinkCard"
-              [href]="item.link"
+              *ngIf="item.route; else noLinkCard"
+              [routerLink]="item.route"
               class="uc-home-repairs-card-link"
-              target="_blank"
-              rel="noopener"
             >
               <div class="uc-home-repairs-img-wrap">
                 <span *ngIf="item.badge" class="uc-home-repairs-badge">{{
@@ -1563,7 +635,7 @@
               <div class="uc-home-repairs-info">
                 <span class="uc-home-repairs-title">{{ item.title }}</span>
 
-                <div class="uc-home-repairs-rating-row">
+                <div class="uc-home-repairs-rating-row" *ngIf="item.rating">
                   <svg
                     class="uc-star-icon"
                     width="12"
@@ -1621,7 +693,7 @@
                 <div class="uc-home-repairs-info">
                   <span class="uc-home-repairs-title">{{ item.title }}</span>
 
-                  <div class="uc-home-repairs-rating-row">
+                  <div class="uc-home-repairs-rating-row" *ngIf="item.rating">
                     <svg
                       class="uc-star-icon"
                       width="12"
@@ -1697,444 +769,37 @@
   </div>
 </section>
 
-<!-- Massage for Men Section -->
-<section class="uc-massage-men-section" id="massageMenSection">
-  <div class="uc-massage-men-container">
-    <div class="uc-massage-men-header">
-      <h2 class="uc-massage-men-heading">Massage for Men</h2>
-      <button
-        class="uc-see-all-btn"
-        aria-label="See all Massage for Men services"
-      >
-        <span>See all</span>
-      </button>
-    </div>
-
-    <div class="uc-massage-men-carousel-wrap">
-      <!-- Left Arrow -->
-      <button
-        *ngIf="canScrollLeftMassageMen"
-        class="uc-carousel-arrow uc-carousel-arrow--left"
-        id="massageMenArrowLeft"
-        (click)="scrollMassageMenCarousel('left')"
-        aria-label="Scroll left"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          fill="#0F0F0F"
-          viewBox="0 0 16 16"
-        >
-          <path
-            fill="#0F0F0F"
-            fill-rule="evenodd"
-            d="M6.47 2.97l-4.5 4.5a.75.75 0 000 1.06l4.5 4.5 1.06-1.06-3.22-3.22h9.19v-1.5H4.31l3.22-3.22-1.06-1.06z"
-            clip-rule="evenodd"
-          />
+<!-- Customer Reviews carousel (data: constants/reviews.ts — hidden while empty) -->
+<app-card-carousel
+  [items]="reviews"
+  heading="Loved by Customers"
+  subheading="Real reviews from real users"
+  sectionId="reviewsSection"
+>
+  <ng-template let-review let-active="active">
+    <div class="uc-review-card" [class.active]="active">
+      <div class="uc-review-stars" role="img" [attr.aria-label]="review.rating + ' out of 5 stars'">
+        <svg *ngFor="let star of stars" viewBox="0 0 24 24" [class.filled]="star <= review.rating" aria-hidden="true">
+          <path d="M12 2.5l2.94 5.96 6.58.96-4.76 4.64 1.12 6.55L12 17.52l-5.88 3.09 1.12-6.55L2.48 9.42l6.58-.96L12 2.5z" />
         </svg>
-      </button>
-
-      <!-- Track -->
-      <div
-        class="uc-massage-men-track-wrap"
-        #massageMenTrack
-        (scroll)="onMassageMenScroll()"
-      >
-        <div class="uc-massage-men-track">
-          <div
-            *ngFor="let item of displayMassageMenServices"
-            class="uc-massage-men-card"
-            [id]="item.id"
-          >
-            <a
-              *ngIf="item.link; else noLinkCard"
-              [href]="item.link"
-              class="uc-massage-men-card-link"
-              target="_blank"
-              rel="noopener"
-            >
-              <div class="uc-massage-men-img-wrap">
-                <span *ngIf="item.badge" class="uc-massage-men-badge">{{
-                  item.badge
-                }}</span>
-                <img
-                  [src]="item.image"
-                  [alt]="item.title"
-                  class="uc-massage-men-img"
-                />
-              </div>
-              <div class="uc-massage-men-info">
-                <span class="uc-massage-men-title">{{ item.title }}</span>
-
-                <div class="uc-massage-men-rating-row">
-                  <svg
-                    class="uc-star-icon"
-                    width="12"
-                    height="12"
-                    viewBox="0 0 24 24"
-                    fill="#545454"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M12.923 2.616a1 1 0 00-1.846 0l-2.41 5.795-6.257.502a1 1 0 00-.571 1.756l4.767 4.084-1.457 6.105a1 1 0 001.494 1.086L12 18.672l5.357 3.272a1 1 0 001.494-1.086l-1.457-6.105 4.767-4.084a1 1 0 00-.57-1.756l-6.257-.502-2.41-5.795z"
-                      fill="#545454"
-                    />
-                  </svg>
-                  <span class="uc-rating-num">{{ item.rating }}</span>
-
-                  <ng-container *ngIf="item.isInstant">
-                    <span class="uc-rating-dot">•</span>
-                    <svg
-                      width="12"
-                      height="12"
-                      viewBox="0 0 12 12"
-                      fill="#07794C"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M1.576 7.77a.2.2 0 01-.16-.32L6.609.546a.2.2 0 01.36.11l.19 3.384a.2.2 0 00.2.19h3.067a.2.2 0 01.16.32l-5.192 6.903a.2.2 0 01-.36-.109l-.19-3.385a.2.2 0 00-.199-.189H1.576z"
-                        fill="#07794C"
-                      />
-                    </svg>
-                    <span class="uc-instant-badge">Instant</span>
-                  </ng-container>
-                </div>
-
-                <div class="uc-massage-men-price-row">
-                  <span class="uc-price-val">{{ item.price }}</span>
-                  <span *ngIf="item.originalPrice" class="uc-orig-price-val">{{
-                    item.originalPrice
-                  }}</span>
-                </div>
-              </div>
-            </a>
-
-            <ng-template #noLinkCard>
-              <div class="uc-massage-men-card-inner">
-                <div class="uc-massage-men-img-wrap">
-                  <span *ngIf="item.badge" class="uc-massage-men-badge">{{
-                    item.badge
-                  }}</span>
-                  <img
-                    [src]="item.image"
-                    [alt]="item.title"
-                    class="uc-massage-men-img"
-                  />
-                </div>
-                <div class="uc-massage-men-info">
-                  <span class="uc-massage-men-title">{{ item.title }}</span>
-
-                  <div class="uc-massage-men-rating-row">
-                    <svg
-                      class="uc-star-icon"
-                      width="12"
-                      height="12"
-                      viewBox="0 0 24 24"
-                      fill="#545454"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M12.923 2.616a1 1 0 00-1.846 0l-2.41 5.795-6.257.502a1 1 0 00-.571 1.756l4.767 4.084-1.457 6.105a1 1 0 001.494 1.086L12 18.672l5.357 3.272a1 1 0 001.494-1.086l-1.457-6.105 4.767-4.084a1 1 0 00-.57-1.756l-6.257-.502-2.41-5.795z"
-                        fill="#545454"
-                      />
-                    </svg>
-                    <span class="uc-rating-num">{{ item.rating }}</span>
-
-                    <ng-container *ngIf="item.isInstant">
-                      <span class="uc-rating-dot">•</span>
-                      <svg
-                        width="12"
-                        height="12"
-                        viewBox="0 0 12 12"
-                        fill="#07794C"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M1.576 7.77a.2.2 0 01-.16-.32L6.609.546a.2.2 0 01.36.11l.19 3.384a.2.2 0 00.2.19h3.067a.2.2 0 01.16.32l-5.192 6.903a.2.2 0 01-.36-.109l-.19-3.385a.2.2 0 00-.199-.189H1.576z"
-                          fill="#07794C"
-                        />
-                      </svg>
-                      <span class="uc-instant-badge">Instant</span>
-                    </ng-container>
-                  </div>
-
-                  <div class="uc-massage-men-price-row">
-                    <span class="uc-price-val">{{ item.price }}</span>
-                    <span
-                      *ngIf="item.originalPrice"
-                      class="uc-orig-price-val"
-                      >{{ item.originalPrice }}</span
-                    >
-                  </div>
-                </div>
-              </div>
-            </ng-template>
-          </div>
-        </div>
       </div>
-
-      <!-- Right Arrow -->
-      <button
-        *ngIf="canScrollRightMassageMen"
-        class="uc-carousel-arrow uc-carousel-arrow--right"
-        id="massageMenArrowRight"
-        (click)="scrollMassageMenCarousel('right')"
-        aria-label="Scroll right"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          fill="#0F0F0F"
-          viewBox="0 0 16 16"
-        >
-          <path
-            fill="#0F0F0F"
-            fill-rule="evenodd"
-            d="M11.69 8.75H2.5v-1.5h9.19L8.47 4.03l1.06-1.06 4.5 4.5a.75.75 0 010 1.06l-4.5 4.5-1.06-1.06 3.22-3.22z"
-            clip-rule="evenodd"
-          />
-        </svg>
-      </button>
-    </div>
-
-    <!-- Mobile Banner below Massage for Men Cards (Only Mobile) -->
-    <div class="uc-massage-men-mobile-banner" *ngIf="isMobile">
-      <img
-        src="assets/massagemen/spotlight-banner.jpeg"
-        alt="Urban Company Spotlight"
-        class="uc-massage-men-banner-img"
-      />
-    </div>
-  </div>
-</section>
-
-<!-- Full Width Spotlight Locks Banner Section -->
-<section class="uc-spotlight-banner-section" id="spotlightLocksSection">
-  <div class="uc-spotlight-banner-container">
-    <div class="uc-spotlight-banner-card">
-      <img
-        [src]="spotlightLocksBanner.image"
-        [alt]="spotlightLocksBanner.alt"
-        class="uc-spotlight-banner-img"
-      />
-    </div>
-  </div>
-</section>
-
-<!-- Salon for men Section -->
-<section class="uc-salon-men-section" id="salonMenSection">
-  <div class="uc-salon-men-container">
-    <div class="uc-salon-men-header">
-      <div class="uc-salon-men-header-text">
-        <h2 class="uc-salon-men-heading">Salon for men</h2>
-        <p class="uc-salon-men-subheading">Grooming essentials</p>
+      <p class="uc-review-text">{{ review.text }}</p>
+      <div class="uc-review-author">
+        <span class="uc-review-avatar" aria-hidden="true">
+          <svg viewBox="0 0 48 48"><circle cx="24" cy="17" r="9" /><path d="M6 44c1.8-9.4 9-15 18-15s16.2 5.6 18 15z" /></svg>
+        </span>
+        <span class="uc-review-name">{{ review.name }}</span>
+        <span class="uc-review-service">{{ review.service }}</span>
+        <span class="uc-review-meta">{{ review.city }} · {{ review.date }}</span>
       </div>
-      <button
-        class="uc-see-all-btn"
-        aria-label="See all Salon for men services"
-      >
-        <span>See all</span>
-      </button>
     </div>
+  </ng-template>
+</app-card-carousel>
 
-    <div class="uc-salon-men-carousel-wrap">
-      <!-- Left Arrow -->
-      <button
-        *ngIf="canScrollLeftSalonMen"
-        class="uc-carousel-arrow uc-carousel-arrow--left"
-        id="salonMenArrowLeft"
-        (click)="scrollSalonMenCarousel('left')"
-        aria-label="Scroll left"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          fill="#0F0F0F"
-          viewBox="0 0 16 16"
-        >
-          <path
-            fill="#0F0F0F"
-            fill-rule="evenodd"
-            d="M6.47 2.97l-4.5 4.5a.75.75 0 000 1.06l4.5 4.5 1.06-1.06-3.22-3.22h9.19v-1.5H4.31l3.22-3.22-1.06-1.06z"
-            clip-rule="evenodd"
-          />
-        </svg>
-      </button>
-
-      <!-- Track -->
-      <div
-        class="uc-salon-men-track-wrap"
-        #salonMenTrack
-        (scroll)="onSalonMenScroll()"
-      >
-        <div class="uc-salon-men-track">
-          <div
-            *ngFor="let item of displaySalonMenServices"
-            class="uc-salon-men-card"
-            [id]="item.id"
-          >
-            <a
-              *ngIf="item.link; else noLinkCard"
-              [href]="item.link"
-              class="uc-salon-men-card-link"
-              target="_blank"
-              rel="noopener"
-            >
-              <div class="uc-salon-men-img-wrap">
-                <span *ngIf="item.badge" class="uc-salon-men-badge">{{
-                  item.badge
-                }}</span>
-                <img
-                  [src]="item.image"
-                  [alt]="item.title"
-                  class="uc-salon-men-img"
-                />
-              </div>
-              <div class="uc-salon-men-info">
-                <span class="uc-salon-men-title">{{ item.title }}</span>
-
-                <div class="uc-salon-men-rating-row">
-                  <svg
-                    class="uc-star-icon"
-                    width="12"
-                    height="12"
-                    viewBox="0 0 24 24"
-                    fill="#545454"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M12.923 2.616a1 1 0 00-1.846 0l-2.41 5.795-6.257.502a1 1 0 00-.571 1.756l4.767 4.084-1.457 6.105a1 1 0 001.494 1.086L12 18.672l5.357 3.272a1 1 0 001.494-1.086l-1.457-6.105 4.767-4.084a1 1 0 00-.57-1.756l-6.257-.502-2.41-5.795z"
-                      fill="#545454"
-                    />
-                  </svg>
-                  <span class="uc-rating-num">{{ item.rating }}</span>
-
-                  <ng-container *ngIf="item.isInstant">
-                    <span class="uc-rating-dot">•</span>
-                    <svg
-                      width="12"
-                      height="12"
-                      viewBox="0 0 12 12"
-                      fill="#07794C"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M1.576 7.77a.2.2 0 01-.16-.32L6.609.546a.2.2 0 01.36.11l.19 3.384a.2.2 0 00.2.19h3.067a.2.2 0 01.16.32l-5.192 6.903a.2.2 0 01-.36-.109l-.19-3.385a.2.2 0 00-.199-.189H1.576z"
-                        fill="#07794C"
-                      />
-                    </svg>
-                    <span class="uc-instant-badge">Instant</span>
-                  </ng-container>
-                </div>
-
-                <div class="uc-salon-men-price-row">
-                  <span class="uc-price-val">{{ item.price }}</span>
-                  <span *ngIf="item.originalPrice" class="uc-orig-price-val">{{
-                    item.originalPrice
-                  }}</span>
-                </div>
-              </div>
-            </a>
-
-            <ng-template #noLinkCard>
-              <div class="uc-salon-men-card-inner">
-                <div class="uc-salon-men-img-wrap">
-                  <span *ngIf="item.badge" class="uc-salon-men-badge">{{
-                    item.badge
-                  }}</span>
-                  <img
-                    [src]="item.image"
-                    [alt]="item.title"
-                    class="uc-salon-men-img"
-                  />
-                </div>
-                <div class="uc-salon-men-info">
-                  <span class="uc-salon-men-title">{{ item.title }}</span>
-
-                  <div class="uc-salon-men-rating-row">
-                    <svg
-                      class="uc-star-icon"
-                      width="12"
-                      height="12"
-                      viewBox="0 0 24 24"
-                      fill="#545454"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M12.923 2.616a1 1 0 00-1.846 0l-2.41 5.795-6.257.502a1 1 0 00-.571 1.756l4.767 4.084-1.457 6.105a1 1 0 001.494 1.086L12 18.672l5.357 3.272a1 1 0 001.494-1.086l-1.457-6.105 4.767-4.084a1 1 0 00-.57-1.756l-6.257-.502-2.41-5.795z"
-                        fill="#545454"
-                      />
-                    </svg>
-                    <span class="uc-rating-num">{{ item.rating }}</span>
-
-                    <ng-container *ngIf="item.isInstant">
-                      <span class="uc-rating-dot">•</span>
-                      <svg
-                        width="12"
-                        height="12"
-                        viewBox="0 0 12 12"
-                        fill="#07794C"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M1.576 7.77a.2.2 0 01-.16-.32L6.609.546a.2.2 0 01.36.11l.19 3.384a.2.2 0 00.2.19h3.067a.2.2 0 01.16.32l-5.192 6.903a.2.2 0 01-.36-.109l-.19-3.385a.2.2 0 00-.199-.189H1.576z"
-                          fill="#07794C"
-                        />
-                      </svg>
-                      <span class="uc-instant-badge">Instant</span>
-                    </ng-container>
-                  </div>
-
-                  <div class="uc-salon-men-price-row">
-                    <span class="uc-price-val">{{ item.price }}</span>
-                    <span
-                      *ngIf="item.originalPrice"
-                      class="uc-orig-price-val"
-                      >{{ item.originalPrice }}</span
-                    >
-                  </div>
-                </div>
-              </div>
-            </ng-template>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right Arrow -->
-      <button
-        *ngIf="canScrollRightSalonMen"
-        class="uc-carousel-arrow uc-carousel-arrow--right"
-        id="salonMenArrowRight"
-        (click)="scrollSalonMenCarousel('right')"
-        aria-label="Scroll right"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          fill="#0F0F0F"
-          viewBox="0 0 16 16"
-        >
-          <path
-            fill="#0F0F0F"
-            fill-rule="evenodd"
-            d="M11.69 8.75H2.5v-1.5h9.19L8.47 4.03l1.06-1.06 4.5 4.5a.75.75 0 010 1.06l-4.5 4.5-1.06-1.06 3.22-3.22z"
-            clip-rule="evenodd"
-          />
-        </svg>
-      </button>
-    </div>
-
-    <!-- Mobile Banner below Salon for Men Cards (Only Mobile) -->
-    <div class="uc-salon-men-mobile-banner" *ngIf="isMobile">
-      <img
-        src="assets/salonmen/spotlight-banner-3x1.jpeg"
-        alt="Urban Company"
-        class="uc-salon-men-banner-img"
-      />
-    </div>
-  </div>
-</section>
+<!-- Category Dialog (opened from "Home services at your doorstep") -->
+<app-category-dialog
+  [category]="selectedCategory"
+  [groups]="selectedGroups"
+  (closed)="closeCategory()"
+  (groupSelected)="openGroup($event)"
+></app-category-dialog>

@@ -1,7 +1,14 @@
-<app-header></app-header>
-<main class="app-main">
-  <router-outlet></router-outlet>
-</main>
-<app-footer></app-footer>
-<app-login></app-login>
+<ng-container *ngIf="(status$ | async) !== 'unserviceable'; else serviceUnavailable">
+  <app-header [attr.inert]="(isBlocked$ | async) ? '' : null"></app-header>
+  <main class="app-main" [attr.inert]="(isBlocked$ | async) ? '' : null">
+    <router-outlet></router-outlet>
+  </main>
+  <app-footer [attr.inert]="(isBlocked$ | async) ? '' : null"></app-footer>
+  <app-login [attr.inert]="(isBlocked$ | async) ? '' : null"></app-login>
+</ng-container>
 
+<ng-template #serviceUnavailable>
+  <app-service-unavailable></app-service-unavailable>
+</ng-template>
+
+<app-location-gate></app-location-gate>

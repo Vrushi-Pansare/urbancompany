@@ -1,0 +1,375 @@
+/* Service Not Available Page — mirrors site header, home category section and footer */
+.uc-unavailable-page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: #0f0f0f;
+}
+
+/* Hide mobile-only header on desktop by default */
+.uc-unavailable-mobile-header {
+  display: none;
+}
+
+/* ── Desktop Header (same as .uc-header) ─────────────── */
+.uc-unavailable-header {
+  background-color: #ffffff;
+  border-bottom: 1px solid #eaeaea;
+  padding: 16px 24px;
+
+  .uc-unavailable-header-inner {
+    max-width: 1232px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+  }
+
+  .uc-unavailable-logo-img {
+    height: 38px;
+    object-fit: contain;
+    aspect-ratio: 3 / 1;
+    display: block;
+  }
+
+  .uc-spacer {
+    flex: 1;
+  }
+
+  .uc-location-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 280px;
+    height: 44px;
+    background-color: #ffffff;
+    border: 1px solid #e3e3e3;
+    border-radius: 8px;
+    padding: 0 14px;
+
+    .uc-icon {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .uc-location-text {
+      font-size: 13.5px;
+      color: #757575;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1;
+    }
+  }
+}
+
+/* ── Content (same rhythm as home .uc-category-grid-section) ── */
+.uc-unavailable-section {
+  flex: 1;
+  padding: 48px 24px 96px;
+  background-color: #ffffff;
+  animation: fadeUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.uc-unavailable-container {
+  max-width: 1232px;
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+.uc-unavailable-content {
+  width: 481.33px;
+  max-width: 100%;
+  flex-shrink: 0;
+}
+
+.uc-main-heading {
+  font-size: 36px;
+  line-height: 44px;
+  font-weight: 600;
+  color: #0f0f0f;
+  margin: 0 0 12px 0;
+}
+
+.uc-main-subheading {
+  font-size: 16px;
+  line-height: 24px;
+  color: #545454;
+  margin: 0 0 32px 0;
+}
+
+.uc-unified-card {
+  width: 100%;
+  background-color: #ffffff;
+  border: 1px solid #eaeaef;
+  border-radius: 16px;
+  padding: 24px 24px 28px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+
+  .uc-card-title {
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 600;
+    color: #545454;
+    margin: 0 0 20px 0;
+  }
+
+  .uc-card-hint {
+    margin: 12px 0 0 0;
+    font-size: 13px;
+    line-height: 18px;
+    color: #757575;
+    text-align: center;
+  }
+}
+
+/* City tiles (same as home .uc-service-card) */
+.uc-cities-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px 16px;
+  margin-bottom: 28px;
+
+  .uc-city-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .uc-city-img-wrap {
+    position: relative;
+    width: 98px;
+    max-width: 100%;
+    height: 64px;
+    background-color: #f5f5f5;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .uc-available-badge {
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #ffffff;
+    border: 1px solid #e2e2e2;
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 9px;
+    line-height: 12px;
+    font-weight: 600;
+    color: #07794c;
+    white-space: nowrap;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+
+  .uc-city-name {
+    margin-top: 14px;
+    font-size: 12px;
+    line-height: 16px;
+    color: #0f0f0f;
+  }
+}
+
+/* Illustration panel (in place of home image collage) */
+.uc-unavailable-media {
+  flex: 1;
+  max-width: 620px;
+  min-height: 480px;
+  align-self: stretch;
+  background-color: #f5f5f5;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Primary button (same as login Continue) */
+.uc-primary-btn {
+  width: 100%;
+  height: 48px;
+  border-radius: 8px;
+  border: none;
+  background-color: rgba(110, 66, 229, 1.00);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  letter-spacing: -0.2px;
+
+  &:hover:not(:disabled) {
+    background-color: rgb(97, 54, 212);
+    box-shadow: 0 4px 14px rgba(110, 66, 229, 0.3);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.99);
+  }
+
+  &.loading {
+    cursor: default;
+  }
+}
+
+.uc-dots-loader {
+  display: flex;
+  gap: 5px;
+
+  .uc-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    animation: bounceDot 0.6s ease-in-out infinite alternate;
+
+    &:nth-child(2) { animation-delay: 0.2s; }
+    &:nth-child(3) { animation-delay: 0.4s; }
+  }
+}
+
+@keyframes bounceDot {
+  from { opacity: 0.4; transform: translateY(0); }
+  to { opacity: 1; transform: translateY(-4px); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Tablet: drop the illustration panel */
+@media (max-width: 1023px) {
+  .uc-unavailable-media {
+    display: none;
+  }
+
+  .uc-unavailable-container {
+    justify-content: center;
+  }
+}
+
+/* =========================================================
+   MOBILE (< 768px) — matches site mobile header & home
+   ========================================================= */
+@media (max-width: 768px) {
+  .uc-unavailable-page {
+    background-color: rgba(245, 245, 245, 1.00);
+  }
+
+  .uc-unavailable-header {
+    display: none;
+  }
+
+  /* Coloured location bar (same as .uc-mobile-header) */
+  .uc-unavailable-mobile-header {
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(17, 146, 232);
+    padding: 14px 16px 16px;
+    color: #ffffff;
+    box-shadow: 0 2px 10px rgba(17, 146, 232, 0.2);
+
+    .uc-mobile-location-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .uc-mobile-loc-icon-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+
+      svg {
+        fill: #008ce7;
+      }
+    }
+
+    .uc-mobile-loc-info {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .uc-mobile-loc-title {
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 24px;
+      letter-spacing: -0.2px;
+    }
+
+    .uc-mobile-loc-address {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.9);
+      margin-top: 1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .uc-unavailable-section {
+    padding: 0 0 24px;
+    background-color: transparent;
+  }
+
+  .uc-unavailable-content {
+    width: 100%;
+    background-color: #ffffff;
+    padding: 24px 16px 28px;
+  }
+
+  .uc-main-heading {
+    font-size: 22px;
+    line-height: 30px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .uc-main-subheading {
+    font-size: 14px;
+    line-height: 20px;
+    margin-bottom: 24px;
+  }
+
+  .uc-unified-card {
+    border: none;
+    box-shadow: none;
+    padding: 0;
+
+    .uc-card-title {
+      font-size: 14px;
+      line-height: 20px;
+      margin-bottom: 16px;
+    }
+  }
+
+  .uc-cities-grid {
+    gap: 20px 12px;
+
+    .uc-city-img-wrap {
+      width: 100%;
+      aspect-ratio: 1 / 0.85;
+      height: auto;
+    }
+  }
+}

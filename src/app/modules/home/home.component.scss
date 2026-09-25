@@ -23,31 +23,42 @@
     -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
     Arial, sans-serif;
 
+  /* Desktop: 2x2 grid — card | video on the first row (same top + height), trust markers below the card */
   .uc-category-grid-container {
     max-width: 1232px;
     margin: 0 auto;
-    display: flex;
-    align-items: flex-start;
+    display: grid;
+    grid-template-columns: 481.33px minmax(0, 620px);
+    grid-template-rows: auto auto;
     justify-content: space-between;
-    gap: 32px;
+    column-gap: 32px;
     width: 100%;
   }
 
-  /* Left Column (Fixed width 481.33px) */
+  /* Left column wrapper is flattened so the card and trust markers sit in the grid directly */
   .uc-category-grid-content {
-    width: 481.33px;
-    max-width: 100%;
-    flex-shrink: 0;
+    display: contents;
   }
 
-  /* Main Heading */
+  .uc-unified-card {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .uc-trust-markers {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  /* Main Heading (full width, centered above card + images) */
   .uc-main-heading {
     font-size: 36px;
     line-height: 44px;
     font-weight: 600;
     color: #0f0f0f;
-    margin: 0 0 40px 0;
-    max-width: 100%;
+    margin: 0 auto 40px;
+    max-width: 1232px;
+    text-align: center;
   }
 
   /* Card Container (481.33px wide, white background, rounded border) */
@@ -150,104 +161,6 @@
     }
   }
 
-  /* Native Smart Products Section */
-  .uc-smart-products-section {
-    margin-top: 36px;
-
-    .uc-sub-heading {
-      font-size: 20px;
-      line-height: 28px;
-      font-weight: 600;
-      color: #545454;
-      margin: 0 0 16px 0;
-    }
-
-    .uc-smart-products-grid {
-      display: flex;
-      align-items: flex-start;
-      gap: 16px;
-
-      .uc-smart-card {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        cursor: pointer;
-        position: relative;
-        padding-bottom: 8px;
-
-        &::after {
-          content: "";
-          position: absolute;
-          transform: scaleX(0);
-          height: 1.5px;
-          bottom: 0;
-          left: 10%;
-          right: 10%;
-          background-color: #000000;
-          transform-origin: bottom right;
-          transition: transform 0.2s ease-in-out;
-        }
-
-        &:hover {
-          .uc-smart-img-wrap {
-            opacity: 0.8;
-          }
-
-          &::after {
-            transform: scaleX(1);
-            transform-origin: bottom left;
-          }
-        }
-
-        .uc-smart-img-wrap {
-          position: relative;
-          width: 98px;
-          height: 64px;
-          background-color: #f5f5f5;
-          border-radius: 12px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 4px;
-          transition: opacity 0.2s ease;
-
-          .uc-new-badge {
-            position: absolute;
-            top: -4px;
-            right: -4px;
-            background-color: #e91e63;
-            color: #ffffff;
-            font-size: 9px;
-            font-weight: 600;
-            padding: 1px 5px;
-            border-radius: 4px;
-            line-height: 12px;
-            z-index: 2;
-          }
-
-          .uc-smart-img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            border-radius: 4px;
-            aspect-ratio: 1.33333 / 1;
-          }
-        }
-
-        .uc-smart-name {
-          font-size: 12px;
-          line-height: 16px;
-          color: #0f0f0f;
-          margin-top: 14px;
-          font-weight: 400;
-          text-align: center;
-          text-decoration: none !important;
-        }
-      }
-    }
-  }
-
   /* Trust Markers Section */
   .uc-trust-markers {
     display: flex;
@@ -291,19 +204,22 @@
     }
   }
 
-  /* Right Side Media Image Collage */
+  /* Right Side Hero Video — fills the card's row, cropping to fit */
   .uc-category-grid-media {
-    flex: 1;
-    max-width: 620px;
-    display: flex;
-    justify-content: flex-end;
+    grid-column: 2;
+    grid-row: 1;
+    position: relative;
+    min-height: 100%;
 
-    .uc-hero-media-img {
+    .uc-hero-video {
+      position: absolute;
+      inset: 0;
       width: 100%;
       height: 100%;
-      object-fit: contain;
-      aspect-ratio: 1 / 1;
-      border-radius: 0px;
+      object-fit: cover;
+      border-radius: 16px;
+      background-color: #f5f5f5;
+      display: block;
     }
   }
 
@@ -314,12 +230,14 @@
     border-bottom: 8px solid rgba(245, 245, 245, 1.00);
 
     .uc-category-grid-container {
+      display: flex;
       flex-direction: column;
       gap: 0;
       width: 100%;
     }
 
     .uc-category-grid-content {
+      display: block;
       width: 100%;
     }
 
@@ -416,270 +334,23 @@
       }
     }
 
-    .uc-smart-products-section {
-      margin-top: 28px;
-      padding: 0;
-
-      .uc-sub-heading {
-        font-size: 17px;
-        line-height: 24px;
-        font-weight: 700;
-        color: #0f0f0f;
-        margin: 0 0 14px 0;
-      }
-
-      .uc-smart-products-grid {
-        display: grid !important;
-        grid-template-columns: repeat(4, 1fr) !important;
-        gap: 16px 10px !important;
-
-        .uc-smart-card {
-          padding-bottom: 0;
-          width: 100%;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-
-          &::after {
-            display: none;
-          }
-
-          .uc-smart-img-wrap {
-            width: 100%;
-            max-width: 76px;
-            height: 64px;
-            background-color: #f5f5f5;
-            border-radius: 12px;
-            padding: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            .uc-smart-img {
-              width: 100%;
-              height: 100%;
-              object-fit: contain;
-              aspect-ratio: 1.33333 / 1;
-              border-radius: 6px;
-            }
-          }
-
-          .uc-smart-name {
-            font-size: 11.5px;
-            line-height: 15px;
-            color: rgba(15, 15, 15, 1);
-            font-weight: 400;
-            margin-top: 10px;
-            text-align: center;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-          line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            word-break: break-word;
-          }
-        }
-      }
-    }
   }
 }
 
-/* ── In the Spotlight Section ─────────────────────────────── */
-.uc-spotlight-section {
-  background-color: #ffffff;
-  padding: 0 24px 56px 24px;
-  font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
-    Arial, sans-serif;
-
-  .uc-spotlight-container {
-    max-width: 1232px;
-    margin: 0 auto;
-  }
-
-  .uc-spotlight-heading {
-    font-size: 36px;
-    line-height: 44px;
-    font-weight: 600;
-    color: #0f0f0f;
-    margin: 0 0 44px 0;
-  }
-
-  /* Wrapper that holds track + arrow buttons */
-  .uc-spotlight-carousel-wrap {
-    position: relative;
-  }
-
-  .uc-spotlight-track-wrap {
-    overflow-x: auto;
-    overflow-y: hidden;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
-  }
-
-  .uc-spotlight-track {
-    display: flex;
-    gap: 26px;
-    width: max-content;
-  }
-
-  .uc-spotlight-card {
-    flex-shrink: 0;
-    width: 385px;
-    height: 222px;
-    border-radius: 8px;
-    overflow: hidden;
-    display: block;
-    cursor: pointer;
-    text-decoration: none;
-    transition: transform 0.2s ease-in-out;
-
-    &:hover {
-      transform: scale(1.025);
-    }
-
-    .uc-spotlight-img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      background-color: #f5f5f5;
-      display: block;
-    }
-  }
-
-  /* Arrow Buttons */
-  .uc-carousel-arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 10;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    border: 1px solid rgba(227, 227, 227, 1);
-    background-color: #ffffff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition:
-      box-shadow 0.2s ease,
-      transform 0.2s ease;
-
-    &:hover {
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-    }
-
-    &--left {
-      left: -24px;
-    }
-
-    &--right {
-      right: -24px;
-    }
-
-    svg {
-      pointer-events: none;
-    }
-  }
-
-  /* Mobile Scroll Indicator */
-  .uc-scroll-indicator-wrap {
-    display: none;
-
-    @media (max-width: 768px) {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-top: 16px;
-
-      .uc-scroll-indicator-track {
-        width: 64px;
-        height: 4px;
-        background-color: rgba(237, 237, 237, 1);
-        border-radius: 8px;
-        overflow: hidden;
-        position: relative;
-
-        .uc-scroll-indicator-thumb {
-          width: 18px;
-          height: 4px;
-          background-color: rgb(84, 84, 84);
-          border-radius: 8px;
-          transition: transform 0.1s linear;
-        }
-      }
-    }
-  }
-
-  /* Mobile Responsiveness (< 768px) */
-  @media (max-width: 768px) {
-    padding: 25px 0 35px 0 !important;
-    background-color: #ffffff;
-    border-bottom: 8px solid rgba(245, 245, 245, 1.00);
-
-    .uc-spotlight-container {
-      padding: 0;
-    }
-
-    .uc-spotlight-heading {
-      font-size: 20px;
-      line-height: 28px;
-      font-weight: 700;
-      color: rgba(15, 15, 15, 1);
-      margin: 0 0 16px 16px;
-    }
-
-    .uc-spotlight-track-wrap {
-      padding: 0 16px;
-    }
-
-    .uc-spotlight-track {
-      gap: 12px;
-    }
-
-    .uc-spotlight-card {
-      width: calc(100vw - 64px);
-      max-width: 335px;
-      height: auto;
-      aspect-ratio: 1.77778 / 1;
-      border-radius: 8px;
-
-      &:hover {
-        transform: none;
-      }
-
-      .uc-spotlight-img {
-        border-radius: 8px;
-        aspect-ratio: 1.77778 / 1;
-      }
-    }
-
-    .uc-carousel-arrow {
-      display: none !important;
-    }
-  }
-}
-
-/* ── New and Noteworthy Section ───────────────────────────── */
-.uc-noteworthy-section {
+/* ── Popular Categories Section ───────────────────────────── */
+.uc-popular-section {
   background-color: #ffffff;
   padding: 30px 24px 96px 24px;
   font-family:
     -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
     Arial, sans-serif;
 
-  .uc-noteworthy-container {
+  .uc-popular-container {
     max-width: 1232px;
     margin: 0 auto;
   }
 
-  .uc-noteworthy-heading {
+  .uc-popular-heading {
     font-size: 36px;
     line-height: 44px;
     font-weight: 600;
@@ -687,1563 +358,137 @@
     margin: 0 0 39px 0;
   }
 
-  @media (max-width: 768px) {
-    padding: 20px 0 35px 0 !important;
-    background-color: #ffffff;
-    border-bottom: 8px solid rgba(245, 245, 245, 1.00);
-
-    .uc-noteworthy-heading {
-      font-size: 20px;
-      line-height: 28px;
-      font-weight: 700;
-      color: rgba(15, 15, 15, 1);
-      margin: 0 0 16px 16px;
-    }
-
-    .uc-noteworthy-track-wrap {
-      padding: 0 16px;
-    }
-
-    .uc-noteworthy-track {
-      display: grid !important;
-      grid-template-rows: auto auto !important;
-      grid-auto-flow: column !important;
-      row-gap: 20px !important;
-      column-gap: 12px !important;
-      width: max-content;
-    }
-
-    .uc-noteworthy-card {
-      width: 108px !important;
-      flex-shrink: 0;
-
-      .uc-noteworthy-img-wrap {
-        width: 108px !important;
-        height: 108px !important;
-        border-radius: 8px;
-        background-color: transparent;
-
-        .uc-noteworthy-img {
-          width: 100%;
-          height: 100%;
-          object-fit: contain;
-          border-radius: 8px;
-          aspect-ratio: 1 / 1;
-        }
-
-        .uc-noteworthy-badge {
-          display: none;
-        }
-      }
-
-      .uc-noteworthy-title-wrap {
-        margin-top: 8px;
-
-        .uc-noteworthy-title {
-          font-size: 12px;
-          line-height: 16px;
-          font-weight: 400;
-          color: rgba(15, 15, 15, 1);
-          text-align: left;
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-
-        .uc-noteworthy-time-info {
-          display: flex;
-          align-items: center;
-          gap: 3px;
-          margin-top: 4px;
-          font-size: 12px;
-          line-height: 16px;
-          color: rgba(7, 121, 76, 1);
-          font-weight: 400;
-
-          svg {
-            width: 12px;
-            height: 12px;
-            flex-shrink: 0;
-          }
-
-          span {
-            font-size: 12px;
-            line-height: 16px;
-            color: rgba(7, 121, 76, 1);
-            font-weight: 400;
-          }
-        }
-      }
-    }
-
-    .uc-carousel-arrow {
-      display: none !important;
-    }
-  }
-
-  .uc-noteworthy-carousel-wrap {
-    position: relative;
-  }
-
-  .uc-noteworthy-track-wrap {
-    overflow-x: auto;
-    overflow-y: hidden;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
-  }
-
-  .uc-noteworthy-track {
+  .uc-popular-grid {
     display: grid;
-    grid-template-rows: auto auto;
-    grid-auto-flow: column;
-    row-gap: 32px;
-    column-gap: 16px;
-    width: max-content;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 233px));
+    gap: 32px 16px;
   }
 
-  .uc-noteworthy-card {
-    width: 233px;
+  .uc-popular-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 0;
+    padding: 0;
+    border: none;
+    background: none;
+    font: inherit;
+    color: inherit;
+    text-align: center;
+    cursor: pointer;
 
-    .uc-noteworthy-card-link,
-    .uc-noteworthy-card-inner {
-      text-decoration: none;
-      display: block;
-      cursor: pointer;
-      color: inherit;
+    &:hover .uc-popular-img-wrap {
+      opacity: 0.85;
     }
 
-    .uc-noteworthy-img-wrap {
-      position: relative;
-      width: 233px;
-      height: 233px;
-      border-radius: 8px;
-      overflow: hidden;
-      background-color: transparent;
-
-      .uc-noteworthy-img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        display: block;
-      }
-
-      .uc-noteworthy-badge {
-        position: absolute;
-        top: 8px;
-        left: 8px;
-        z-index: 2;
-        background-color: #841a3d;
-        color: #ffffff;
-        font-size: 12px;
-        line-height: 16px;
-        font-weight: 600;
-        padding: 2px 8px;
-        border-radius: 4px;
-      }
-    }
-
-    .uc-noteworthy-title-wrap {
-      margin-top: 12px;
-
-      .uc-noteworthy-title {
-        font-size: 16px;
-        line-height: 24px;
-        font-weight: 600;
-        color: #0f0f0f;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      .uc-noteworthy-time-info {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        margin-top: 4px;
-        font-size: 12px;
-        line-height: 16px;
-        color: #07794c;
-        font-weight: 400;
-      }
+    &:hover .uc-popular-name {
+      text-decoration: underline;
     }
   }
 
-  /* Arrow Buttons */
-  .uc-carousel-arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 10;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    border: 1px solid rgba(227, 227, 227, 1);
-    background-color: #ffffff;
+  .uc-popular-img-wrap {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 12px;
+    background-color: #f5f5f5;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition:
-      box-shadow 0.2s ease,
-      transform 0.2s ease;
-
-    &:hover {
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-    }
-
-    &--left {
-      left: -24px;
-    }
-
-    &--right {
-      right: -24px;
-    }
-
-    svg {
-      pointer-events: none;
-    }
-  }
-}
-
-/* ── Most Booked Services Section ─────────────────────────── */
-.uc-most-booked-section {
-  background-color: #ffffff;
-  padding: 0 24px 96px 24px;
-  font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
-    Arial, sans-serif;
-
-  .uc-most-booked-container {
-    max-width: 1232px;
-    margin: 0 auto;
+    padding: 28px;
+    overflow: hidden;
+    transition: opacity 0.2s ease;
+    --uc-icon-size: 72px;
   }
 
-  .uc-most-booked-heading {
-    font-size: 36px;
-    line-height: 44px;
-    font-weight: 600;
+  .uc-popular-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .uc-popular-name {
+    margin-top: 12px;
+    font-size: 16px;
+    line-height: 22px;
+    font-weight: 500;
     color: #0f0f0f;
-    margin: 0 0 32px 0;
-  }
-
-  .uc-most-booked-carousel-wrap {
-    position: relative;
-  }
-
-  .uc-most-booked-track-wrap {
-    overflow-x: auto;
-    overflow-y: hidden;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
-  }
-
-  .uc-most-booked-track {
-    display: flex;
-    gap: 16px;
-    width: max-content;
-  }
-
-  .uc-most-booked-card {
-    width: 233.6px;
-    flex-shrink: 0;
-
-    .uc-most-booked-card-link,
-    .uc-most-booked-card-inner {
-      text-decoration: none;
-      display: block;
-      cursor: pointer;
-      color: inherit;
-    }
-
-    .uc-most-booked-img-wrap {
-      position: relative;
-      width: 233.6px;
-      height: 233.6px;
-      border-radius: 8px;
-      overflow: hidden;
-      background-color: #f5f5f5;
-
-      .uc-most-booked-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-      }
-    }
-
-    .uc-most-booked-info {
-      margin-top: 12px;
-
-      .uc-most-booked-title {
-        font-size: 16px;
-        line-height: 24px;
-        font-weight: 600;
-        color: #0f0f0f;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        min-height: 24px;
-      }
-
-      .uc-most-booked-rating-row {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        margin-top: 4px;
-
-        .uc-star-icon {
-          width: 12px;
-          height: 12px;
-          fill: #545454;
-          flex-shrink: 0;
-        }
-
-        .uc-rating-num {
-          font-size: 13px;
-          line-height: 16px;
-          color: #545454;
-          font-weight: 400;
-        }
-
-        .uc-rating-dot {
-          font-size: 12px;
-          color: #545454;
-          line-height: 16px;
-          margin: 0 1px;
-        }
-
-        .uc-instant-badge {
-          font-size: 12px;
-          line-height: 16px;
-          color: #545454;
-          font-weight: 400;
-        }
-      }
-
-      .uc-most-booked-price-row {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        margin-top: 4px;
-
-        .uc-price-val {
-          font-size: 14px;
-          line-height: 20px;
-          font-weight: 600;
-          color: #0f0f0f;
-        }
-
-        .uc-orig-price-val {
-          font-size: 12px;
-          line-height: 16px;
-          color: #757575;
-          text-decoration: line-through;
-        }
-      }
-    }
-  }
-
-  /* Arrow Buttons */
-  .uc-carousel-arrow {
-    position: absolute;
-    top: 40%;
-    transform: translateY(-50%);
-    z-index: 10;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    border: 1px solid rgba(227, 227, 227, 1);
-    background-color: #ffffff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition:
-      box-shadow 0.2s ease,
-      transform 0.2s ease;
-
-    &:hover {
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-    }
-
-    &--left {
-      left: -24px;
-    }
-
-    &--right {
-      right: -24px;
-    }
-
-    svg {
-      pointer-events: none;
-    }
-  }
-
-  .uc-most-booked-mobile-banner {
-    display: none;
   }
 
   @media (max-width: 768px) {
-    padding: 20px 0 35px 0 !important;
-    background-color: #ffffff;
-    border-bottom: 8px solid rgba(245, 245, 245, 1.00);
+    padding: 20px 16px 35px !important;
 
-    .uc-most-booked-heading {
+    .uc-popular-heading {
       font-size: 20px;
       line-height: 28px;
       font-weight: 700;
-      color: rgba(15, 15, 15, 1);
-      margin: 0 0 16px 16px;
+      margin: 0 0 16px;
     }
 
-    .uc-most-booked-track-wrap {
-      padding: 0 16px;
+    .uc-popular-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px 12px;
     }
 
-    .uc-most-booked-track {
-      gap: 12px;
+    .uc-popular-img-wrap {
+      padding: 16px;
+      --uc-icon-size: 44px;
     }
 
-    .uc-most-booked-card {
-      width: calc((100vw - 32px - 12px) / 2);
-      max-width: 180px;
-      flex-shrink: 0;
-
-      .uc-most-booked-img-wrap {
-        width: 100%;
-        height: auto;
-        border-radius: 8px;
-        aspect-ratio: 1 / 1;
-
-        .uc-most-booked-img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          border-radius: 8px;
-          aspect-ratio: 1 / 1;
-        }
-      }
-
-      .uc-most-booked-info {
-        margin-top: 8px;
-
-        .uc-most-booked-title {
-          font-size: 14px;
-          line-height: 20px;
-          font-weight: 400;
-          color: rgba(15, 15, 15, 1);
-          min-height: auto;
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-
-        .uc-most-booked-rating-row {
-          display: flex;
-          align-items: center;
-          gap: 4px;
-          margin-top: 4px;
-
-          .uc-star-icon {
-            width: 12px;
-            height: 12px;
-            fill: #545454;
-          }
-
-          .uc-rating-num {
-            font-size: 12px;
-            line-height: 16px;
-            color: rgba(84, 84, 84, 1);
-            font-weight: 400;
-          }
-
-          .uc-rating-dot {
-            font-size: 12px;
-            color: rgba(84, 84, 84, 1);
-            margin: 0 1px;
-          }
-
-          .uc-instant-badge {
-            font-size: 12px;
-            line-height: 16px;
-            color: rgba(84, 84, 84, 1);
-            font-weight: 400;
-          }
-        }
-
-        .uc-most-booked-price-row {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          margin-top: 4px;
-
-          .uc-price-val {
-            font-size: 14px;
-            line-height: 20px;
-            font-weight: 600;
-            color: rgba(15, 15, 15, 1);
-          }
-
-          .uc-orig-price-val {
-            font-size: 12px;
-            line-height: 16px;
-            color: #757575;
-            text-decoration: line-through;
-          }
-        }
-      }
-    }
-
-    .uc-carousel-arrow {
-      display: none !important;
-    }
-
-    .uc-most-booked-mobile-banner {
-      display: block !important;
-      width: 100%;
-      margin-top: 24px;
-      overflow: hidden;
-
-      .uc-most-booked-banner-img {
-        width: 100%;
-        height: auto;
-        display: block;
-        object-fit: cover;
-      }
+    .uc-popular-name {
+      margin-top: 8px;
+      font-size: 13px;
+      line-height: 18px;
     }
   }
 }
 
-/* ── Salon for Women Section ─────────────────────────────── */
-.uc-salon-women-section {
-  background-color: #ffffff;
-  padding: 0 24px 96px 24px;
-  font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
-    Arial, sans-serif;
+/* ── Popular / Recommended Services (extends .uc-popular-section) ── */
+.uc-popular-section.uc-popular-services {
+  padding-top: 0;
 
-  .uc-salon-women-container {
-    max-width: 1232px;
-    margin: 0 auto;
+  .uc-service-card-link {
+    align-items: flex-start;
+    text-align: left;
+    text-decoration: none;
   }
 
-  .uc-salon-women-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 32px;
-
-    .uc-salon-women-title-group {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .uc-salon-women-heading {
-      font-size: 36px;
-      line-height: 44px;
-      font-weight: 600;
-      color: #0f0f0f;
-      margin: 0;
-    }
-
-    .uc-salon-women-subheading {
-      font-size: 16px;
-      line-height: 24px;
-      color: #545454;
-      font-weight: 400;
-      margin: 0;
-    }
-
-    .uc-see-all-btn {
-      background-color: #ffffff;
-      border: 1px solid rgba(227, 227, 227, 1);
-      border-radius: 8px;
-      padding: 8px 16px;
-      font-size: 14px;
-      line-height: 20px;
-      font-weight: 600;
-      color: #6e42e5;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition:
-        background-color 0.2s ease,
-        border-color 0.2s ease;
-
-      &:hover {
-        background-color: #f7f5ff;
-        border-color: #6e42e5;
-      }
-    }
-  }
-
-  .uc-salon-women-carousel-wrap {
+  /* Photos fill the tile */
+  .uc-popular-img-wrap {
     position: relative;
   }
 
-  .uc-salon-women-track-wrap {
-    overflow-x: auto;
-    overflow-y: hidden;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
-  }
-
-  .uc-salon-women-track {
-    display: flex;
-    gap: 16px;
-    width: max-content;
-  }
-
-  .uc-salon-women-card {
-    width: 233.6px;
-    flex-shrink: 0;
-
-    .uc-salon-women-card-link,
-    .uc-salon-women-card-inner {
-      text-decoration: none;
-      display: block;
-      cursor: pointer;
-      color: inherit;
-    }
-
-    .uc-salon-women-img-wrap {
-      position: relative;
-      width: 233.6px;
-      height: 233.6px;
-      border-radius: 8px;
-      overflow: hidden;
-      background-color: transparent;
-
-      .uc-salon-women-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-      }
-
-      .uc-salon-women-badge {
-        position: absolute;
-        top: 8px;
-        left: 8px;
-        z-index: 2;
-        background-color: #07794c;
-        color: #ffffff;
-        font-size: 12px;
-        line-height: 16px;
-        font-weight: 600;
-        padding: 2px 8px;
-        border-radius: 4px;
-      }
-    }
-
-    .uc-salon-women-info {
-      margin-top: 12px;
-
-      .uc-salon-women-title {
-        font-size: 16px;
-        line-height: 24px;
-        font-weight: 600;
-        color: #0f0f0f;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        min-height: 24px;
-      }
-
-      .uc-salon-women-rating-row {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        margin-top: 4px;
-
-        .uc-star-icon {
-          width: 12px;
-          height: 12px;
-          fill: #545454;
-          flex-shrink: 0;
-        }
-
-        .uc-rating-num {
-          font-size: 13px;
-          line-height: 16px;
-          color: #545454;
-          font-weight: 400;
-        }
-
-        .uc-rating-dot {
-          font-size: 12px;
-          color: #545454;
-          line-height: 16px;
-          margin: 0 1px;
-        }
-
-        .uc-instant-badge {
-          font-size: 12px;
-          line-height: 16px;
-          color: #545454;
-          font-weight: 400;
-        }
-      }
-
-      .uc-salon-women-price-row {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        margin-top: 4px;
-
-        .uc-price-val {
-          font-size: 14px;
-          line-height: 20px;
-          font-weight: 600;
-          color: #0f0f0f;
-        }
-
-        .uc-orig-price-val {
-          font-size: 12px;
-          line-height: 16px;
-          color: #757575;
-          text-decoration: line-through;
-        }
-      }
-    }
-  }
-
-  /* Arrow Buttons */
-  .uc-carousel-arrow {
+  .uc-popular-img {
     position: absolute;
-    top: 40%;
-    transform: translateY(-50%);
-    z-index: 10;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    border: 1px solid rgba(227, 227, 227, 1);
-    background-color: #ffffff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition:
-      box-shadow 0.2s ease,
-      transform 0.2s ease;
-
-    &:hover {
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-    }
-
-    &--left {
-      left: -24px;
-    }
-
-    &--right {
-      right: -24px;
-    }
-
-    svg {
-      pointer-events: none;
-    }
+    inset: 0;
+    object-fit: cover;
   }
 
-  @media (max-width: 768px) {
-    padding: 32px 0 40px 0 !important;
-    background-color: #ffffff;
-    border-bottom: 8px solid rgba(245, 245, 245, 1.00);
-
-    .uc-salon-women-container {
-      max-width: 100% !important;
-      padding: 0 !important;
-      margin: 0 !important;
-      width: 100% !important;
-    }
-
-    .uc-salon-women-header {
-      padding: 0 16px;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-
-      .uc-salon-women-heading {
-        font-size: 17px;
-        line-height: 24px;
-        font-weight: 700;
-        color: rgba(15, 15, 15, 1);
-        margin: 0;
-        flex: 1;
-      }
-
-      .uc-salon-women-subheading {
-        font-size: 12px;
-        line-height: 16px;
-        color: rgba(84, 84, 84, 1);
-      }
-
-      .uc-see-all-btn {
-        border: none;
-        padding: 0;
-        background: transparent;
-        flex-shrink: 0;
-        white-space: nowrap;
-
-        span {
-          font-size: 14px;
-          line-height: 20px;
-          font-weight: 600;
-          color: rgba(110, 66, 229, 1);
-          white-space: nowrap;
-        }
-      }
-    }
-
-    .uc-salon-women-track-wrap {
-      padding: 0 16px !important;
-      width: 100% !important;
-      box-sizing: border-box !important;
-      overflow-x: auto !important;
-      overflow-y: hidden !important;
-      scrollbar-width: none !important;
-      -ms-overflow-style: none !important;
-
-      &::-webkit-scrollbar {
-        display: none !important;
-      }
-    }
-
-    .uc-salon-women-track {
-      display: flex !important;
-      flex-direction: row !important;
-      flex-wrap: nowrap !important;
-      gap: 12px !important;
-      width: max-content !important;
-    }
-
-    .uc-salon-women-card {
-      width: 144px !important;
-      min-width: 144px !important;
-      max-width: 144px !important;
-      flex: 0 0 144px !important;
-      box-sizing: border-box !important;
-
-      .uc-salon-women-card-link,
-      .uc-salon-women-card-inner {
-        text-decoration: none !important;
-        display: block !important;
-        cursor: pointer !important;
-        color: inherit !important;
-        width: 144px !important;
-      }
-
-      .uc-salon-women-img-wrap {
-        width: 144px !important;
-        height: 144px !important;
-        border-radius: 8px !important;
-        aspect-ratio: 1 / 1 !important;
-        overflow: hidden !important;
-        position: relative !important;
-        background-color: transparent !important;
-
-        .uc-salon-women-img {
-          width: 144px !important;
-          height: 144px !important;
-          object-fit: cover !important;
-          border-radius: 8px !important;
-          aspect-ratio: 1 / 1 !important;
-          display: block !important;
-        }
-      }
-
-      .uc-salon-women-info {
-        margin-top: 8px;
-
-        .uc-salon-women-title {
-          font-size: 14px;
-          line-height: 20px;
-          font-weight: 400;
-          color: rgba(15, 15, 15, 1);
-          min-height: auto;
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-
-        .uc-salon-women-rating-row {
-          display: flex;
-          align-items: center;
-          gap: 4px;
-          margin-top: 4px;
-
-          .uc-star-icon {
-            width: 12px;
-            height: 12px;
-            fill: #545454;
-          }
-
-          .uc-rating-num {
-            font-size: 12px;
-            line-height: 16px;
-            color: rgba(84, 84, 84, 1);
-            font-weight: 400;
-          }
-
-          .uc-rating-dot {
-            font-size: 12px;
-            color: rgba(84, 84, 84, 1);
-            margin: 0 1px;
-          }
-
-          .uc-instant-badge {
-            font-size: 12px;
-            line-height: 16px;
-            color: rgba(84, 84, 84, 1);
-            font-weight: 400;
-          }
-        }
-
-        .uc-salon-women-price-row {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          margin-top: 4px;
-
-          .uc-price-val {
-            font-size: 14px;
-            line-height: 20px;
-            font-weight: 600;
-            color: rgba(15, 15, 15, 1);
-          }
-
-          .uc-orig-price-val {
-            font-size: 12px;
-            line-height: 16px;
-            color: #757575;
-            text-decoration: line-through;
-          }
-        }
-      }
-    }
-
-    .uc-carousel-arrow {
-      display: none !important;
-    }
-
-    .uc-salon-women-mobile-banners {
-      display: flex !important;
-      flex-direction: column;
-      width: 100%;
-      margin-top: 24px;
-      gap: 16px;
-
-      .uc-salon-women-banner-item {
-        width: 100%;
-        overflow: hidden;
-
-        .uc-salon-women-banner-img {
-          width: 100%;
-          height: auto;
-          display: block;
-          object-fit: fill;
-          aspect-ratio: 1 / 1;
-        }
-      }
-    }
+  .uc-popular-meta {
+    margin-top: 2px;
+    font-size: 14px;
+    line-height: 20px;
+    color: #545454;
   }
 
-  .uc-salon-women-mobile-banners {
-    display: none;
-  }
-}
-
-/* ── Revamp your space with Section ──────────────────────── */
-.uc-revamp-section {
-  background-color: #ffffff;
-  padding: 0 24px 96px 24px;
-  font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
-    Arial, sans-serif;
-
-  .uc-revamp-container {
-    max-width: 1232px;
-    margin: 0 auto;
-  }
-
-  .uc-revamp-heading {
-    font-size: 36px;
-    line-height: 44px;
+  .uc-popular-price {
+    margin-top: 6px;
+    font-size: 14px;
+    line-height: 20px;
     font-weight: 600;
     color: #0f0f0f;
-    margin: 0 0 32px 0;
-  }
-
-  .uc-revamp-carousel-wrap {
-    position: relative;
-  }
-
-  .uc-revamp-track-wrap {
-    overflow-x: auto;
-    overflow-y: hidden;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
-  }
-
-  .uc-revamp-track {
-    display: flex;
-    gap: 24px;
-    width: max-content;
-  }
-
-  .uc-revamp-card {
-    flex-shrink: 0;
-    width: 394px;
-    height: 526px;
-    border-radius: 8px;
-    overflow: hidden;
-    display: block;
-    cursor: pointer;
-    text-decoration: none;
-    background-color: transparent;
-
-    .uc-revamp-img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      display: block;
-    }
-  }
-
-  /* Arrow Buttons */
-  .uc-carousel-arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 10;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    border: 1px solid rgba(227, 227, 227, 1);
-    background-color: #ffffff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition:
-      box-shadow 0.2s ease,
-      transform 0.2s ease;
-
-    &:hover {
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-    }
-
-    &--left {
-      left: -24px;
-    }
-
-    &--right {
-      right: -24px;
-    }
-
-    svg {
-      pointer-events: none;
-    }
   }
 
   @media (max-width: 768px) {
-    display: none !important;
-  }
-}
+    padding-top: 20px !important;
 
-/* ── Full Width Spotlight Banner Section ──────────────────── */
-.uc-spotlight-banner-section {
-  background-color: #ffffff;
-  padding: 0 24px 96px 24px;
-  font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
-    Arial, sans-serif;
-
-  .uc-spotlight-banner-container {
-    max-width: 1232px;
-    margin: 0 auto;
-  }
-
-  .uc-spotlight-banner-card {
-    display: block;
-    text-decoration: none;
-    width: 100%;
-    height: 405px;
-    border-radius: 1px;
-    overflow: hidden;
-    cursor: pointer;
-    background-color: transparent;
-
-    .uc-spotlight-banner-img {
-      width: 100%;
-      height: 100%;
-      object-fit: fill;
-      display: block;
-    }
-  }
-
-  @media (max-width: 768px) {
-    display: none !important;
-  }
-}
-
-/* ── Spa for Women Section ────────────────────────────────── */
-.uc-spa-section {
-  background-color: #ffffff;
-  padding: 0 24px 96px 24px;
-  font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
-    Arial, sans-serif;
-
-  .uc-spa-container {
-    max-width: 1232px;
-    margin: 0 auto;
-  }
-
-  .uc-spa-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 32px;
-
-    .uc-spa-heading {
-      font-size: 36px;
-      line-height: 44px;
-      font-weight: 600;
-      color: #0f0f0f;
-      margin: 0;
+    .uc-popular-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .uc-see-all-btn {
-      background-color: #ffffff;
-      border: 1px solid rgba(227, 227, 227, 1);
-      border-radius: 8px;
-      padding: 8px 16px;
-      font-size: 14px;
-      line-height: 20px;
-      font-weight: 600;
-      color: #6e42e5;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition:
-        background-color 0.2s ease,
-        border-color 0.2s ease;
-
-      &:hover {
-        background-color: #f7f5ff;
-        border-color: #6e42e5;
-      }
-    }
-  }
-
-  .uc-spa-carousel-wrap {
-    position: relative;
-  }
-
-  .uc-spa-track-wrap {
-    overflow-x: auto;
-    overflow-y: hidden;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
-  }
-
-  .uc-spa-track {
-    display: flex;
-    gap: 16px;
-    width: max-content;
-  }
-
-  .uc-spa-card {
-    width: 233.6px;
-    flex-shrink: 0;
-
-    .uc-spa-card-link,
-    .uc-spa-card-inner {
-      text-decoration: none;
-      display: block;
-      cursor: pointer;
-      color: inherit;
-    }
-
-    .uc-spa-img-wrap {
-      position: relative;
-      width: 233.6px;
-      height: 233.6px;
-      border-radius: 8px;
-      overflow: hidden;
-      background-color: #f5f5f5;
-
-      .uc-spa-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-      }
-
-      .uc-spa-badge {
-        position: absolute;
-        top: 8px;
-        left: 8px;
-        z-index: 2;
-        background-color: #6e42e5;
-        color: #ffffff;
-        font-size: 11px;
-        line-height: 14px;
-        font-weight: 700;
-        letter-spacing: 0.4px;
-        text-transform: uppercase;
-        padding: 3px 8px;
-        border-radius: 4px;
-      }
-    }
-
-    .uc-spa-info {
-      margin-top: 12px;
-
-      .uc-spa-title {
-        font-size: 16px;
-        line-height: 24px;
-        font-weight: 600;
-        color: #0f0f0f;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        min-height: 24px;
-      }
-
-      .uc-spa-rating-row {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        margin-top: 4px;
-
-        .uc-star-icon {
-          width: 12px;
-          height: 12px;
-          fill: #545454;
-          flex-shrink: 0;
-        }
-
-        .uc-rating-num {
-          font-size: 13px;
-          line-height: 16px;
-          color: #545454;
-          font-weight: 400;
-        }
-
-        .uc-rating-dot {
-          font-size: 12px;
-          color: #545454;
-          line-height: 16px;
-          margin: 0 1px;
-        }
-
-        .uc-instant-badge {
-          font-size: 12px;
-          line-height: 16px;
-          color: #545454;
-          font-weight: 400;
-        }
-      }
-
-      .uc-spa-price-row {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        margin-top: 4px;
-
-        .uc-price-val {
-          font-size: 14px;
-          line-height: 20px;
-          font-weight: 600;
-          color: #0f0f0f;
-        }
-
-        .uc-orig-price-val {
-          font-size: 12px;
-          line-height: 16px;
-          color: #757575;
-          text-decoration: line-through;
-        }
-      }
-    }
-  }
-
-  /* Arrow Buttons */
-  .uc-carousel-arrow {
-    position: absolute;
-    top: 40%;
-    transform: translateY(-50%);
-    z-index: 10;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    border: 1px solid rgba(227, 227, 227, 1);
-    background-color: #ffffff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition:
-      box-shadow 0.2s ease,
-      transform 0.2s ease;
-
-    &:hover {
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-    }
-
-    &--left {
-      left: -24px;
-    }
-
-    &--right {
-      right: -24px;
-    }
-
-    svg {
-      pointer-events: none;
-    }
-  }
-
-  @media (max-width: 768px) {
-    padding: 32px 0 40px 0 !important;
-    background-color: #ffffff;
-    border-bottom: 8px solid rgba(245, 245, 245, 1.00);
-
-    .uc-spa-container {
-      max-width: 100% !important;
-      padding: 0 !important;
-      margin: 0 !important;
-      width: 100% !important;
-    }
-
-    .uc-spa-header {
-      padding: 0 16px;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-
-      .uc-spa-heading {
-        font-size: 17px;
-        line-height: 24px;
-        font-weight: 700;
-        color: rgba(15, 15, 15, 1);
-        margin: 0;
-        flex: 1;
-      }
-
-      .uc-see-all-btn {
-        border: none;
-        padding: 0;
-        background: transparent;
-        flex-shrink: 0;
-        white-space: nowrap;
-
-        span {
-          font-size: 14px;
-          line-height: 20px;
-          font-weight: 600;
-          color: rgba(110, 66, 229, 1);
-          white-space: nowrap;
-        }
-      }
-    }
-
-    .uc-spa-track-wrap {
-      padding: 0 16px !important;
-      width: 100% !important;
-      box-sizing: border-box !important;
-      overflow-x: auto !important;
-      overflow-y: hidden !important;
-      scrollbar-width: none !important;
-      -ms-overflow-style: none !important;
-
-      &::-webkit-scrollbar {
-        display: none !important;
-      }
-    }
-
-    .uc-spa-track {
-      display: flex !important;
-      flex-direction: row !important;
-      flex-wrap: nowrap !important;
-      gap: 12px !important;
-      width: max-content !important;
-    }
-
-    .uc-spa-card {
-      width: 144px !important;
-      min-width: 144px !important;
-      max-width: 144px !important;
-      flex: 0 0 144px !important;
-      box-sizing: border-box !important;
-
-      .uc-spa-card-link,
-      .uc-spa-card-inner {
-        text-decoration: none !important;
-        display: block !important;
-        cursor: pointer !important;
-        color: inherit !important;
-        width: 144px !important;
-      }
-
-      .uc-spa-img-wrap {
-        width: 144px !important;
-        height: 144px !important;
-        border-radius: 8px !important;
-        aspect-ratio: 1 / 1 !important;
-        overflow: hidden !important;
-        position: relative !important;
-        background-color: transparent !important;
-
-        .uc-spa-img {
-          width: 144px !important;
-          height: 144px !important;
-          object-fit: cover !important;
-          border-radius: 8px !important;
-          aspect-ratio: 1 / 1 !important;
-          display: block !important;
-        }
-
-        .uc-spa-badge {
-          top: 6px;
-          left: 6px;
-          background-color: rgba(110, 66, 229, 1);
-          color: #ffffff;
-          font-size: 10px;
-          line-height: 14px;
-          font-weight: 600;
-          letter-spacing: 0.4px;
-          text-transform: uppercase;
-          padding: 2px 6px;
-          border-radius: 4px;
-        }
-      }
-
-      .uc-spa-info {
-        margin-top: 8px;
-
-        .uc-spa-title {
-          font-size: 14px;
-          line-height: 20px;
-          font-weight: 400;
-          color: rgba(15, 15, 15, 1);
-          min-height: auto;
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-
-        .uc-spa-rating-row {
-          display: flex;
-          align-items: center;
-          gap: 4px;
-          margin-top: 4px;
-
-          .uc-star-icon {
-            width: 12px;
-            height: 12px;
-            fill: #545454;
-          }
-
-          .uc-rating-num {
-            font-size: 12px;
-            line-height: 16px;
-            color: rgba(84, 84, 84, 1);
-            font-weight: 400;
-          }
-
-          .uc-rating-dot {
-            font-size: 12px;
-            color: rgba(84, 84, 84, 1);
-            margin: 0 1px;
-          }
-
-          .uc-instant-badge {
-            font-size: 12px;
-            line-height: 16px;
-            color: rgba(84, 84, 84, 1);
-            font-weight: 400;
-          }
-        }
-
-        .uc-spa-price-row {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          margin-top: 4px;
-
-          .uc-price-val {
-            font-size: 14px;
-            line-height: 20px;
-            font-weight: 600;
-            color: rgba(15, 15, 15, 1);
-          }
-
-          .uc-orig-price-val {
-            font-size: 12px;
-            line-height: 16px;
-            color: #757575;
-            text-decoration: line-through;
-          }
-        }
-      }
-    }
-
-    .uc-carousel-arrow {
-      display: none !important;
+    .uc-popular-meta,
+    .uc-popular-price {
+      font-size: 12px;
+      line-height: 16px;
     }
   }
 }
@@ -2460,20 +705,6 @@
       display: none !important;
     }
 
-    .uc-cleaning-essentials-mobile-banner {
-      display: block !important;
-      width: 100%;
-      margin-top: 24px;
-      overflow: hidden;
-
-      .uc-cleaning-essentials-banner-img {
-        width: 100%;
-        height: auto;
-        display: block;
-        object-fit: fill;
-        aspect-ratio: 1 / 1;
-      }
-    }
   }
 }
 
@@ -3301,1058 +1532,7 @@
   }
 }
 
-/* ── Massage for Men Section ─────────────────────────────── */
-.uc-massage-men-section {
-  background-color: #ffffff;
-  padding: 0 24px 96px 24px;
-  font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
-    Arial, sans-serif;
-
-  .uc-massage-men-container {
-    max-width: 1232px;
-    margin: 0 auto;
-  }
-
-  .uc-massage-men-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 32px;
-
-    .uc-massage-men-heading {
-      font-size: 36px;
-      line-height: 44px;
-      font-weight: 600;
-      color: #0f0f0f;
-      margin: 0;
-    }
-
-    .uc-see-all-btn {
-      background-color: #ffffff;
-      border: 1px solid rgba(227, 227, 227, 1);
-      border-radius: 8px;
-      padding: 8px 16px;
-      font-size: 14px;
-      line-height: 20px;
-      font-weight: 600;
-      color: #6e42e5;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition:
-        background-color 0.2s ease,
-        border-color 0.2s ease;
-
-      &:hover {
-        background-color: #f7f5ff;
-        border-color: #6e42e5;
-      }
-    }
-  }
-
-  .uc-massage-men-carousel-wrap {
-    position: relative;
-  }
-
-  .uc-massage-men-track-wrap {
-    overflow-x: auto;
-    overflow-y: hidden;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
-  }
-
-  .uc-massage-men-track {
-    display: flex;
-    gap: 16px;
-    width: max-content;
-  }
-
-  .uc-massage-men-card {
-    width: 233.6px;
-    flex-shrink: 0;
-
-    .uc-massage-men-card-link,
-    .uc-massage-men-card-inner {
-      text-decoration: none;
-      display: block;
-      cursor: pointer;
-      color: inherit;
-    }
-
-    .uc-massage-men-img-wrap {
-      position: relative;
-      width: 233.6px;
-      height: 233.6px;
-      border-radius: 8px;
-      overflow: hidden;
-      background-color: #f5f5f5;
-
-      .uc-massage-men-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-      }
-
-      .uc-massage-men-badge {
-        position: absolute;
-        top: 8px;
-        left: 8px;
-        z-index: 2;
-        background-color: #6e42e5;
-        color: #ffffff;
-        font-size: 11px;
-        line-height: 14px;
-        font-weight: 700;
-        letter-spacing: 0.4px;
-        text-transform: uppercase;
-        padding: 3px 8px;
-        border-radius: 4px;
-      }
-    }
-
-    .uc-massage-men-info {
-      margin-top: 12px;
-
-      .uc-massage-men-title {
-        font-size: 16px;
-        line-height: 24px;
-        font-weight: 600;
-        color: #0f0f0f;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        min-height: 24px;
-      }
-
-      .uc-massage-men-rating-row {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        margin-top: 4px;
-
-        .uc-star-icon {
-          width: 12px;
-          height: 12px;
-          fill: #545454;
-          flex-shrink: 0;
-        }
-
-        .uc-rating-num {
-          font-size: 13px;
-          line-height: 16px;
-          color: #545454;
-          font-weight: 400;
-        }
-
-        .uc-rating-dot {
-          font-size: 12px;
-          color: #545454;
-          line-height: 16px;
-          margin: 0 1px;
-        }
-
-        .uc-instant-badge {
-          font-size: 12px;
-          line-height: 16px;
-          color: #545454;
-          font-weight: 400;
-        }
-      }
-
-      .uc-massage-men-price-row {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        margin-top: 4px;
-
-        .uc-price-val {
-          font-size: 14px;
-          line-height: 20px;
-          font-weight: 600;
-          color: #0f0f0f;
-        }
-
-        .uc-orig-price-val {
-          font-size: 12px;
-          line-height: 16px;
-          color: #757575;
-          text-decoration: line-through;
-        }
-      }
-    }
-  }
-
-  /* Arrow Buttons */
-  .uc-carousel-arrow {
-    position: absolute;
-    top: 40%;
-    transform: translateY(-50%);
-    z-index: 10;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    border: 1px solid rgba(227, 227, 227, 1);
-    background-color: #ffffff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition:
-      box-shadow 0.2s ease,
-      transform 0.2s ease;
-
-    &:hover {
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-    }
-
-    &--left {
-      left: -24px;
-    }
-
-    &--right {
-      right: -24px;
-    }
-
-    svg {
-      pointer-events: none;
-    }
-  }
-
-  @media (max-width: 768px) {
-    padding: 32px 0 40px 0 !important;
-    background-color: #ffffff;
-    border-bottom: 8px solid rgba(245, 245, 245, 1.00);
-
-    .uc-massage-men-container {
-      max-width: 100% !important;
-      padding: 0 !important;
-      margin: 0 !important;
-      width: 100% !important;
-    }
-
-    .uc-massage-men-header {
-      padding: 0 16px;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-
-      .uc-massage-men-heading {
-        font-size: 17px;
-        line-height: 24px;
-        font-weight: 700;
-        color: rgba(15, 15, 15, 1);
-        margin: 0;
-        flex: 1;
-      }
-
-      .uc-see-all-btn {
-        border: none;
-        padding: 0;
-        background: transparent;
-        flex-shrink: 0;
-        white-space: nowrap;
-
-        span {
-          font-size: 14px;
-          line-height: 20px;
-          font-weight: 600;
-          color: rgba(110, 66, 229, 1);
-          white-space: nowrap;
-        }
-      }
-    }
-
-    .uc-massage-men-track-wrap {
-      padding: 0 16px !important;
-      width: 100% !important;
-      box-sizing: border-box !important;
-      overflow-x: auto !important;
-      overflow-y: hidden !important;
-      scrollbar-width: none !important;
-      -ms-overflow-style: none !important;
-
-      &::-webkit-scrollbar {
-        display: none !important;
-      }
-    }
-
-    .uc-massage-men-track {
-      display: flex !important;
-      flex-direction: row !important;
-      flex-wrap: nowrap !important;
-      gap: 12px !important;
-      width: max-content !important;
-    }
-
-    .uc-massage-men-card {
-      width: 144px !important;
-      min-width: 144px !important;
-      max-width: 144px !important;
-      flex: 0 0 144px !important;
-      box-sizing: border-box !important;
-
-      .uc-massage-men-card-link,
-      .uc-massage-men-card-inner {
-        text-decoration: none !important;
-        display: block !important;
-        cursor: pointer !important;
-        color: inherit !important;
-        width: 144px !important;
-      }
-
-      .uc-massage-men-img-wrap {
-        width: 144px !important;
-        height: 144px !important;
-        border-radius: 8px !important;
-        aspect-ratio: 1 / 1 !important;
-        overflow: hidden !important;
-        position: relative !important;
-        background-color: transparent !important;
-
-        .uc-massage-men-img {
-          width: 144px !important;
-          height: 144px !important;
-          object-fit: cover !important;
-          border-radius: 8px !important;
-          aspect-ratio: 1 / 1 !important;
-          display: block !important;
-        }
-
-        .uc-massage-men-badge {
-          top: 6px;
-          left: 6px;
-          background-color: rgba(110, 66, 229, 1);
-          color: #ffffff;
-          font-size: 10px;
-          line-height: 14px;
-          font-weight: 600;
-          letter-spacing: 0.4px;
-          text-transform: uppercase;
-          padding: 2px 6px;
-          border-radius: 4px;
-        }
-      }
-
-      .uc-massage-men-info {
-        margin-top: 8px;
-
-        .uc-massage-men-title {
-          font-size: 14px;
-          line-height: 20px;
-          font-weight: 400;
-          color: rgba(15, 15, 15, 1);
-          min-height: auto;
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-
-        .uc-massage-men-rating-row {
-          display: flex;
-          align-items: center;
-          gap: 4px;
-          margin-top: 4px;
-
-          .uc-star-icon {
-            width: 12px;
-            height: 12px;
-            fill: #545454;
-          }
-
-          .uc-rating-num {
-            font-size: 12px;
-            line-height: 16px;
-            color: rgba(84, 84, 84, 1);
-            font-weight: 400;
-          }
-
-          .uc-rating-dot {
-            font-size: 12px;
-            color: rgba(84, 84, 84, 1);
-            margin: 0 1px;
-          }
-
-          .uc-instant-badge {
-            font-size: 12px;
-            line-height: 16px;
-            color: rgba(84, 84, 84, 1);
-            font-weight: 400;
-          }
-        }
-
-        .uc-massage-men-price-row {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          margin-top: 4px;
-
-          .uc-price-val {
-            font-size: 14px;
-            line-height: 20px;
-            font-weight: 600;
-            color: rgba(15, 15, 15, 1);
-          }
-
-          .uc-orig-price-val {
-            font-size: 12px;
-            line-height: 16px;
-            color: #757575;
-            text-decoration: line-through;
-          }
-        }
-      }
-    }
-
-    .uc-carousel-arrow {
-      display: none !important;
-    }
-
-    .uc-massage-men-mobile-banner {
-      display: block !important;
-      width: 100%;
-      margin-top: 24px;
-      overflow: hidden;
-
-      .uc-massage-men-banner-img {
-        width: 100%;
-        height: auto;
-        display: block;
-        object-fit: fill;
-        aspect-ratio: 1 / 1;
-      }
-    }
-  }
-
-  .uc-massage-men-mobile-banner {
-    display: none;
-  }
-}
-
-/* ── Salon for men Section ────────────────────────────────── */
-.uc-salon-men-section {
-  background-color: #ffffff;
-  padding: 0 24px 96px 24px;
-  font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
-    Arial, sans-serif;
-
-  .uc-salon-men-container {
-    max-width: 1232px;
-    margin: 0 auto;
-  }
-
-  .uc-salon-men-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 32px;
-
-    .uc-salon-men-header-text {
-      .uc-salon-men-heading {
-        font-size: 36px;
-        line-height: 44px;
-        font-weight: 600;
-        color: #0f0f0f;
-        margin: 0;
-      }
-
-      .uc-salon-men-subheading {
-        font-size: 16px;
-        line-height: 24px;
-        color: #545454;
-        font-weight: 400;
-        margin: 4px 0 0 0;
-      }
-    }
-
-    .uc-see-all-btn {
-      background-color: #ffffff;
-      border: 1px solid rgba(227, 227, 227, 1);
-      border-radius: 8px;
-      padding: 8px 16px;
-      font-size: 14px;
-      line-height: 20px;
-      font-weight: 600;
-      color: #6e42e5;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition:
-        background-color 0.2s ease,
-        border-color 0.2s ease;
-
-      &:hover {
-        background-color: #f7f5ff;
-        border-color: #6e42e5;
-      }
-    }
-  }
-
-  .uc-salon-men-carousel-wrap {
-    position: relative;
-  }
-
-  .uc-salon-men-track-wrap {
-    overflow-x: auto;
-    overflow-y: hidden;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
-  }
-
-  .uc-salon-men-track {
-    display: flex;
-    gap: 16px;
-    width: max-content;
-  }
-
-  .uc-salon-men-card {
-    width: 233.6px;
-    flex-shrink: 0;
-
-    .uc-salon-men-card-link,
-    .uc-salon-men-card-inner {
-      text-decoration: none;
-      display: block;
-      cursor: pointer;
-      color: inherit;
-    }
-
-    .uc-salon-men-img-wrap {
-      position: relative;
-      width: 233.6px;
-      height: 233.6px;
-      border-radius: 8px;
-      overflow: hidden;
-      background-color: #f5f5f5;
-
-      .uc-salon-men-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-      }
-
-      .uc-salon-men-badge {
-        position: absolute;
-        top: 8px;
-        left: 8px;
-        z-index: 2;
-        background-color: #6e42e5;
-        color: #ffffff;
-        font-size: 11px;
-        line-height: 14px;
-        font-weight: 700;
-        letter-spacing: 0.4px;
-        text-transform: uppercase;
-        padding: 3px 8px;
-        border-radius: 4px;
-      }
-    }
-
-    .uc-salon-men-info {
-      margin-top: 12px;
-
-      .uc-salon-men-title {
-        font-size: 16px;
-        line-height: 24px;
-        font-weight: 600;
-        color: #0f0f0f;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        min-height: 24px;
-      }
-
-      .uc-salon-men-rating-row {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        margin-top: 4px;
-
-        .uc-star-icon {
-          width: 12px;
-          height: 12px;
-          fill: #545454;
-          flex-shrink: 0;
-        }
-
-        .uc-rating-num {
-          font-size: 13px;
-          line-height: 16px;
-          color: #545454;
-          font-weight: 400;
-        }
-
-        .uc-rating-dot {
-          font-size: 12px;
-          color: #545454;
-          line-height: 16px;
-          margin: 0 1px;
-        }
-
-        .uc-instant-badge {
-          font-size: 12px;
-          line-height: 16px;
-          color: #545454;
-          font-weight: 400;
-        }
-      }
-
-      .uc-salon-men-price-row {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        margin-top: 4px;
-
-        .uc-price-val {
-          font-size: 14px;
-          line-height: 20px;
-          font-weight: 600;
-          color: #0f0f0f;
-        }
-
-        .uc-orig-price-val {
-          font-size: 12px;
-          line-height: 16px;
-          color: #757575;
-          text-decoration: line-through;
-        }
-      }
-    }
-  }
-
-  /* Arrow Buttons */
-  .uc-carousel-arrow {
-    position: absolute;
-    top: 40%;
-    transform: translateY(-50%);
-    z-index: 10;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    border: 1px solid rgba(227, 227, 227, 1);
-    background-color: #ffffff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition:
-      box-shadow 0.2s ease,
-      transform 0.2s ease;
-
-    &:hover {
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-    }
-
-    &--left {
-      left: -24px;
-    }
-
-    &--right {
-      right: -24px;
-    }
-
-    svg {
-      pointer-events: none;
-    }
-  }
-
-  @media (max-width: 768px) {
-    padding: 32px 0 40px 0 !important;
-    background-color: #ffffff;
-    border-bottom: 8px solid rgba(245, 245, 245, 1.00);
-
-    .uc-salon-men-container {
-      max-width: 100% !important;
-      padding: 0 !important;
-      margin: 0 !important;
-      width: 100% !important;
-    }
-
-    .uc-salon-men-header {
-      padding: 0 16px;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-
-      .uc-salon-men-header-text {
-        .uc-salon-men-heading {
-          font-size: 17px;
-          line-height: 24px;
-          font-weight: 700;
-          color: rgba(15, 15, 15, 1);
-          margin: 0;
-        }
-
-        .uc-salon-men-subheading {
-          font-size: 12px;
-          line-height: 16px;
-          color: rgba(84, 84, 84, 1);
-          margin: 0;
-        }
-      }
-
-      .uc-see-all-btn {
-        border: none;
-        padding: 0;
-        background: transparent;
-        flex-shrink: 0;
-        white-space: nowrap;
-
-        span {
-          font-size: 14px;
-          line-height: 20px;
-          font-weight: 600;
-          color: rgba(110, 66, 229, 1);
-          white-space: nowrap;
-        }
-      }
-    }
-
-    .uc-salon-men-track-wrap {
-      padding: 0 16px !important;
-      width: 100% !important;
-      box-sizing: border-box !important;
-      overflow-x: auto !important;
-      overflow-y: hidden !important;
-      scrollbar-width: none !important;
-      -ms-overflow-style: none !important;
-
-      &::-webkit-scrollbar {
-        display: none !important;
-      }
-    }
-
-    .uc-salon-men-track {
-      display: flex !important;
-      flex-direction: row !important;
-      flex-wrap: nowrap !important;
-      gap: 12px !important;
-      width: max-content !important;
-    }
-
-    .uc-salon-men-card {
-      width: 144px !important;
-      min-width: 144px !important;
-      max-width: 144px !important;
-      flex: 0 0 144px !important;
-      box-sizing: border-box !important;
-
-      .uc-salon-men-card-link,
-      .uc-salon-men-card-inner {
-        text-decoration: none !important;
-        display: block !important;
-        cursor: pointer !important;
-        color: inherit !important;
-        width: 144px !important;
-      }
-
-      .uc-salon-men-img-wrap {
-        width: 144px !important;
-        height: 144px !important;
-        border-radius: 8px !important;
-        aspect-ratio: 1 / 1 !important;
-        overflow: hidden !important;
-        position: relative !important;
-        background-color: transparent !important;
-
-        .uc-salon-men-img {
-          width: 144px !important;
-          height: 144px !important;
-          object-fit: cover !important;
-          border-radius: 8px !important;
-          aspect-ratio: 1 / 1 !important;
-          display: block !important;
-        }
-
-        .uc-salon-men-badge {
-          top: 6px;
-          left: 6px;
-          background-color: rgba(110, 66, 229, 1);
-          color: #ffffff;
-          font-size: 10px;
-          line-height: 14px;
-          font-weight: 600;
-          letter-spacing: 0.4px;
-          text-transform: uppercase;
-          padding: 2px 6px;
-          border-radius: 4px;
-        }
-      }
-
-      .uc-salon-men-info {
-        margin-top: 8px;
-
-        .uc-salon-men-title {
-          font-size: 14px;
-          line-height: 20px;
-          font-weight: 400;
-          color: rgba(15, 15, 15, 1);
-          min-height: auto;
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-
-        .uc-salon-men-rating-row {
-          display: flex;
-          align-items: center;
-          gap: 4px;
-          margin-top: 4px;
-
-          .uc-star-icon {
-            width: 12px;
-            height: 12px;
-            fill: #545454;
-          }
-
-          .uc-rating-num {
-            font-size: 12px;
-            line-height: 16px;
-            color: rgba(84, 84, 84, 1);
-            font-weight: 400;
-          }
-
-          .uc-rating-dot {
-            font-size: 12px;
-            color: rgba(84, 84, 84, 1);
-            margin: 0 1px;
-          }
-
-          .uc-instant-badge {
-            font-size: 12px;
-            line-height: 16px;
-            color: rgba(84, 84, 84, 1);
-            font-weight: 400;
-          }
-        }
-
-        .uc-salon-men-price-row {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          margin-top: 4px;
-
-          .uc-price-val {
-            font-size: 14px;
-            line-height: 20px;
-            font-weight: 600;
-            color: rgba(15, 15, 15, 1);
-          }
-
-          .uc-orig-price-val {
-            font-size: 12px;
-            line-height: 16px;
-            color: #757575;
-            text-decoration: line-through;
-          }
-        }
-      }
-    }
-
-    .uc-carousel-arrow {
-      display: none !important;
-    }
-
-    .uc-salon-men-mobile-banner {
-      display: block !important;
-      width: 100%;
-      margin-top: 24px;
-      overflow: hidden;
-
-      .uc-salon-men-banner-img {
-        width: 100%;
-        height: auto;
-        display: block;
-        object-fit: fill;
-        aspect-ratio: 3 / 1;
-      }
-    }
-  }
-
-  .uc-salon-men-mobile-banner {
-    display: none;
-  }
-}
-
 @media (max-width: 600px) {
-  .uc-spotlight-section {
-    padding: 0 16px 40px 16px;
-
-    .uc-spotlight-heading {
-      font-size: 24px;
-      line-height: 32px;
-    }
-
-    .uc-spotlight-card {
-      width: 280px;
-      height: 158px;
-    }
-
-    .uc-carousel-arrow {
-      display: none;
-    }
-  }
-
-  .uc-noteworthy-section {
-    padding: 0 16px 56px 16px;
-
-    .uc-noteworthy-heading {
-      font-size: 24px;
-      line-height: 32px;
-      margin-bottom: 24px;
-    }
-
-    .uc-noteworthy-track {
-      row-gap: 20px;
-      column-gap: 12px;
-    }
-
-    .uc-noteworthy-card {
-      width: 160px;
-
-      .uc-noteworthy-img-wrap {
-        width: 160px;
-        height: 160px;
-      }
-
-      .uc-noteworthy-title-wrap .uc-noteworthy-title {
-        font-size: 14px;
-        line-height: 20px;
-      }
-    }
-
-    .uc-carousel-arrow {
-      display: none;
-    }
-  }
-
-  .uc-most-booked-section {
-    padding: 0 16px 56px 16px;
-
-    .uc-most-booked-heading {
-      font-size: 24px;
-      line-height: 32px;
-      margin-bottom: 20px;
-    }
-
-    .uc-most-booked-track {
-      gap: 12px;
-    }
-
-    .uc-most-booked-card {
-      width: 160px;
-
-      .uc-most-booked-img-wrap {
-        width: 160px;
-        height: 160px;
-      }
-
-      .uc-most-booked-info .uc-most-booked-title {
-        font-size: 14px;
-        line-height: 20px;
-      }
-    }
-
-    .uc-carousel-arrow {
-      display: none;
-    }
-  }
-
-  .uc-revamp-section {
-    padding: 0 16px 56px 16px;
-
-    .uc-revamp-heading {
-      font-size: 24px;
-      line-height: 32px;
-      margin-bottom: 20px;
-    }
-
-    .uc-revamp-track {
-      gap: 16px;
-    }
-
-    .uc-revamp-card {
-      width: 280px;
-      height: 374px;
-    }
-
-    .uc-carousel-arrow {
-      display: none;
-    }
-  }
-
-  .uc-spotlight-banner-section {
-    padding: 0 16px 56px 16px;
-
-    .uc-spotlight-banner-card {
-      height: 180px;
-    }
-  }
-
-  .uc-spa-section {
-    padding: 0 16px 56px 16px;
-
-    .uc-spa-header {
-      margin-bottom: 20px;
-
-      .uc-spa-heading {
-        font-size: 24px;
-        line-height: 32px;
-      }
-    }
-
-    .uc-spa-track {
-      gap: 12px;
-    }
-
-    .uc-spa-card {
-      width: 160px;
-
-      .uc-spa-img-wrap {
-        width: 160px;
-        height: 160px;
-      }
-
-      .uc-spa-info .uc-spa-title {
-        font-size: 14px;
-        line-height: 20px;
-      }
-    }
-
-    .uc-carousel-arrow {
-      display: none;
-    }
-  }
-
   .uc-appliance-section {
     padding: 0 16px 56px 16px;
 
@@ -4423,82 +1603,6 @@
     }
   }
 
-  .uc-massage-men-section {
-    padding: 0 16px 56px 16px;
-
-    .uc-massage-men-header {
-      margin-bottom: 20px;
-
-      .uc-massage-men-heading {
-        font-size: 24px;
-        line-height: 32px;
-      }
-    }
-
-    .uc-massage-men-track {
-      gap: 12px;
-    }
-
-    .uc-massage-men-card {
-      width: 160px;
-
-      .uc-massage-men-img-wrap {
-        width: 160px;
-        height: 160px;
-      }
-
-      .uc-massage-men-info .uc-massage-men-title {
-        font-size: 14px;
-        line-height: 20px;
-      }
-    }
-
-    .uc-carousel-arrow {
-      display: none;
-    }
-  }
-
-  .uc-salon-men-section {
-    padding: 0 16px 56px 16px;
-
-    .uc-salon-men-header {
-      margin-bottom: 20px;
-
-      .uc-salon-men-header-text {
-        .uc-salon-men-heading {
-          font-size: 24px;
-          line-height: 32px;
-        }
-
-        .uc-salon-men-subheading {
-          font-size: 14px;
-          line-height: 20px;
-        }
-      }
-    }
-
-    .uc-salon-men-track {
-      gap: 12px;
-    }
-
-    .uc-salon-men-card {
-      width: 160px;
-
-      .uc-salon-men-img-wrap {
-        width: 160px;
-        height: 160px;
-      }
-
-      .uc-salon-men-info .uc-salon-men-title {
-        font-size: 14px;
-        line-height: 20px;
-      }
-    }
-
-    .uc-carousel-arrow {
-      display: none;
-    }
-  }
 }
 
 /* Mobile Responsiveness */
@@ -4518,6 +1622,139 @@
       width: 100%;
       max-width: 481.33px;
       margin-top: 24px;
+    }
+  }
+}
+
+/* ── Carousel card content (frame: modules/card-carousel) ──── */
+/* "What our customers say" */
+.uc-review-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+
+  .uc-review-stars {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 18px;
+
+    svg {
+      width: 22px;
+      height: 22px;
+      fill: none;
+      stroke: #f5b301;
+      stroke-width: 1.6;
+      stroke-linejoin: round;
+
+      &.filled {
+        fill: #f5b301;
+      }
+    }
+  }
+
+  .uc-review-text {
+    margin: 0 0 24px;
+    font-size: 17px;
+    line-height: 28px;
+    font-style: italic;
+    color: #3d3d3d;
+  }
+
+  .uc-review-author {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 24px 16px 20px;
+    border: 1px solid #e3e3e3;
+    border-radius: 16px;
+  }
+
+  .uc-review-avatar {
+    width: 88px;
+    height: 88px;
+    margin-bottom: 12px;
+    border-radius: 50%;
+    border: 3px solid #d9cffa;
+    background-color: #f5f5f5;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    overflow: hidden;
+    transition: border-color 0.6s ease;
+
+    svg {
+      width: 76px;
+      height: 76px;
+      fill: #a3a3a3;
+      transition: fill 0.6s ease;
+    }
+  }
+
+  .uc-review-name {
+    font-size: 22px;
+    line-height: 28px;
+    font-weight: 700;
+    color: #b7a6f2;
+    transition: color 0.6s ease;
+  }
+
+  .uc-review-service {
+    font-size: 13px;
+    line-height: 18px;
+    font-weight: 500;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    color: #545454;
+  }
+
+  .uc-review-meta {
+    font-size: 12px;
+    line-height: 16px;
+    color: #757575;
+  }
+
+  &.active {
+    .uc-review-avatar {
+      border-color: #6e42e5;
+
+      svg {
+        fill: #0f0f0f;
+      }
+    }
+
+    .uc-review-name {
+      color: #6e42e5;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .uc-review-text {
+      font-size: 15px;
+      line-height: 24px;
+      margin-bottom: 18px;
+    }
+
+    .uc-review-author {
+      padding: 18px 12px 16px;
+    }
+
+    .uc-review-avatar {
+      width: 68px;
+      height: 68px;
+
+      svg {
+        width: 58px;
+        height: 58px;
+      }
+    }
+
+    .uc-review-name {
+      font-size: 18px;
+      line-height: 24px;
     }
   }
 }
