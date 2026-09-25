@@ -284,6 +284,18 @@
   }
 }
 
+/* Inline search now appears in the (desktop) header on mobile too — let it flex
+   to fill the row and keep its dropdown inside the viewport. */
+@media (max-width: 768px) {
+  .uc-search-inline {
+    width: 100%;
+  }
+
+  .uc-search-dropdown {
+    width: min(420px, calc(100vw - 24px));
+  }
+}
+
 @keyframes dropIn {
   from { opacity: 0; transform: translateY(-4px); }
   to { opacity: 1; transform: translateY(0); }

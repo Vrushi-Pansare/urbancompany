@@ -319,14 +319,50 @@
 
 /* Mobile Responsiveness (< 768px) */
 @media (max-width: 768px) {
-  /* Hide Desktop Header on Mobile */
+  /* Mobile now uses the same chrome as desktop — no separate mobile header/nav.
+     Shrink the desktop header so its row fits a phone without overflowing. */
   .uc-desktop-header {
-    display: none !important;
+    padding: 10px 12px;
+
+    .uc-header-inner {
+      gap: 8px;
+    }
+
+    .uc-logo-col .uc-logo-link {
+      height: 30px;
+    }
+
+    /* Search column takes the remaining width; children may shrink */
+    .uc-search-col {
+      flex: 1;
+      min-width: 0;
+      gap: 8px;
+    }
+
+    .uc-location-box {
+      width: auto;
+      max-width: 116px;
+      flex-shrink: 0;
+      padding: 0 10px;
+    }
+
+    /* Inline search stretches to fill instead of a fixed 260px */
+    app-service-search {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .uc-actions-col {
+      padding-left: 4px;
+
+      .uc-actions-group {
+        gap: 8px;
+      }
+    }
   }
 
-  /* Mobile Top Header Bar */
   .uc-mobile-header {
-    display: flex;
+    display: none !important;
     flex-direction: column;
     background-color: rgb(17, 146, 232);
     padding: 14px 16px 16px 16px;
@@ -598,7 +634,7 @@
 
   /* Mobile Bottom Navigation Bar */
   .uc-mobile-bottom-nav {
-    display: flex;
+    display: none !important;
     justify-content: space-around;
     align-items: center;
     position: fixed;
