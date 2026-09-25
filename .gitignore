@@ -43,6 +43,3 @@ Thumbs.db
 
 # Local Netlify folder
 .netlify
-
-# Local publish script
-/deploy.sh
