@@ -1,24 +1,67 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AsyncPipe, NgIf } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { HeaderComponent } from './modules/header/header.component';
 import { FooterComponent } from './modules/footer/footer.component';
 import { LoginComponent } from './modules/login/login.component';
 import { LocationGateComponent } from './modules/location-gate/location-gate.component';
-import { ServiceUnavailableComponent } from './modules/service-unavailable/service-unavailable.component';
 import { LocationService } from './services/location.service';
+import { NotifyService } from './services/notify.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, AsyncPipe, NgIf, HeaderComponent, FooterComponent, LoginComponent, LocationGateComponent, ServiceUnavailableComponent],
+  imports: [RouterOutlet, AsyncPipe, NgIf, HeaderComponent, FooterComponent, LoginComponent, LocationGateComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent {
-  title = 'Urban Company';
-  isBlocked$ = this.locationService.isBlocked$;
-  status$ = this.locationService.status$;
+export class AppComponent implements OnInit, OnDestroy {
+  title = 'MyGenie';
+  area$ = this.locationService.area$;
+  // Inert only while the gate is deciding — an unserviceable area is browsable.
+  isResolving$ = this.locationService.isResolving$;
+  isUnserviceable$ = this.locationService.isUnserviceable$;
+  toast$ = this.notify.message$;
+  // The checkout route uses its own minimal chrome, so hide the site header/footer there.
+  hideChrome = false;
 
-  constructor(private locationService: LocationService) {}
+  private sub = new Subscription();
+
+  constructor(
+    private locationService: LocationService,
+    private notify: NotifyService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    // Drive the global browse-only styles (hide prices, disable purchase) from the body.
+    this.sub.add(
+      this.locationService.isUnserviceable$.subscribe((unserviceable) => {
+        document.body.classList.toggle('browse-only', unserviceable);
+      })
+    );
+
+    this.hideChrome = this.isCheckout(this.router.url);
+    this.sub.add(
+      this.router.events
+        .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
+        .subscribe((e) => (this.hideChrome = this.isCheckout(e.urlAfterRedirects)))
+    );
+  }
+
+  private isCheckout(url: string): boolean {
+    return url.split('?')[0].startsWith('/checkout');
+  }
+
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
+    document.body.classList.remove('browse-only');
+  }
+
+  checkAgain(): void {
+    // Fresh position; the banner clears automatically if the new area is serviceable.
+    this.locationService.requestLocation(false, true);
+  }
 }

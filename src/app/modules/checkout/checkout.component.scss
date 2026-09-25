@@ -1,0 +1,551 @@
+:host {
+  --co-purple: #6c40e5;
+  --co-border: #ededed;
+  --co-ink: #0f0f0f;
+  --co-muted: #808080;
+
+  display: block;
+  background-color: #ffffff;
+  min-height: 100vh;
+  color: var(--co-ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.co-page {
+  padding-bottom: 96px; // clear the sticky bottom bar
+}
+
+/* ── Top bar ─────────────────────────────────────────── */
+.co-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 24px;
+  background-color: #ffffff;
+  border-bottom: 1px solid var(--co-border);
+
+  .co-brand {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .co-logo {
+    height: 30px;
+    width: auto;
+    max-width: 120px;
+    object-fit: contain;
+    display: block;
+  }
+
+  .co-topbar-title {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  @media (max-width: 768px) {
+    padding: 12px 16px;
+  }
+}
+
+/* ── Layout ──────────────────────────────────────────── */
+.co-container {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 28px 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    max-width: 560px;
+    gap: 16px;
+    padding: 16px;
+  }
+}
+
+.co-left,
+.co-right {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── Card base ───────────────────────────────────────── */
+.co-card {
+  background-color: #ffffff;
+  border: 1px solid var(--co-border);
+  border-radius: 14px;
+  padding: 18px 20px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.co-card-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.co-muted {
+  color: var(--co-muted);
+  font-size: 13.5px;
+  line-height: 1.4;
+}
+
+.co-link {
+  color: var(--co-ink);
+  font-size: 13.5px;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ── Buttons ─────────────────────────────────────────── */
+.co-primary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 13px 22px;
+  border: none;
+  border-radius: 10px;
+  background-color: var(--co-purple);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter 0.15s ease;
+  text-decoration: none;
+
+  &.full {
+    width: 100%;
+    margin-top: 12px;
+  }
+
+  &:hover {
+    filter: brightness(1.06);
+  }
+}
+
+.co-ghost-btn {
+  flex: none;
+  padding: 7px 16px;
+  border: 1px solid #d4d4d4;
+  border-radius: 8px;
+  background: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    background: #f7f7f7;
+  }
+}
+
+/* ── Account (logged-out left) ───────────────────────── */
+.co-account .co-muted {
+  margin-top: 2px;
+}
+
+/* ── Booking steps (logged-in left) ──────────────────── */
+.co-steps {
+  padding: 6px 20px;
+}
+
+.co-step {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--co-border);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &.co-step-col {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .co-step-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+}
+
+.co-step-icon {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: #f5f5f5;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.co-step-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.co-step-grow {
+  flex: 1;
+  min-width: 0;
+}
+
+.co-step-label {
+  font-size: 14px;
+  font-weight: 700;
+
+  &.muted {
+    color: #b8b8b8;
+  }
+}
+
+.co-step-value {
+  font-size: 13px;
+  color: #4b4b4b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.co-step-disabled {
+  opacity: 0.85;
+}
+
+/* ── Cancellation policy ─────────────────────────────── */
+.co-policy {
+  padding: 4px 4px 0;
+
+  .co-policy-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .co-muted {
+    margin-bottom: 8px;
+  }
+}
+
+/* ── Cart summary (right) ────────────────────────────── */
+.co-cart-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.co-cart-item {
+  padding-bottom: 12px;
+
+  & + .co-cart-item {
+    padding-top: 12px;
+    border-top: 1px solid #f2f2f2;
+  }
+}
+
+.co-cart-item-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.co-cart-item-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.co-cart-item-price {
+  flex: none;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.co-cart-item-notes {
+  margin: 8px 0 0 4px;
+  padding-left: 16px;
+  list-style: disc;
+
+  li {
+    font-size: 12.5px;
+    color: var(--co-muted);
+    line-height: 1.5;
+  }
+}
+
+.co-edit-package {
+  display: inline-block;
+  margin: 10px 0 14px;
+}
+
+/* Quantity stepper */
+.co-stepper {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #e3defb;
+  background: #f4f1fe;
+  border-radius: 8px;
+  overflow: hidden;
+
+  button {
+    width: 30px;
+    height: 30px;
+    border: none;
+    background: transparent;
+    color: var(--co-purple);
+    font-size: 17px;
+    line-height: 1;
+    cursor: pointer;
+
+    &:hover {
+      background: #ebe6fc;
+    }
+  }
+
+  span {
+    min-width: 26px;
+    text-align: center;
+    font-size: 13.5px;
+    font-weight: 600;
+  }
+}
+
+/* Avoid-calling checkbox */
+.co-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 14px;
+  border-top: 1px solid #f2f2f2;
+  font-size: 13.5px;
+  cursor: pointer;
+
+  input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--co-ink);
+    cursor: pointer;
+  }
+}
+
+/* ── Coupons ─────────────────────────────────────────── */
+.co-coupons {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+
+  .co-coupons-icon {
+    flex: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #16a34a;
+    color: #fff;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .co-coupons-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .co-coupons-title {
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .co-coupons-count {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--co-purple);
+  }
+
+  .co-chevron {
+    color: var(--co-purple);
+    font-size: 20px;
+    font-weight: 700;
+  }
+}
+
+/* ── Payment summary (logged out) ────────────────────── */
+.co-sum-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13.5px;
+  padding: 7px 0;
+
+  &.co-sum-total {
+    border-top: 1px solid var(--co-border);
+    padding-top: 12px;
+    font-weight: 700;
+  }
+
+  &.co-sum-pay {
+    font-weight: 700;
+    font-size: 14.5px;
+  }
+}
+
+.co-sum-note {
+  margin-top: 6px;
+  font-size: 11.5px;
+  color: var(--co-muted);
+}
+
+/* ── Total bill (logged in) ──────────────────────────── */
+.co-totalbill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+
+  .co-totalbill-left {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .co-totalbill-amt {
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .co-chevron {
+    color: #9a9a9a;
+    font-size: 20px;
+  }
+}
+
+/* ── Tip ─────────────────────────────────────────────── */
+.co-tip {
+  padding: 2px 4px;
+
+  .co-tip-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+}
+
+.co-tip-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.co-tip-btn {
+  position: relative;
+  min-width: 76px;
+  padding: 10px 14px;
+  border: 1px solid #d9d9d9;
+  border-radius: 10px;
+  background: #ffffff;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.12s ease, background 0.12s ease;
+
+  &:hover {
+    border-color: #16a34a;
+  }
+
+  &.active {
+    border-color: #16a34a;
+    background: #f0fdf4;
+  }
+
+  .co-tip-popular {
+    display: block;
+    margin-top: 2px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: #16a34a;
+  }
+}
+
+/* ── Empty cart ──────────────────────────────────────── */
+.co-empty {
+  max-width: 420px;
+  margin: 80px auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+
+  h2 {
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  p {
+    color: var(--co-muted);
+    font-size: 14px;
+  }
+
+  .co-primary-btn {
+    margin-top: 8px;
+  }
+}
+
+/* ── Sticky bottom bar ───────────────────────────────── */
+.co-bottombar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  background: #ffffff;
+  border-top: 1px solid var(--co-border);
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06);
+
+  .co-bottombar-inner {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    @media (max-width: 900px) {
+      justify-content: space-between;
+      padding: 14px 18px;
+    }
+  }
+
+  .co-bottombar-amt {
+    font-size: 15px;
+
+    strong {
+      font-size: 18px;
+      font-weight: 700;
+      margin-left: 6px;
+    }
+  }
+}

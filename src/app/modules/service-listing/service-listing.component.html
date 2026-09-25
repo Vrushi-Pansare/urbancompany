@@ -136,6 +136,9 @@
             <span>Total</span>
             <span>{{ formatPrice(cartTotal) }}</span>
           </div>
+          <button type="button" class="uc-sl-checkout-btn" (click)="goToCheckout()">
+            Proceed to checkout
+          </button>
         </ng-container>
         <ng-template #emptyCart>
           <div class="uc-sl-cart-empty">
@@ -169,8 +172,11 @@
   </div>
 
   <!-- Mobile cart bar -->
-  <div class="uc-sl-mobile-cart" *ngIf="cartCount">
-    <span class="uc-sl-mobile-cart-total">{{ formatPrice(cartTotal) }}</span>
-    <span class="uc-sl-mobile-cart-count">{{ cartCount }} {{ cartCount === 1 ? 'item' : 'items' }} added</span>
-  </div>
+  <button type="button" class="uc-sl-mobile-cart" *ngIf="cartCount" (click)="goToCheckout()">
+    <span class="uc-sl-mobile-cart-info">
+      <span class="uc-sl-mobile-cart-total">{{ formatPrice(cartTotal) }}</span>
+      <span class="uc-sl-mobile-cart-count">{{ cartCount }} {{ cartCount === 1 ? 'item' : 'items' }} added</span>
+    </span>
+    <span class="uc-sl-mobile-cart-cta">Checkout ›</span>
+  </button>
 </div>

@@ -6,9 +6,83 @@
   background-color: #fcfcfd;
   color: #111111;
 
+  .app-browse-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    padding: 9px 16px;
+    background-color: #1f1f1f;
+    color: #ffffff;
+    font-size: 13.5px;
+    line-height: 1.35;
+    text-align: center;
+
+    .app-browse-banner-text {
+      font-weight: 500;
+    }
+
+    .app-browse-banner-btn {
+      flex: none;
+      padding: 5px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      border-radius: 999px;
+      background: transparent;
+      color: #ffffff;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.14);
+      }
+    }
+
+    @media (max-width: 768px) {
+      font-size: 12.5px;
+      padding: 8px 12px;
+    }
+  }
+
+  .app-toast {
+    position: fixed;
+    left: 50%;
+    bottom: 32px;
+    transform: translateX(-50%);
+    z-index: 2000;
+    max-width: min(92vw, 420px);
+    padding: 12px 20px;
+    border-radius: 999px;
+    background-color: #1f1f1f;
+    color: #ffffff;
+    font-size: 13.5px;
+    font-weight: 500;
+    line-height: 1.35;
+    text-align: center;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+    animation: app-toast-in 0.2s ease-out;
+
+    @media (max-width: 768px) {
+      bottom: 84px; /* clear the mobile bottom nav */
+      font-size: 12.5px;
+      padding: 11px 18px;
+    }
+  }
+
+  @keyframes app-toast-in {
+    from { opacity: 0; transform: translate(-50%, 8px); }
+    to   { opacity: 1; transform: translate(-50%, 0); }
+  }
+
   .app-main {
     flex: 1;
     padding-top: 70px;
+
+    &.no-chrome {
+      padding-top: 0;
+    }
 
     @media (max-width: 768px) {
       padding-top: 0;

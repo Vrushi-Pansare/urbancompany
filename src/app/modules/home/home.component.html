@@ -91,32 +91,8 @@
         loop
         playsinline
         preload="auto"
-        aria-label="Urban Company professionals at work"
+        aria-label="MyGenie professionals at work"
       ></video>
-    </div>
-  </div>
-</section>
-
-<!-- Popular Categories (unique categories of items tagged "popular") -->
-<section class="uc-popular-section" id="popularCategoriesSection" *ngIf="popularCategories.length">
-  <div class="uc-popular-container">
-    <h2 class="uc-popular-heading">Popular Categories</h2>
-
-    <div class="uc-popular-grid">
-      <button
-        *ngFor="let item of popularCategories"
-        type="button"
-        class="uc-popular-card"
-        (click)="openCategory(item)"
-      >
-        <div class="uc-popular-img-wrap">
-          <img *ngIf="item.image; else popularIcon" [src]="item.image" [alt]="item.name" class="uc-popular-img" />
-          <ng-template #popularIcon>
-            <app-service-icon [code]="item.id"></app-service-icon>
-          </ng-template>
-        </div>
-        <span class="uc-popular-name">{{ item.name }}</span>
-      </button>
     </div>
   </div>
 </section>

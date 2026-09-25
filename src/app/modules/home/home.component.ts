@@ -48,7 +48,7 @@ interface MostBookedService {
 }
 
 // Listing tags shown on the home page
-const POPULAR_TAG_CODE = 'popular'; // "Popular Categories" + "Popular Services"
+const POPULAR_TAG_CODE = 'popular'; // "Popular Services"
 const RECOMMENDED_TAG_CODE = 'recommended'; // "Recommended Services"
 const APPLIANCE_REPAIR_TAG_CODE = 'repairing_ac'; // "Appliance repair & service"
 const INSTALLATION_TAG_CODE = 'installation'; // "Home repair & installation"
@@ -215,9 +215,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
   listingCategories: CategoryItem[] = [];
   private listingLoaded = false;
 
-  // "Popular Categories" — unique categories of listing items tagged popular
-  popularCategories: CategoryItem[] = [];
-
   // "Popular Services" / "Recommended Services" — listing items with that tag
   popularServices: PopularService[] = [];
   recommendedServices: PopularService[] = [];
@@ -265,14 +262,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
       }
     });
     this.listingCategories = [...unique.values()].sort(byLabel).map(toCategoryTile);
-
-    const popular = new Map<string, ListingItem['category']>();
-    this.listingItems
-      .filter((item) => item.tags?.code === POPULAR_TAG_CODE && item.category)
-      .forEach((item) => {
-        if (!popular.has(item.category.code)) popular.set(item.category.code, item.category);
-      });
-    this.popularCategories = [...popular.values()].sort(byLabel).map(toCategoryTile);
 
     this.popularServices = this.servicesWithTag(POPULAR_TAG_CODE);
     this.recommendedServices = this.servicesWithTag(RECOMMENDED_TAG_CODE);

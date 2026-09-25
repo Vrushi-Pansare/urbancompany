@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ListingItem, ListingService } from '../../services/listing.service';
+import { LocationService } from '../../services/location.service';
+import { NotifyService } from '../../services/notify.service';
+import { CartRow, CartService } from '../../services/cart.service';
 import { ServiceIconComponent } from '../service-icon/service-icon.component';
 import { byLabel, groupImage, productImage, toTitleCase } from '../../constants/listing-display';
 
@@ -40,22 +43,25 @@ export class ServiceListingComponent implements OnInit, OnDestroy {
   siblings: SiblingGroup[] = [];
   services: ServiceRow[] = [];
 
-  // In-page cart, kept while switching groups — not persisted yet
-  cart = new Map<string, { service: ServiceRow; qty: number }>();
-
   highlightedId: string | null = null;
   private highlightTimer?: ReturnType<typeof setTimeout>;
 
   private listing: ListingItem[] = [];
   private sub = new Subscription();
 
+  private canTransact = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private listingService: ListingService
+    private listingService: ListingService,
+    private locationService: LocationService,
+    private notify: NotifyService,
+    private cartService: CartService
   ) {}
 
   ngOnInit(): void {
+    this.sub.add(this.locationService.canTransact$.subscribe((can) => (this.canTransact = can)));
     this.sub.add(
       this.route.paramMap.subscribe(async (params) => {
         this.categoryCode = params.get('category') ?? '';
@@ -91,30 +97,37 @@ export class ServiceListingComponent implements OnInit, OnDestroy {
     this.highlightTimer = setTimeout(() => (this.highlightedId = null), 2600);
   }
 
-  get cartRows(): { service: ServiceRow; qty: number }[] {
-    return [...this.cart.values()];
+  get cartRows(): CartRow[] {
+    return this.cartService.rows;
   }
 
   get cartCount(): number {
-    return this.cartRows.reduce((sum, row) => sum + row.qty, 0);
+    return this.cartService.count;
   }
 
   get cartTotal(): number {
-    return this.cartRows.reduce((sum, row) => sum + row.service.price * row.qty, 0);
+    return this.cartService.total;
   }
 
   qty(id: string): number {
-    return this.cart.get(id)?.qty ?? 0;
+    return this.cartService.qty(id);
   }
 
   add(service: ServiceRow): void {
-    this.cart.set(service.id, { service, qty: this.qty(service.id) + 1 });
+    // Booking is disabled outside serviceable areas — tell the user instead.
+    if (!this.canTransact) {
+      this.notify.show("MyGenie isn't available in your area yet — we're expanding soon!");
+      return;
+    }
+    this.cartService.add({ ...service, groupName: this.groupName, categoryName: this.categoryName });
   }
 
   remove(service: ServiceRow): void {
-    const next = this.qty(service.id) - 1;
-    if (next > 0) this.cart.set(service.id, { service, qty: next });
-    else this.cart.delete(service.id);
+    this.cartService.remove(service.id);
+  }
+
+  goToCheckout(): void {
+    this.router.navigate(['/checkout']);
   }
 
   formatPrice(value: number): string {

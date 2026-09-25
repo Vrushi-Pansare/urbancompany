@@ -38,6 +38,20 @@ export class LocationService {
   public status$ = this.statusSubject.asObservable();
   public isBlocked$ = this.status$.pipe(map((status) => status !== 'serviceable'));
 
+  /**
+   * The gate is still deciding (permission / geocoding). Content stays inert while true.
+   * An unserviceable area is NOT blocking: the user may browse in view-only mode.
+   */
+  public isResolving$ = this.status$.pipe(
+    map((status) => status !== 'serviceable' && status !== 'unserviceable')
+  );
+
+  /** Prices and add-to-cart/purchase are only available inside a serviceable area. */
+  public canTransact$ = this.status$.pipe(map((status) => status === 'serviceable'));
+
+  /** Area confirmed but outside our serviceable cities — browse-only mode. */
+  public isUnserviceable$ = this.status$.pipe(map((status) => status === 'unserviceable'));
+
   private locationSubject = new BehaviorSubject<UserLocation | null>(null);
   public location$ = this.locationSubject.asObservable();
 

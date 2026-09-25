@@ -10,9 +10,9 @@
     <!-- Mobile drag handle (visual only) -->
     <div class="uc-sheet-handle"></div>
 
-    <!-- Urban Company Brand Logo -->
+    <!-- MyGenie Brand Logo -->
     <div class="uc-brand-logo-row">
-      <img [src]="logoUrl" alt="Urban Company" class="uc-location-logo-img" />
+      <img [src]="logoUrl" alt="MyGenie" class="uc-location-logo-img" />
     </div>
 
     <!-- Location Pin Illustration -->
@@ -41,7 +41,7 @@
       <p id="uc-location-desc" class="uc-location-subheading">
         {{ status === 'checking'
           ? 'This usually takes a few seconds.'
-          : 'Making sure Urban Company is available at your address.' }}
+          : 'Making sure MyGenie is available at your address.' }}
       </p>
       <div class="uc-action-btn-row">
         <button type="button" class="uc-primary-btn loading" disabled>
@@ -60,7 +60,7 @@
         {{ status === 'requesting' ? 'Allow location access' : 'Location access is required' }}
       </h1>
       <p id="uc-location-desc" class="uc-location-subheading">
-        Urban Company uses your location to show services available at your address.
+        MyGenie uses your location to show services available at your address.
         You'll need to turn it on to continue.
       </p>
 
@@ -99,7 +99,7 @@
     <ng-container *ngIf="status === 'denied'">
       <h1 id="uc-location-heading" class="uc-location-heading">Location permission is off</h1>
       <p id="uc-location-desc" class="uc-location-subheading">
-        Location is blocked for this site. Turn it on in {{ browserName }} to continue using Urban Company.
+        Location is blocked for this site. Turn it on in {{ browserName }} to continue using MyGenie.
       </p>
 
       <div class="uc-steps-card">
@@ -163,7 +163,7 @@
     <ng-container *ngIf="status === 'unsupported'">
       <h1 id="uc-location-heading" class="uc-location-heading">Your browser doesn't support location</h1>
       <p id="uc-location-desc" class="uc-location-subheading">
-        Urban Company needs your location to show services near you.
+        MyGenie needs your location to show services near you.
         Please open this site in the latest version of Chrome, Safari, Edge or Firefox.
       </p>
     </ng-container>

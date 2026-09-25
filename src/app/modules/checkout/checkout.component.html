@@ -1,0 +1,182 @@
+<div class="co-page">
+  <!-- Top bar -->
+  <header class="co-topbar">
+    <a routerLink="/" class="co-brand" aria-label="MyGenie home">
+      <img [src]="logoUrl" alt="MyGenie" class="co-logo" />
+    </a>
+    <span class="co-topbar-title">Checkout</span>
+  </header>
+
+  <!-- Empty cart -->
+  <div class="co-empty" *ngIf="!rows.length">
+    <svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="9" cy="20" r="1.3" />
+      <circle cx="18" cy="20" r="1.3" />
+      <path d="M2.5 3.5h2.8l2.4 11.2a1.5 1.5 0 001.5 1.2h8.4a1.5 1.5 0 001.5-1.1l1.6-6.3H6.2" />
+    </svg>
+    <h2>Your cart is empty</h2>
+    <p>Add a service to continue to checkout.</p>
+    <a routerLink="/" class="co-primary-btn">Browse services</a>
+  </div>
+
+  <div class="co-container" *ngIf="rows.length">
+    <!-- ─────────────── LEFT ─────────────── -->
+    <div class="co-left">
+      <!-- Logged out: Account -->
+      <section class="co-card co-account" *ngIf="!user">
+        <h3 class="co-card-title">Account</h3>
+        <p class="co-muted">To book the service, please login or sign up</p>
+        <button type="button" class="co-primary-btn full" (click)="login()">Login</button>
+      </section>
+
+      <!-- Logged in: booking details -->
+      <ng-container *ngIf="user">
+        <section class="co-card co-steps">
+          <div class="co-step">
+            <span class="co-step-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#0f0f0f" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            </span>
+            <div class="co-step-body">
+              <span class="co-step-label">Send booking details to</span>
+              <span class="co-step-value">{{ user.countryCode }} {{ user.phoneNumber }}</span>
+            </div>
+          </div>
+
+          <div class="co-step">
+            <span class="co-step-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#0f0f0f" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
+            </span>
+            <div class="co-step-body co-step-grow">
+              <span class="co-step-label">Address</span>
+              <span class="co-step-value">{{ addressLine }}</span>
+            </div>
+            <button type="button" class="co-ghost-btn" (click)="editAddress()">Edit</button>
+          </div>
+
+          <div class="co-step co-step-col">
+            <div class="co-step-head">
+              <span class="co-step-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#0f0f0f" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+              </span>
+              <span class="co-step-label">Slot</span>
+            </div>
+            <button type="button" class="co-primary-btn full" (click)="selectSlot()">Select time &amp; date</button>
+          </div>
+
+          <div class="co-step co-step-disabled">
+            <span class="co-step-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#a3a3a3" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg>
+            </span>
+            <span class="co-step-label muted">Payment Method</span>
+          </div>
+        </section>
+
+        <section class="co-policy">
+          <h3 class="co-policy-title">Cancellation policy</h3>
+          <p class="co-muted">
+            Free cancellations if done more than 12 hrs before the service. A fee will be charged otherwise.
+          </p>
+          <a class="co-link" (click)="readPolicy()">Read full policy</a>
+        </section>
+      </ng-container>
+    </div>
+
+    <!-- ─────────────── RIGHT ─────────────── -->
+    <div class="co-right">
+      <!-- Cart summary -->
+      <section class="co-card co-cart">
+        <h3 class="co-cart-title">{{ cardTitle }}</h3>
+
+        <div class="co-cart-item" *ngFor="let row of rows">
+          <div class="co-cart-item-head">
+            <span class="co-cart-item-name">{{ row.service.title }}</span>
+            <div class="co-stepper" role="group" [attr.aria-label]="'Quantity of ' + row.service.title">
+              <button type="button" aria-label="Remove one" (click)="dec(row)">−</button>
+              <span>{{ row.qty }}</span>
+              <button type="button" aria-label="Add one" (click)="inc(row)">+</button>
+            </div>
+            <span class="co-cart-item-price">{{ formatPrice(row.service.price * row.qty) }}</span>
+          </div>
+          <ul class="co-cart-item-notes" *ngIf="row.service.note">
+            <li>{{ row.service.note }}</li>
+          </ul>
+        </div>
+
+        <a class="co-link co-edit-package" (click)="editPackage()">Edit package</a>
+
+        <label class="co-check">
+          <input type="checkbox" [(ngModel)]="avoidCalling" />
+          <span>Avoid calling before reaching the location</span>
+        </label>
+      </section>
+
+      <!-- Coupons and offers -->
+      <button type="button" class="co-card co-coupons" (click)="viewOffers()">
+        <span class="co-coupons-icon" aria-hidden="true">%</span>
+        <span class="co-coupons-text">
+          <span class="co-coupons-title">Coupons and offers</span>
+          <span class="co-muted" *ngIf="!user">Login/Sign up to view offers</span>
+          <span class="co-coupons-count" *ngIf="user">14 offers</span>
+        </span>
+        <span class="co-chevron" *ngIf="user" aria-hidden="true">›</span>
+      </button>
+
+      <!-- Payment summary (logged out) -->
+      <section class="co-card co-summary" *ngIf="!user">
+        <h3 class="co-card-title">Payment summary</h3>
+        <div class="co-sum-row">
+          <span>Item total</span>
+          <span>{{ formatPrice(itemTotal) }}</span>
+        </div>
+        <div class="co-sum-row co-sum-total">
+          <span>Total amount</span>
+          <span>{{ formatPrice(amountToPay) }}</span>
+        </div>
+        <div class="co-sum-row co-sum-pay">
+          <span>Amount to pay</span>
+          <span>{{ formatPrice(amountToPay) }}</span>
+        </div>
+        <p class="co-sum-note">Inclusive of all taxes &amp; charges</p>
+      </section>
+
+      <!-- Total bill + tip (logged in) -->
+      <ng-container *ngIf="user">
+        <button type="button" class="co-card co-totalbill" (click)="viewBreakup()">
+          <span class="co-totalbill-left">
+            <span class="co-totalbill-amt">Total bill {{ formatPrice(amountToPay) }}</span>
+            <span class="co-muted">Incl. all taxes &amp; charges</span>
+          </span>
+          <span class="co-chevron" aria-hidden="true">›</span>
+        </button>
+
+        <section class="co-tip">
+          <h3 class="co-tip-title">Add a tip to thank the Professional</h3>
+          <div class="co-tip-options">
+            <button
+              type="button"
+              class="co-tip-btn"
+              *ngFor="let t of tipOptions"
+              [class.active]="tip === t"
+              (click)="setTip(t)"
+            >
+              <span class="co-tip-amt">₹ {{ t }}</span>
+              <span class="co-tip-popular" *ngIf="t === 75">POPULAR</span>
+            </button>
+            <button type="button" class="co-tip-btn" [class.active]="tip && !tipOptions.includes(tip)" (click)="customTip()">
+              <span class="co-tip-amt">Custom</span>
+            </button>
+          </div>
+          <p class="co-muted">100% of the tip goes to the professional.</p>
+        </section>
+      </ng-container>
+    </div>
+  </div>
+
+  <!-- Sticky bottom bar -->
+  <div class="co-bottombar" *ngIf="rows.length">
+    <div class="co-bottombar-inner">
+      <span class="co-bottombar-amt">Amount to pay <strong>{{ formatPrice(amountToPay) }}</strong></span>
+      <a class="co-link" (click)="viewBreakup()">View breakup</a>
+    </div>
+  </div>
+</div>

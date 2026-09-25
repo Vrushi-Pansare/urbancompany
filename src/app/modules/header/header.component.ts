@@ -7,6 +7,8 @@ import { filter } from 'rxjs/operators';
 import { ASSET_URLS } from '../../constants/urls';
 import { AuthService, UserProfile } from '../../services/auth.service';
 import { LocationService } from '../../services/location.service';
+import { NotifyService } from '../../services/notify.service';
+import { CartService } from '../../services/cart.service';
 import { ProfileComponent } from '../profile/profile.component';
 import { ServiceSearchComponent } from '../service-search/service-search.component';
 
@@ -47,17 +49,30 @@ export class HeaderComponent implements OnInit, OnDestroy {
   isScrolled = false;
   showProfileDropdown = false;
   currentUser: UserProfile | null = null;
-  activeMobileTab: 'home' | 'wall-panels' | 'native' | 'beauty' | 'account' = 'home';
+  activeMobileTab: 'home' | 'account' = 'home';
   // Service listing pages have their own mobile top bar
   isServicePage = false;
+  cartCount = 0;
+  private canTransact = false;
   private authSub = new Subscription();
 
   constructor(
     private authService: AuthService,
     private locationService: LocationService,
+    private notify: NotifyService,
+    private cartService: CartService,
     private elementRef: ElementRef,
     private router: Router
   ) {}
+
+  onCartClick(): void {
+    // No cart outside a serviceable area — surface the "expanding" notice.
+    if (!this.canTransact) {
+      this.notify.show("MyGenie isn't available in your area yet — we're expanding soon!");
+      return;
+    }
+    this.router.navigate(['/checkout']);
+  }
 
   @HostListener('window:scroll', [])
   onWindowScroll(): void {
@@ -80,7 +95,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.showProfileDropdown = !this.showProfileDropdown;
   }
 
-  setMobileTab(tab: 'home' | 'wall-panels' | 'native' | 'beauty' | 'account'): void {
+  setMobileTab(tab: 'home' | 'account'): void {
     this.activeMobileTab = tab;
     if (typeof document !== 'undefined') {
       if (tab === 'account') {
@@ -90,13 +105,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       }
     }
 
-    if (tab === 'wall-panels') {
-      this.router.navigate(['/wall-panels']);
-    } else if (tab === 'native') {
-      this.router.navigate(['/native']);
-    } else if (tab === 'beauty') {
-      this.router.navigate(['/beauty']);
-    } else if (tab === 'home') {
+    if (tab === 'home') {
       this.router.navigate(['/']);
     }
   }
@@ -176,7 +185,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   promoBanners: PromoBanner[] = [
     {
       id: 'promo-1',
-      alt: 'Urban Company Offers',
+      alt: 'MyGenie Offers',
       image: 'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T10:07:49.210Z/banner-1.jpg',
     },
     {
@@ -197,6 +206,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
     // Detect user's current live location
     this.detectUserLiveLocation();
 
+    // Track whether the current area can transact (show/allow prices & cart)
+    this.authSub.add(
+      this.locationService.canTransact$.subscribe((can) => (this.canTransact = can))
+    );
+
+    // Keep the cart badge in sync
+    this.authSub.add(
+      this.cartService.rows$.subscribe((rows) => (this.cartCount = rows.reduce((n, r) => n + r.qty, 0)))
+    );
+
     // Subscribe to current user auth state
     this.authSub.add(
       this.authService.currentUser$.subscribe((user) => {
@@ -206,26 +225,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     // Sync active mobile tab with current url
     this.isServicePage = this.router.url.startsWith('/services/');
-    if (this.router.url.includes('wall-panels')) {
-      this.activeMobileTab = 'wall-panels';
-    } else if (this.router.url.includes('native')) {
-      this.activeMobileTab = 'native';
-    } else if (this.router.url.includes('beauty')) {
-      this.activeMobileTab = 'beauty';
-    }
     this.authSub.add(
       this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe((event: any) => {
         this.isServicePage = event.urlAfterRedirects.startsWith('/services/');
-        if (event.url.includes('wall-panels')) {
-          this.activeMobileTab = 'wall-panels';
-        } else if (event.url.includes('native')) {
-          this.activeMobileTab = 'native';
-        } else if (event.url.includes('beauty')) {
-          this.activeMobileTab = 'beauty';
-        } else if (event.url === '/' || event.url === '') {
-          if (this.activeMobileTab !== 'account') {
-            this.activeMobileTab = 'home';
-          }
+        if ((event.url === '/' || event.url === '') && this.activeMobileTab !== 'account') {
+          this.activeMobileTab = 'home';
         }
       })
     );

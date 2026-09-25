@@ -8,38 +8,11 @@
         (click)="setMobileTab('home')"
         class="uc-logo-link"
       >
-        <img [src]="logoUrl" alt="Urban Company logo" class="uc-logo-img" />
+        <img [src]="logoUrl" alt="MyGenie logo" class="uc-logo-img" />
       </a>
     </div>
 
-    <!-- Navigation Tabs Column -->
-    <div class="uc-header-col uc-nav-col" id="NavTabsColumn">
-      <nav class="uc-nav-tabs">
-        <a
-          href="javascript:void(0)"
-          class="uc-nav-tab"
-          [class.active]="activeMobileTab === 'wall-panels'"
-          (click)="setMobileTab('wall-panels')"
-          >Wall Panels</a
-        >
-        <a
-          href="javascript:void(0)"
-          class="uc-nav-tab"
-          [class.active]="activeMobileTab === 'native'"
-          (click)="setMobileTab('native')"
-          >Native</a
-        >
-        <a
-          href="javascript:void(0)"
-          class="uc-nav-tab"
-          [class.active]="activeMobileTab === 'beauty'"
-          (click)="setMobileTab('beauty')"
-          >Beauty</a
-        >
-      </nav>
-    </div>
-
-    <!-- Location Box next to menu on Left (For Wall Panels, Native, Beauty) -->
+    <!-- Location Box next to menu on Left -->
     <div
       *ngIf="activeMobileTab !== 'home'"
       class="uc-header-col uc-menu-location-col"
@@ -99,7 +72,8 @@
     <div class="uc-header-col uc-actions-col" id="rightButtonColumn">
       <div class="uc-actions-group">
         <!-- Cart Button -->
-        <button class="uc-action-btn uc-cart-btn" aria-label="Cart">
+        <button class="uc-action-btn uc-cart-btn" aria-label="Cart" (click)="onCartClick()">
+          <span class="uc-cart-badge" *ngIf="cartCount">{{ cartCount }}</span>
           <svg class="uc-btn-icon" viewBox="0 0 24 24" fill="#0F0F0F">
             <path
               fill-rule="evenodd"
@@ -364,65 +338,9 @@
     (click)="setMobileTab('home')"
   >
     <div class="uc-bottom-icon-box">
-      <span class="uc-bottom-logo-badge">uc</span>
+      <span class="uc-bottom-logo-badge">mg</span>
     </div>
-    <span class="uc-bottom-nav-label">UC</span>
-  </a>
-
-  <a
-    href="javascript:void(0)"
-    class="uc-bottom-nav-item"
-    [class.active]="activeMobileTab === 'wall-panels'"
-    (click)="setMobileTab('wall-panels')"
-  >
-    <div class="uc-bottom-icon-box">
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        width="20"
-        height="20"
-      >
-        <rect x="3" y="3" width="8" height="18" rx="1"></rect>
-        <rect x="13" y="3" width="8" height="18" rx="1"></rect>
-      </svg>
-      <span class="uc-badge-dot"></span>
-    </div>
-    <span class="uc-bottom-nav-label">Wall Panels</span>
-  </a>
-
-  <a
-    href="javascript:void(0)"
-    class="uc-bottom-nav-item"
-    [class.active]="activeMobileTab === 'native'"
-    (click)="setMobileTab('native')"
-  >
-    <div class="uc-bottom-icon-box">
-      <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-      </svg>
-      <span class="uc-badge-dot"></span>
-    </div>
-    <span class="uc-bottom-nav-label">Native</span>
-  </a>
-
-  <a
-    href="javascript:void(0)"
-    class="uc-bottom-nav-item"
-    [class.active]="activeMobileTab === 'beauty'"
-    (click)="setMobileTab('beauty')"
-  >
-    <div class="uc-bottom-icon-box">
-      <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-        <path
-          d="M12 2a7 7 0 00-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 001 1h6a1 1 0 001-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 00-7-7z"
-        />
-      </svg>
-    </div>
-    <span class="uc-bottom-nav-label">Beauty</span>
+    <span class="uc-bottom-nav-label">MG</span>
   </a>
 
   <a

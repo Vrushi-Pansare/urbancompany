@@ -1,14 +1,21 @@
-<ng-container *ngIf="(status$ | async) !== 'unserviceable'; else serviceUnavailable">
-  <app-header [attr.inert]="(isBlocked$ | async) ? '' : null"></app-header>
-  <main class="app-main" [attr.inert]="(isBlocked$ | async) ? '' : null">
-    <router-outlet></router-outlet>
-  </main>
-  <app-footer [attr.inert]="(isBlocked$ | async) ? '' : null"></app-footer>
-  <app-login [attr.inert]="(isBlocked$ | async) ? '' : null"></app-login>
-</ng-container>
-
-<ng-template #serviceUnavailable>
-  <app-service-unavailable></app-service-unavailable>
-</ng-template>
+<app-header *ngIf="!hideChrome" [attr.inert]="(isResolving$ | async) ? '' : null"></app-header>
+<main class="app-main" [class.no-chrome]="hideChrome" [attr.inert]="(isResolving$ | async) ? '' : null">
+  <!-- Browse-only notice: area isn't serviceable, but the user can still explore -->
+  <div class="app-browse-banner" *ngIf="(isUnserviceable$ | async) && !hideChrome">
+    <span class="app-browse-banner-text">
+      MyGenie isn't available in {{ (area$ | async)?.city || 'your area' }} yet.
+      You can browse services, but booking isn't available here.
+    </span>
+    <button type="button" class="app-browse-banner-btn" (click)="checkAgain()">Check again</button>
+  </div>
+  <router-outlet></router-outlet>
+</main>
+<app-footer *ngIf="!hideChrome" [attr.inert]="(isResolving$ | async) ? '' : null"></app-footer>
+<app-login [attr.inert]="(isResolving$ | async) ? '' : null"></app-login>
 
 <app-location-gate></app-location-gate>
+
+<!-- Transient notice (e.g. trying to book outside a serviceable area) -->
+<div class="app-toast" *ngIf="toast$ | async as msg" role="status" aria-live="polite">
+  {{ msg }}
+</div>
