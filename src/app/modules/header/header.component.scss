@@ -320,44 +320,58 @@
 /* Mobile Responsiveness (< 768px) */
 @media (max-width: 768px) {
   /* Mobile now uses the same chrome as desktop — no separate mobile header/nav.
-     Shrink the desktop header so its row fits a phone without overflowing. */
+     Stack it into two rows: logo + actions on top, location + search full-width below. */
   .uc-desktop-header {
-    padding: 10px 12px;
+    padding: 10px 14px;
 
     .uc-header-inner {
-      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      row-gap: 10px;
+      column-gap: 8px;
     }
 
-    .uc-logo-col .uc-logo-link {
-      height: 30px;
+    /* Row 1 — logo (left) ... actions (right) */
+    .uc-logo-col {
+      order: 1;
+
+      .uc-logo-link {
+        height: 30px;
+      }
     }
 
-    /* Search column takes the remaining width; children may shrink */
+    .uc-spacer {
+      order: 2;
+    }
+
+    .uc-actions-col {
+      order: 3;
+      padding-left: 8px;
+
+      .uc-actions-group {
+        gap: 10px;
+      }
+    }
+
+    /* Row 2 — location + search as one full-width component */
     .uc-search-col {
-      flex: 1;
-      min-width: 0;
+      order: 4;
+      flex: 0 0 100%;
+      width: 100%;
       gap: 8px;
     }
 
     .uc-location-box {
       width: auto;
-      max-width: 116px;
+      max-width: 132px;
       flex-shrink: 0;
       padding: 0 10px;
     }
 
-    /* Inline search stretches to fill instead of a fixed 260px */
+    /* Inline search fills the rest of the full-width row */
     app-service-search {
       flex: 1;
       min-width: 0;
-    }
-
-    .uc-actions-col {
-      padding-left: 4px;
-
-      .uc-actions-group {
-        gap: 8px;
-      }
     }
   }
 

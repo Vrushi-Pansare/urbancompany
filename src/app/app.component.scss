@@ -85,8 +85,8 @@
     }
 
     @media (max-width: 768px) {
-      /* Fixed desktop header is now shown on mobile too — keep the offset */
-      padding-top: 70px;
+      /* Fixed desktop header shown on mobile stacks into two rows — taller offset */
+      padding-top: 108px;
       background-color: rgba(245, 245, 245, 1.00);
     }
   }
