@@ -33,8 +33,6 @@ export class LoginComponent implements OnInit, OnDestroy {
   isOtpFocused = true;
   countdown = 28;
   generatedOtp = '';
-  // Auto-login: OTP is pre-filled with this default and verified automatically
-  readonly DEFAULT_OTP = '000000';
   private countdownTimer: any;
   private sub = new Subscription();
 
@@ -116,21 +114,23 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.loadVerification();
   }
 
-  onSendOtp(): void {
+  async onSendOtp(): Promise<void> {
     if (!this.isContinueEnabled) return;
     this.isLoading = true;
     this.otpValue = '';
 
-    // Auto-login: use a fixed default OTP instead of generating/sending a real one
-    this.generatedOtp = this.DEFAULT_OTP;
+    // Generate 6-digit OTP
+    this.generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // Move to the OTP step with the code pre-filled, then auto-verify + log in
+    // Call Fast2SMS / Alert API
+    await this.smsService.sendOtpSms(this.phoneNumber, this.generatedOtp);
+
+    // Transition to OTP step
     setTimeout(() => {
       this.isLoading = false;
       this.currentStep = 'otp';
       this.startCountdown();
-      this.otpValue = this.DEFAULT_OTP; // auto-filled OTP
-      setTimeout(() => this.onVerifyOtp(), 700); // auto-verify and log in
+      setTimeout(() => this.focusOtpInput(), 100);
     }, 800);
   }
 

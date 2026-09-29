@@ -25,7 +25,7 @@ export class NativeComponent implements OnInit {
   marketingBanner = {
     key: 'marketing__image_or__m2',
     image: 'assets/native/marketing-banner-m2.jpeg',
-    alt: 'MyGenie'
+    alt: 'Urban Company'
   };
 
   // Desktop & Mobile Section 1 (Frame 2 Banners)
@@ -33,12 +33,12 @@ export class NativeComponent implements OnInit {
     {
       id: 'banner-0',
       image: 'assets/native/banner-1.jpeg',
-      alt: 'MyGenie Banner 0'
+      alt: 'Urban Company Banner 0'
     },
     {
       id: 'banner-1',
       image: 'assets/native/banner-2.jpeg',
-      alt: 'MyGenie Banner 1'
+      alt: 'Urban Company Banner 1'
     }
   ];
 
@@ -47,17 +47,17 @@ export class NativeComponent implements OnInit {
     {
       id: 'advantage-0',
       image: 'assets/native/advantage-1.jpeg',
-      alt: 'MyGenie Banner 0'
+      alt: 'Urban Company Banner 0'
     },
     {
       id: 'advantage-1',
       image: 'assets/native/advantage-2.jpeg',
-      alt: 'MyGenie Banner 1'
+      alt: 'Urban Company Banner 1'
     },
     {
       id: 'advantage-2',
       image: 'assets/native/advantage-3.jpeg',
-      alt: 'MyGenie Banner 2'
+      alt: 'Urban Company Banner 2'
     }
   ];
 

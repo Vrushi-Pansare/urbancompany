@@ -49,13 +49,7 @@
                   "maximumError": "300kb"
                 }
               ],
-              "outputHashing": "all",
-              "fileReplacements": [
-                {
-                  "replace": "src/app/constants/reviews.preview.ts",
-                  "with": "src/app/constants/reviews.preview.prod.ts"
-                }
-              ]
+              "outputHashing": "all"
             },
             "development": {
               "optimization": false,
@@ -75,10 +69,7 @@
               "buildTarget": "urbancompany:build:development"
             }
           },
-          "defaultConfiguration": "development",
-          "options": {
-            "proxyConfig": "src/proxy.conf.json"
-          }
+          "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",

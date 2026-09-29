@@ -1,3 +1,1 @@
-# Proxy API calls to MyGenie (its server sends no CORS headers)
-/api/*   https://mygenie.netraax.com/api/:splat   200
 /*    /index.html   200

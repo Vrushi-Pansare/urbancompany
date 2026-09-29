@@ -8,11 +8,38 @@
         (click)="setMobileTab('home')"
         class="uc-logo-link"
       >
-        <img [src]="logoUrl" alt="MyGenie logo" class="uc-logo-img" />
+        <img [src]="logoUrl" alt="Urban Company logo" class="uc-logo-img" />
       </a>
     </div>
 
-    <!-- Location Box next to menu on Left -->
+    <!-- Navigation Tabs Column -->
+    <div class="uc-header-col uc-nav-col" id="NavTabsColumn">
+      <nav class="uc-nav-tabs">
+        <a
+          href="javascript:void(0)"
+          class="uc-nav-tab"
+          [class.active]="activeMobileTab === 'wall-panels'"
+          (click)="setMobileTab('wall-panels')"
+          >Wall Panels</a
+        >
+        <a
+          href="javascript:void(0)"
+          class="uc-nav-tab"
+          [class.active]="activeMobileTab === 'native'"
+          (click)="setMobileTab('native')"
+          >Native</a
+        >
+        <a
+          href="javascript:void(0)"
+          class="uc-nav-tab"
+          [class.active]="activeMobileTab === 'beauty'"
+          (click)="setMobileTab('beauty')"
+          >Beauty</a
+        >
+      </nav>
+    </div>
+
+    <!-- Location Box next to menu on Left (For Wall Panels, Native, Beauty) -->
     <div
       *ngIf="activeMobileTab !== 'home'"
       class="uc-header-col uc-menu-location-col"
@@ -64,16 +91,29 @@
         </svg>
       </div>
 
-      <!-- Service Search (results dropdown) -->
-      <app-service-search mode="inline" [placeholder]="displayedSearchText"></app-service-search>
+      <!-- Service Search Box -->
+      <div class="uc-search-box uc-service-box">
+        <svg class="uc-icon" viewBox="0 0 24 24" fill="#757575">
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M10.875 2a8.875 8.875 0 105.528 15.818l3.89 3.89 1.414-1.415-3.89-3.889A8.875 8.875 0 0010.875 2zM4 10.875a6.875 6.875 0 1113.75 0 6.875 6.875 0 01-13.75 0z"
+          />
+        </svg>
+        <input
+          type="text"
+          [placeholder]="displayedSearchText"
+          class="uc-search-input"
+          aria-label="Search for services"
+        />
+      </div>
     </div>
 
     <!-- Right Actions Column (Cart & Profile Buttons) -->
     <div class="uc-header-col uc-actions-col" id="rightButtonColumn">
       <div class="uc-actions-group">
         <!-- Cart Button -->
-        <button class="uc-action-btn uc-cart-btn" aria-label="Cart" (click)="onCartClick()">
-          <span class="uc-cart-badge" *ngIf="cartCount">{{ cartCount }}</span>
+        <button class="uc-action-btn uc-cart-btn" aria-label="Cart">
           <svg class="uc-btn-icon" viewBox="0 0 24 24" fill="#0F0F0F">
             <path
               fill-rule="evenodd"
@@ -174,7 +214,7 @@
 <!-- Mobile Top Header Bar (Shown only on Home tab) -->
 <div
   class="uc-mobile-header"
-  *ngIf="activeMobileTab === 'home' && !isServicePage"
+  *ngIf="activeMobileTab === 'home'"
   [style.background-color]="activeCampaign.themeColor"
 >
   <div
@@ -261,15 +301,11 @@
         <circle cx="11" cy="11" r="8"></circle>
         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
       </svg>
-      <!-- Opens the full-screen search -->
       <input
         type="text"
-        readonly
         [placeholder]="displayedSearchText"
         class="uc-mobile-search-input"
         aria-label="Search for services"
-        (click)="mobileSearchOpen = true"
-        (keydown.enter)="mobileSearchOpen = true"
       />
     </div>
   </div>
@@ -382,7 +418,7 @@
 <app-profile *ngIf="activeMobileTab === 'account'"></app-profile>
 
 <!-- Mobile Bottom Navigation Bar (Matching Screenshot) -->
-<nav class="uc-mobile-bottom-nav" *ngIf="!isServicePage">
+<nav class="uc-mobile-bottom-nav">
   <a
     href="javascript:void(0)"
     class="uc-bottom-nav-item"
@@ -390,9 +426,65 @@
     (click)="setMobileTab('home')"
   >
     <div class="uc-bottom-icon-box">
-      <span class="uc-bottom-logo-badge">mg</span>
+      <span class="uc-bottom-logo-badge">uc</span>
     </div>
-    <span class="uc-bottom-nav-label">MG</span>
+    <span class="uc-bottom-nav-label">UC</span>
+  </a>
+
+  <a
+    href="javascript:void(0)"
+    class="uc-bottom-nav-item"
+    [class.active]="activeMobileTab === 'wall-panels'"
+    (click)="setMobileTab('wall-panels')"
+  >
+    <div class="uc-bottom-icon-box">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        width="20"
+        height="20"
+      >
+        <rect x="3" y="3" width="8" height="18" rx="1"></rect>
+        <rect x="13" y="3" width="8" height="18" rx="1"></rect>
+      </svg>
+      <span class="uc-badge-dot"></span>
+    </div>
+    <span class="uc-bottom-nav-label">Wall Panels</span>
+  </a>
+
+  <a
+    href="javascript:void(0)"
+    class="uc-bottom-nav-item"
+    [class.active]="activeMobileTab === 'native'"
+    (click)="setMobileTab('native')"
+  >
+    <div class="uc-bottom-icon-box">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+      </svg>
+      <span class="uc-badge-dot"></span>
+    </div>
+    <span class="uc-bottom-nav-label">Native</span>
+  </a>
+
+  <a
+    href="javascript:void(0)"
+    class="uc-bottom-nav-item"
+    [class.active]="activeMobileTab === 'beauty'"
+    (click)="setMobileTab('beauty')"
+  >
+    <div class="uc-bottom-icon-box">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+        <path
+          d="M12 2a7 7 0 00-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 001 1h6a1 1 0 001-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 00-7-7z"
+        />
+      </svg>
+    </div>
+    <span class="uc-bottom-nav-label">Beauty</span>
   </a>
 
   <a
@@ -411,6 +503,3 @@
     <span class="uc-bottom-nav-label">Account</span>
   </a>
 </nav>
-
-<!-- Mobile full-screen search -->
-<app-service-search mode="overlay" [open]="mobileSearchOpen" (closed)="mobileSearchOpen = false"></app-service-search>
