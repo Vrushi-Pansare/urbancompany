@@ -6,7 +6,11 @@ import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ASSET_URLS } from '../../constants/urls';
 import { AuthService, UserProfile } from '../../services/auth.service';
+import { LocationService } from '../../services/location.service';
+import { NotifyService } from '../../services/notify.service';
+import { CartService } from '../../services/cart.service';
 import { ProfileComponent } from '../profile/profile.component';
+import { ServiceSearchComponent } from '../service-search/service-search.component';
 
 interface PromoBanner {
   id: string;
@@ -35,7 +39,7 @@ interface Campaign {
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProfileComponent],
+  imports: [CommonModule, FormsModule, ProfileComponent, ServiceSearchComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
@@ -45,14 +49,36 @@ export class HeaderComponent implements OnInit, OnDestroy {
   isScrolled = false;
   showProfileDropdown = false;
   currentUser: UserProfile | null = null;
-  activeMobileTab: 'home' | 'wall-panels' | 'native' | 'beauty' | 'account' = 'home';
+  activeMobileTab: 'home' | 'account' = 'home';
+  // Service listing pages have their own mobile top bar
+  isServicePage = false;
+  cartCount = 0;
+  private canTransact = false;
+  private isUnserviceable = false;
   private authSub = new Subscription();
 
   constructor(
     private authService: AuthService,
+    private locationService: LocationService,
+    private notify: NotifyService,
+    private cartService: CartService,
     private elementRef: ElementRef,
     private router: Router
   ) {}
+
+  onCartClick(): void {
+    // No cart outside a serviceable area.
+    if (!this.canTransact) {
+      if (this.isUnserviceable) {
+        this.notify.show("MyGenie isn't available in your area yet — we're expanding soon!");
+      } else {
+        this.notify.show('Enable location to book services near you.');
+        this.locationService.promptEnable();
+      }
+      return;
+    }
+    this.router.navigate(['/checkout']);
+  }
 
   @HostListener('window:scroll', [])
   onWindowScroll(): void {
@@ -75,7 +101,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.showProfileDropdown = !this.showProfileDropdown;
   }
 
-  setMobileTab(tab: 'home' | 'wall-panels' | 'native' | 'beauty' | 'account'): void {
+  setMobileTab(tab: 'home' | 'account'): void {
     this.activeMobileTab = tab;
     if (typeof document !== 'undefined') {
       if (tab === 'account') {
@@ -85,13 +111,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       }
     }
 
-    if (tab === 'wall-panels') {
-      this.router.navigate(['/wall-panels']);
-    } else if (tab === 'native') {
-      this.router.navigate(['/native']);
-    } else if (tab === 'beauty') {
-      this.router.navigate(['/beauty']);
-    } else if (tab === 'home') {
+    if (tab === 'home') {
       this.router.navigate(['/']);
     }
   }
@@ -153,22 +173,25 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   // Dynamic rotating search terms
   searchKeywords: string[] = [
-    "'AC service'",
-    "'Bathroom cleaning'",
-    "'Facial'",
-    "'Salon for women'",
-    "'Electrician'",
-    "'Native Water Purifier'",
-    "'Full home painting'"
+    "'AC repair'",
+    "'Washing machine'",
+    "'Refrigerator'",
+    "'RO purifier'",
+    "'Geyser'",
+    "'Microwave'",
+    "'LED TV'"
   ];
   currentKeywordIndex = 0;
-  displayedSearchText = "Search for 'AC service'";
+  displayedSearchText = "Search for 'AC repair'";
+
+  // Mobile full-screen search
+  mobileSearchOpen = false;
   private typingTimer: any;
 
   promoBanners: PromoBanner[] = [
     {
       id: 'promo-1',
-      alt: 'Urban Company Offers',
+      alt: 'MyGenie Offers',
       image: 'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T10:07:49.210Z/banner-1.jpg',
     },
     {
@@ -189,6 +212,19 @@ export class HeaderComponent implements OnInit, OnDestroy {
     // Detect user's current live location
     this.detectUserLiveLocation();
 
+    // Track whether the current area can transact (show/allow prices & cart)
+    this.authSub.add(
+      this.locationService.canTransact$.subscribe((can) => (this.canTransact = can))
+    );
+    this.authSub.add(
+      this.locationService.isUnserviceable$.subscribe((v) => (this.isUnserviceable = v))
+    );
+
+    // Keep the cart badge in sync
+    this.authSub.add(
+      this.cartService.rows$.subscribe((rows) => (this.cartCount = rows.reduce((n, r) => n + r.qty, 0)))
+    );
+
     // Subscribe to current user auth state
     this.authSub.add(
       this.authService.currentUser$.subscribe((user) => {
@@ -197,25 +233,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
     );
 
     // Sync active mobile tab with current url
-    if (this.router.url.includes('wall-panels')) {
-      this.activeMobileTab = 'wall-panels';
-    } else if (this.router.url.includes('native')) {
-      this.activeMobileTab = 'native';
-    } else if (this.router.url.includes('beauty')) {
-      this.activeMobileTab = 'beauty';
-    }
+    this.isServicePage = this.router.url.startsWith('/services/');
     this.authSub.add(
       this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe((event: any) => {
-        if (event.url.includes('wall-panels')) {
-          this.activeMobileTab = 'wall-panels';
-        } else if (event.url.includes('native')) {
-          this.activeMobileTab = 'native';
-        } else if (event.url.includes('beauty')) {
-          this.activeMobileTab = 'beauty';
-        } else if (event.url === '/' || event.url === '') {
-          if (this.activeMobileTab !== 'account') {
-            this.activeMobileTab = 'home';
-          }
+        this.isServicePage = event.urlAfterRedirects.startsWith('/services/');
+        if ((event.url === '/' || event.url === '') && this.activeMobileTab !== 'account') {
+          this.activeMobileTab = 'home';
         }
       })
     );
@@ -257,48 +280,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
       console.log('IP geocode fallback running...');
     }
 
-    // 2. High precision GPS browser Geolocation
-    if (typeof window !== 'undefined' && 'geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          try {
-            const lat = position.coords.latitude;
-            const lon = position.coords.longitude;
-            
-            // Fast reverse geocoding via bigdatacloud
-            const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`);
-            if (res.ok) {
-              const data = await res.json();
-              const locality = data.locality || data.principalSubdivision || data.city;
-              const city = data.city || data.principalSubdivision || 'Pune';
-              if (locality && city) {
-                const locStr = locality !== city ? `${locality}, ${city}` : city;
-                this.liveUserLocation = locStr;
-                this.campaigns.forEach(c => c.location = locStr);
-                return;
-              }
-            }
-
-            // Fallback to OpenStreetMap Nominatim
-            const nomRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
-            if (nomRes.ok) {
-              const nomData = await nomRes.json();
-              const area = nomData.address?.suburb || nomData.address?.neighbourhood || nomData.address?.residential || nomData.address?.road;
-              const city = nomData.address?.city || nomData.address?.town || nomData.address?.state_district || 'Pune';
-              const locStr = area ? `${area}, ${city}` : (nomData.display_name?.split(',').slice(0, 2).join(',') || city);
-              this.liveUserLocation = locStr;
-              this.campaigns.forEach(c => c.location = locStr);
-            }
-          } catch (e) {
-            console.warn('GPS reverse geocode error:', e);
-          }
-        },
-        (error) => {
-          console.log('Location GPS notice:', error.message);
-        },
-        { timeout: 10000, enableHighAccuracy: true }
-      );
-    }
+    // 2. Precise area from GPS (permission + reverse geocoding handled by LocationService)
+    this.authSub.add(
+      this.locationService.area$
+        .pipe(filter((area) => !!area))
+        .subscribe((area) => {
+          this.liveUserLocation = area!.label;
+          this.campaigns.forEach(c => c.location = area!.label);
+        })
+    );
   }
 
   // Calculate transform for rolling digit slot

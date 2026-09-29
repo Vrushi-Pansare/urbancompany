@@ -1,0 +1,164 @@
+<!-- ── Inline (desktop header) ─────────────────────────────── -->
+<div class="uc-search-inline" *ngIf="mode === 'inline'">
+  <div class="uc-search-field" [class.focused]="isPanelOpen">
+    <svg class="uc-search-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+        d="M10.875 2a8.875 8.875 0 105.528 15.818l3.89 3.89 1.414-1.415-3.89-3.889A8.875 8.875 0 0010.875 2zM4 10.875a6.875 6.875 0 1113.75 0 6.875 6.875 0 01-13.75 0z"
+      />
+    </svg>
+    <input
+      #searchInput
+      type="search"
+      class="uc-search-input"
+      [placeholder]="placeholder"
+      [(ngModel)]="query"
+      (ngModelChange)="onQueryChange()"
+      (focus)="onFocus()"
+      (keydown)="onKeydown($event)"
+      aria-label="Search for services"
+      role="combobox"
+      aria-autocomplete="list"
+      [attr.aria-expanded]="isPanelOpen"
+      aria-controls="uc-search-results"
+      autocomplete="off"
+    />
+    <button *ngIf="query" type="button" class="uc-search-clear" aria-label="Clear search" (mousedown)="$event.preventDefault()" (click)="clear()">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+    </button>
+  </div>
+
+  <div class="uc-search-dropdown" *ngIf="isPanelOpen">
+    <ng-container *ngTemplateOutlet="resultsList"></ng-container>
+  </div>
+</div>
+
+<!-- ── Overlay (mobile full-screen search) ─────────────────── -->
+<div class="uc-search-overlay" *ngIf="mode === 'overlay' && open" role="dialog" aria-modal="true" aria-label="Search">
+  <div class="uc-search-overlay-bar">
+    <button type="button" class="uc-search-back" aria-label="Close search" (click)="close()">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+    </button>
+    <div class="uc-search-field focused">
+      <svg class="uc-search-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path
+          fill-rule="evenodd"
+          clip-rule="evenodd"
+          d="M10.875 2a8.875 8.875 0 105.528 15.818l3.89 3.89 1.414-1.415-3.89-3.889A8.875 8.875 0 0010.875 2zM4 10.875a6.875 6.875 0 1113.75 0 6.875 6.875 0 01-13.75 0z"
+        />
+      </svg>
+      <input
+        #searchInput
+        type="search"
+        class="uc-search-input"
+        placeholder="Search for services"
+        [(ngModel)]="query"
+        (ngModelChange)="onQueryChange()"
+        (keydown)="onKeydown($event)"
+        aria-label="Search for services"
+        aria-controls="uc-search-results"
+        autocomplete="off"
+        enterkeyhint="search"
+      />
+      <button *ngIf="query" type="button" class="uc-search-clear" aria-label="Clear search" (click)="clear()">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="uc-search-overlay-body">
+    <ng-container *ngTemplateOutlet="resultsList"></ng-container>
+  </div>
+</div>
+
+<!-- ── Shared results list ─────────────────────────────────── -->
+<ng-template #resultsList>
+  <div id="uc-search-results" class="uc-search-results" role="listbox">
+    <div class="uc-search-state" *ngIf="isLoading">Loading services…</div>
+
+    <ng-container *ngIf="!isLoading">
+      <!-- Services -->
+      <div class="uc-search-group" *ngIf="results.services.length">
+        <p class="uc-search-group-title">{{ isEmptyQuery ? 'Popular services' : 'Services' }}</p>
+        <button
+          *ngFor="let result of results.services"
+          type="button"
+          class="uc-search-item"
+          role="option"
+          [class.active]="indexOf(result) === activeIndex"
+          [attr.aria-selected]="indexOf(result) === activeIndex"
+          (mousedown)="$event.preventDefault()"
+          (click)="select(result)"
+        >
+          <ng-container *ngTemplateOutlet="thumb; context: { $implicit: result }"></ng-container>
+          <span class="uc-search-item-text">
+            <span class="uc-search-item-title">{{ result.title }}</span>
+            <span class="uc-search-item-sub">{{ result.subtitle }}</span>
+          </span>
+          <span class="uc-search-item-price" *ngIf="result.price">{{ result.price }}</span>
+        </button>
+      </div>
+
+      <!-- Service types (groups) -->
+      <div class="uc-search-group" *ngIf="results.groups.length">
+        <p class="uc-search-group-title">Service types</p>
+        <button
+          *ngFor="let result of results.groups"
+          type="button"
+          class="uc-search-item"
+          role="option"
+          [class.active]="indexOf(result) === activeIndex"
+          [attr.aria-selected]="indexOf(result) === activeIndex"
+          (mousedown)="$event.preventDefault()"
+          (click)="select(result)"
+        >
+          <ng-container *ngTemplateOutlet="thumb; context: { $implicit: result }"></ng-container>
+          <span class="uc-search-item-text">
+            <span class="uc-search-item-title">{{ result.title }}</span>
+            <span class="uc-search-item-sub">{{ result.subtitle }}</span>
+          </span>
+          <svg class="uc-search-item-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5" /></svg>
+        </button>
+      </div>
+
+      <!-- Categories -->
+      <div class="uc-search-group" *ngIf="results.categories.length">
+        <p class="uc-search-group-title">{{ isEmptyQuery ? 'Browse categories' : 'Categories' }}</p>
+        <button
+          *ngFor="let result of results.categories"
+          type="button"
+          class="uc-search-item"
+          role="option"
+          [class.active]="indexOf(result) === activeIndex"
+          [attr.aria-selected]="indexOf(result) === activeIndex"
+          (mousedown)="$event.preventDefault()"
+          (click)="select(result)"
+        >
+          <ng-container *ngTemplateOutlet="thumb; context: { $implicit: result }"></ng-container>
+          <span class="uc-search-item-text">
+            <span class="uc-search-item-title">{{ result.title }}</span>
+            <span class="uc-search-item-sub">{{ result.subtitle }}</span>
+          </span>
+          <svg class="uc-search-item-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5" /></svg>
+        </button>
+      </div>
+
+      <!-- No results -->
+      <div class="uc-search-state" *ngIf="!isEmptyQuery && !hasResults">
+        <p class="uc-search-state-title">No services found for "{{ query.trim() }}"</p>
+        <p class="uc-search-state-text">Try "AC", "fridge", "washing machine" or "RO".</p>
+      </div>
+    </ng-container>
+  </div>
+</ng-template>
+
+<ng-template #thumb let-result>
+  <span class="uc-search-thumb">
+    <img *ngIf="result.image; else thumbIcon" [src]="result.image" alt="" loading="lazy" decoding="async" />
+    <ng-template #thumbIcon><app-service-icon [code]="result.categoryCode"></app-service-icon></ng-template>
+  </span>
+</ng-template>

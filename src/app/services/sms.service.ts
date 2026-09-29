@@ -21,7 +21,7 @@ export class SmsService {
    */
   async sendOtpSms(phoneNumber: string, otp: string): Promise<{ success: boolean; message: string }> {
     const cleanNumber = phoneNumber.replace(/\D/g, '');
-    const smsMessage = `<#> ${otp} is your Urban Company ACCOUNT LOGIN verification code. DO NOT SHARE this code with anyone for account safety. gEcqWzJu2Pl`;
+    const smsMessage = `<#> ${otp} is your MyGenie ACCOUNT LOGIN verification code. DO NOT SHARE this code with anyone for account safety. gEcqWzJu2Pl`;
 
     // 1. If real Fast2SMS API Key is present, call Fast2SMS API
     if (this.fast2smsApiKey) {
@@ -42,14 +42,14 @@ export class SmsService {
     // 2. Free Instant Delivery via Native Desktop/Mobile OS System Notification
     if (typeof window !== 'undefined' && 'Notification' in window) {
       if (Notification.permission === 'granted') {
-        new Notification('💬 SMS • Urban Company', {
+        new Notification('💬 SMS • MyGenie', {
           body: smsMessage,
           icon: 'https://www.urbancompany.com/favicon.ico'
         });
       } else {
         Notification.requestPermission().then((permission) => {
           if (permission === 'granted') {
-            new Notification('💬 SMS • Urban Company', {
+            new Notification('💬 SMS • MyGenie', {
               body: smsMessage
             });
           }
@@ -58,7 +58,7 @@ export class SmsService {
     }
 
     // 3. Log to browser console
-    console.log(`%c[Urban Company SMS to +91${cleanNumber}]`, 'color: #2563eb; font-weight: bold; font-size: 14px;');
+    console.log(`%c[MyGenie SMS to +91${cleanNumber}]`, 'color: #2563eb; font-weight: bold; font-size: 14px;');
     console.log(smsMessage);
 
     return {
@@ -72,7 +72,7 @@ export class SmsService {
    */
   sendWhatsAppOtp(phoneNumber: string, otp: string): void {
     const cleanNumber = phoneNumber.replace(/\D/g, '');
-    const message = `<#> ${otp} is your Urban Company ACCOUNT LOGIN verification code.\n\nDO NOT SHARE this code with anyone for account safety.\ngEcqWzJu2Pl`;
+    const message = `<#> ${otp} is your MyGenie ACCOUNT LOGIN verification code.\n\nDO NOT SHARE this code with anyone for account safety.\ngEcqWzJu2Pl`;
     const waUrl = `https://api.whatsapp.com/send?phone=91${cleanNumber}&text=${encodeURIComponent(message)}`;
 
     if (typeof window !== 'undefined') {
