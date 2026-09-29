@@ -7,13 +7,14 @@ import { HeaderComponent } from './modules/header/header.component';
 import { FooterComponent } from './modules/footer/footer.component';
 import { LoginComponent } from './modules/login/login.component';
 import { LocationGateComponent } from './modules/location-gate/location-gate.component';
+import { CookieConsentComponent } from './modules/cookie-consent/cookie-consent.component';
 import { LocationService } from './services/location.service';
 import { NotifyService } from './services/notify.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, AsyncPipe, NgIf, HeaderComponent, FooterComponent, LoginComponent, LocationGateComponent],
+  imports: [RouterOutlet, AsyncPipe, NgIf, HeaderComponent, FooterComponent, LoginComponent, LocationGateComponent, CookieConsentComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })

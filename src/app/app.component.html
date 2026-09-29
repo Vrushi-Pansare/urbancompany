@@ -22,6 +22,8 @@
 
 <app-location-gate></app-location-gate>
 
+<app-cookie-consent></app-cookie-consent>
+
 <!-- Transient notice (e.g. trying to book outside a serviceable area) -->
 <div class="app-toast" *ngIf="toast$ | async as msg" role="status" aria-live="polite">
   {{ msg }}
