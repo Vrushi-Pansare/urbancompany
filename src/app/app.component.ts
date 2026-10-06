@@ -8,13 +8,15 @@ import { FooterComponent } from './modules/footer/footer.component';
 import { LoginComponent } from './modules/login/login.component';
 import { LocationGateComponent } from './modules/location-gate/location-gate.component';
 import { CookieConsentComponent } from './modules/cookie-consent/cookie-consent.component';
+import { AiAssistantComponent } from './modules/ai-assistant/ai-assistant.component';
+import { AssistantKnowledgeService } from './services/assistant-knowledge.service';
 import { LocationService } from './services/location.service';
 import { NotifyService } from './services/notify.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, AsyncPipe, NgIf, HeaderComponent, FooterComponent, LoginComponent, LocationGateComponent, CookieConsentComponent],
+  imports: [RouterOutlet, AsyncPipe, NgIf, HeaderComponent, FooterComponent, LoginComponent, LocationGateComponent, CookieConsentComponent, AiAssistantComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
@@ -33,10 +35,15 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     private locationService: LocationService,
     private notify: NotifyService,
-    private router: Router
+    private router: Router,
+    private assistantKnowledge: AssistantKnowledgeService
   ) {}
 
   ngOnInit(): void {
+    // Load the listing (shared with search) and other site data once, up front,
+    // so the AI assistant can answer the moment it's opened.
+    this.assistantKnowledge.preload();
+
     // Drive the global browse-only styles (hide prices, disable purchase) from the body.
     this.sub.add(
       this.locationService.isUnserviceable$.subscribe((unserviceable) => {

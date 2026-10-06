@@ -20,6 +20,10 @@
 <app-footer *ngIf="!hideChrome"></app-footer>
 <app-login></app-login>
 
+<!-- Floating AI assistant. [hidden] rather than *ngIf so the conversation
+     survives a trip through checkout. -->
+<app-ai-assistant [hidden]="hideChrome"></app-ai-assistant>
+
 <app-location-gate></app-location-gate>
 
 <app-cookie-consent></app-cookie-consent>

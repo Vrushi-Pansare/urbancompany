@@ -43,3 +43,7 @@ Thumbs.db
 
 # Local Netlify folder
 .netlify
+
+# Secrets: Gemini key lives in .env and is baked into this generated file
+.env
+/src/app/constants/gemini-key.generated.ts
