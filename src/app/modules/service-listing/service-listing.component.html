@@ -74,6 +74,16 @@
         </div>
       </div>
 
+      <nav class="uc-sl-tabs" aria-label="Page sections">
+        <button
+          *ngFor="let tab of sectionTabs"
+          type="button"
+          class="uc-sl-tab"
+          [class.active]="tab.id === activeSection"
+          (click)="goToSection(tab.id)"
+        >{{ tab.label }}</button>
+      </nav>
+
       <section class="uc-sl-section" id="sl-services">
         <h2 class="uc-sl-section-title">Services</h2>
 
@@ -117,9 +127,41 @@
           </div>
         </div>
       </section>
+
+      <section class="uc-sl-section" id="sl-process">
+        <h2 class="uc-sl-section-title">Our Process</h2>
+        <ol class="uc-sl-process">
+          <li *ngFor="let step of processSteps; let i = index" class="uc-sl-process-step">
+            <span class="uc-sl-process-num">{{ i + 1 }}</span>
+            <div>
+              <h3 class="uc-sl-process-title">{{ step.title }}</h3>
+              <p class="uc-sl-process-text">{{ step.text }}</p>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <section class="uc-sl-section" id="sl-rate-card">
+        <h2 class="uc-sl-section-title">Std. Rate Card</h2>
+        <table class="uc-sl-rate-table">
+          <thead>
+            <tr>
+              <th scope="col">Service</th>
+              <th scope="col">Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let service of services">
+              <td>{{ service.title }}</td>
+              <td class="uc-sl-service-price">{{ formatPrice(service.price) }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="uc-sl-rate-note">Spare parts, if required, are charged extra at actuals after your approval.</p>
+      </section>
     </main>
 
-    <!-- ── Right: cart + UC Promise ───────────────────────── -->
+    <!-- ── Right: cart + MyGenie Promise ───────────────────────── -->
     <aside class="uc-sl-right">
       <div class="uc-sl-box uc-sl-cart">
         <ng-container *ngIf="cartRows.length; else emptyCart">
@@ -155,7 +197,7 @@
 
       <div class="uc-sl-box uc-sl-promise">
         <div class="uc-sl-promise-text">
-          <h3 class="uc-sl-box-title">UC Promise</h3>
+          <h3 class="uc-sl-box-title">MyGenie Promise</h3>
           <ul>
             <li>Verified Professionals</li>
             <li>Hassle Free Booking</li>

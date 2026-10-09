@@ -32,6 +32,16 @@ type GeoResult = { area: UserArea; serviceable: boolean };
 export const SERVICEABLE_CITIES = ['Delhi', 'Gurugram', 'Noida', 'Ahmedabad'];
 const SERVICEABLE_KEYWORDS = ['delhi', 'gurugram', 'gurgaon', 'noida', 'ahmedabad'];
 
+/** Areas the user can pick by hand from the header location picker (no GPS needed). */
+export const MANUAL_AREAS: UserArea[] = [
+  { label: 'Delhi', city: 'Delhi', state: 'Delhi' },
+  { label: 'Gurugram', city: 'Gurugram', state: 'Haryana' },
+  { label: 'Haryana', city: 'Haryana', state: 'Haryana' },
+  { label: 'Noida', city: 'Noida', state: 'Uttar Pradesh' }
+];
+
+const MANUAL_AREA_KEY = 'uc_manual_area';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -82,12 +92,20 @@ export class LocationService {
   private permission: PermissionStatus | null = null;
   private initialized = false;
   private ipLookup?: Promise<GeoResult | null>;
+  // A hand-picked area wins over GPS/IP until the user asks for their current location again.
+  private manualArea: UserArea | null = null;
 
   constructor(private zone: NgZone) {}
 
   async init(): Promise<void> {
     if (this.initialized) return;
     this.initialized = true;
+
+    const saved = this.readManualArea();
+    if (saved) {
+      this.setManualArea(saved);
+      return;
+    }
 
     if (typeof navigator === 'undefined' || !('geolocation' in navigator)) {
       this.statusSubject.next('unsupported');
@@ -142,7 +160,7 @@ export class LocationService {
         if (done) return;
         done = true;
         this.zone.run(() => {
-          apply();
+          if (!this.manualArea) apply();
           resolve();
         });
       };
@@ -200,8 +218,42 @@ export class LocationService {
     });
   }
 
+  /** Use a hand-picked area (header location picker). Remembered across visits. */
+  setManualArea(area: UserArea): void {
+    this.manualArea = area;
+    try {
+      localStorage.setItem(MANUAL_AREA_KEY, JSON.stringify(area));
+    } catch {
+      // Storage blocked (private mode etc.) — the choice still applies to this visit.
+    }
+    this.areaSubject.next(area);
+    this.statusSubject.next('serviceable');
+  }
+
+  /** Drop the hand-picked area and detect the user's real location again. */
+  useCurrentLocation(): void {
+    this.manualArea = null;
+    try {
+      localStorage.removeItem(MANUAL_AREA_KEY);
+    } catch {}
+    this.requestLocation();
+  }
+
+  private readManualArea(): UserArea | null {
+    if (typeof localStorage === 'undefined') return null;
+    try {
+      const raw = localStorage.getItem(MANUAL_AREA_KEY);
+      const saved = raw ? (JSON.parse(raw) as UserArea) : null;
+      // Only restore areas we still offer in the picker
+      return MANUAL_AREAS.find((a) => a.label === saved?.label) ?? null;
+    } catch {
+      return null;
+    }
+  }
+
   /** Apply a resolved area to the app state (used by both the GPS and IP paths). */
   private applyGeo(result: GeoResult, source: string): void {
+    if (this.manualArea) return;
     if (isDevMode()) console.log(`[location] resolved via ${source} → ${result.area.label} (${result.serviceable ? 'serviceable' : 'unserviceable'})`);
     this.areaSubject.next(result.area);
     this.statusSubject.next(result.serviceable ? 'serviceable' : 'unserviceable');
@@ -254,6 +306,7 @@ export class LocationService {
   }
 
   private async verifyArea(location: UserLocation, quiet = false): Promise<void> {
+    if (this.manualArea) return;
     if (!quiet) {
       this.statusSubject.next('verifying');
     }
@@ -263,6 +316,7 @@ export class LocationService {
     if (isDevMode()) console.log(`[location] reverse-geocode in ${Math.round(performance.now() - t0)}ms → ${result ? result.area.label : 'failed'}`);
 
     this.zone.run(() => {
+      if (this.manualArea) return;
       if (!result) {
         this.statusSubject.next('verify-failed');
         return;

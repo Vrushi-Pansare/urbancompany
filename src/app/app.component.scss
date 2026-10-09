@@ -78,7 +78,8 @@
 
   .app-main {
     flex: 1;
-    padding-top: 70px;
+    /* --uc-header-h is the fixed header's measured height (set by HeaderComponent) */
+    padding-top: var(--uc-header-h, 70px);
 
     &.no-chrome {
       padding-top: 0;
@@ -86,7 +87,7 @@
 
     @media (max-width: 768px) {
       /* Fixed desktop header shown on mobile stacks into two rows — taller offset */
-      padding-top: 108px;
+      padding-top: var(--uc-header-h, 108px);
       background-color: rgba(245, 245, 245, 1.00);
     }
   }
