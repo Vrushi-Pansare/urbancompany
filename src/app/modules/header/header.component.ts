@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, HostListener, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, HostListener, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, NavigationEnd } from '@angular/router';
@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ASSET_URLS } from '../../constants/urls';
 import { AuthService, UserProfile } from '../../services/auth.service';
-import { LocationService } from '../../services/location.service';
+import { LocationService, MANUAL_AREAS, UserArea } from '../../services/location.service';
 import { NotifyService } from '../../services/notify.service';
 import { CartService } from '../../services/cart.service';
 import { ProfileComponent } from '../profile/profile.component';
@@ -43,11 +43,14 @@ interface Campaign {
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
-export class HeaderComponent implements OnInit, OnDestroy {
+export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   logoUrl = ASSET_URLS.LOGO;
 
   isScrolled = false;
   showProfileDropdown = false;
+  // Manual location picker (opened from the location box)
+  showCityPicker = false;
+  manualAreas = MANUAL_AREAS;
   currentUser: UserProfile | null = null;
   activeMobileTab: 'home' | 'account' = 'home';
   // Service listing pages have their own mobile top bar
@@ -56,6 +59,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private canTransact = false;
   private isUnserviceable = false;
   private authSub = new Subscription();
+  private headerResize?: ResizeObserver;
 
   constructor(
     private authService: AuthService,
@@ -92,12 +96,32 @@ export class HeaderComponent implements OnInit, OnDestroy {
   onDocumentClick(event: MouseEvent): void {
     if (!this.elementRef.nativeElement.contains(event.target)) {
       this.showProfileDropdown = false;
+      this.showCityPicker = false;
     }
+  }
+
+  toggleCityPicker(event: Event): void {
+    event.stopPropagation();
+    this.showProfileDropdown = false;
+    this.showCityPicker = !this.showCityPicker;
+  }
+
+  pickArea(area: UserArea, event: Event): void {
+    event.stopPropagation();
+    this.showCityPicker = false;
+    this.locationService.setManualArea(area);
+  }
+
+  useCurrentLocation(event: Event): void {
+    event.stopPropagation();
+    this.showCityPicker = false;
+    this.locationService.useCurrentLocation();
   }
 
 
   toggleProfileDropdown(event: Event): void {
     event.stopPropagation();
+    this.showCityPicker = false;
     this.showProfileDropdown = !this.showProfileDropdown;
   }
 
@@ -119,6 +143,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
   openLoginModal(): void {
     this.showProfileDropdown = false;
     this.authService.openLoginModal();
+  }
+
+  openChangePassword(): void {
+    this.showProfileDropdown = false;
+    this.authService.openChangePasswordModal();
   }
 
   logout(): void {
@@ -244,8 +273,25 @@ export class HeaderComponent implements OnInit, OnDestroy {
     );
   }
 
+  /**
+   * The header is position: fixed, so the page needs a top offset equal to its height. That height
+   * changes with breakpoint, logo size and wrapping, so publish the real value as --uc-header-h
+   * (consumed by .app-main in app.component.scss) instead of hard-coding it.
+   */
+  ngAfterViewInit(): void {
+    if (typeof ResizeObserver === 'undefined') return;
+    const header: HTMLElement | null = this.elementRef.nativeElement.querySelector('.uc-desktop-header');
+    if (!header) return;
+    this.headerResize = new ResizeObserver(() => {
+      document.documentElement.style.setProperty('--uc-header-h', `${header.offsetHeight}px`);
+    });
+    this.headerResize.observe(header);
+  }
+
   ngOnDestroy(): void {
     this.authSub.unsubscribe();
+    this.headerResize?.disconnect();
+    document.documentElement.style.removeProperty('--uc-header-h');
     if (typeof document !== 'undefined') {
       document.body.style.overflow = '';
     }
@@ -264,12 +310,22 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   async detectUserLiveLocation(): Promise<void> {
-    // 1. Instant IP-based lookup (no permission prompt required, instant)
+    // 1. Precise area from GPS or the manual picker (permission + reverse geocoding handled by LocationService)
+    this.authSub.add(
+      this.locationService.area$
+        .pipe(filter((area) => !!area))
+        .subscribe((area) => {
+          this.liveUserLocation = area!.label;
+          this.campaigns.forEach(c => c.location = area!.label);
+        })
+    );
+
+    // 2. Instant IP-based lookup (no permission prompt required) — only until a real area is known
     try {
       const ipRes = await fetch('https://ipapi.co/json/');
       if (ipRes.ok) {
         const data = await ipRes.json();
-        if (data.city) {
+        if (data.city && !this.liveUserLocation) {
           const area = data.postal ? `${data.postal}, ${data.city}` : data.city;
           const locStr = `${area}, ${data.region || data.country_name || 'India'}`;
           this.liveUserLocation = locStr;
@@ -279,16 +335,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     } catch (e) {
       console.log('IP geocode fallback running...');
     }
-
-    // 2. Precise area from GPS (permission + reverse geocoding handled by LocationService)
-    this.authSub.add(
-      this.locationService.area$
-        .pipe(filter((area) => !!area))
-        .subscribe((area) => {
-          this.liveUserLocation = area!.label;
-          this.campaigns.forEach(c => c.location = area!.label);
-        })
-    );
   }
 
   // Calculate transform for rolling digit slot

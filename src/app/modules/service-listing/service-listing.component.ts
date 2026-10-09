@@ -43,6 +43,20 @@ export class ServiceListingComponent implements OnInit, OnDestroy {
   siblings: SiblingGroup[] = [];
   services: ServiceRow[] = [];
 
+  readonly sectionTabs = [
+    { id: 'sl-services', label: 'Services' },
+    { id: 'sl-process', label: 'Our Process' },
+    { id: 'sl-rate-card', label: 'Std. Rate Card' },
+  ];
+  activeSection = 'sl-services';
+
+  readonly processSteps = [
+    { title: 'Book a slot', text: 'Pick a service and a time that suits you.' },
+    { title: 'Inspection', text: 'A verified professional checks the issue at your doorstep.' },
+    { title: 'Upfront quote', text: 'You approve the price before any work begins.' },
+    { title: 'Service & clean-up', text: 'Work is completed and the area is left clean.' },
+  ];
+
   highlightedId: string | null = null;
   private highlightTimer?: ReturnType<typeof setTimeout>;
   private scrollToServicesOnLoad = false;
@@ -114,6 +128,12 @@ export class ServiceListingComponent implements OnInit, OnDestroy {
   private scrollToServices(): void {
     // Same delay as highlightFromQuery — let the list render and the router's scroll-to-top run first
     setTimeout(() => document.getElementById('sl-services')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
+  }
+
+  /** Section tabs: Services / Our Process / Std. Rate Card */
+  goToSection(id: string): void {
+    this.activeSection = id;
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   private isMobile(): boolean {

@@ -211,7 +211,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   // Raw listing from the API
   listingItems: ListingItem[] = [];
 
-  // Unique categories from the listing, shown in "Home services at your doorstep"
+  // Unique categories from the listing, shown in "Home Services At Your Fingertips"
   listingCategories: CategoryItem[] = [];
   private listingLoaded = false;
 
