@@ -94,6 +94,10 @@
           </div>
         </div>
 
+        <div class="uc-text-field">
+          <input type="email" name="email" [(ngModel)]="email" placeholder="Email" autocomplete="email" />
+        </div>
+
         <ng-container *ngTemplateOutlet="newPasswordFields"></ng-container>
         <ng-container *ngTemplateOutlet="messages"></ng-container>
 
@@ -110,6 +114,61 @@
         </p>
 
         <ng-container *ngTemplateOutlet="policy"></ng-container>
+      </form>
+
+      <!-- STEP: Address (register step 2 -- logged in now, so the pincode API can be called) -->
+      <form class="uc-step-address" *ngIf="currentStep === 'address'" (ngSubmit)="onSaveAddress()">
+        <h1 class="uc-modal-heading">Add your address</h1>
+        <p class="uc-modal-subheading">Pick your pincode so we can send professionals near you.</p>
+
+        <!-- Pincode dropdown: filled from the pincode API, searchable -->
+        <div class="uc-pincode-combo">
+          <div class="uc-text-field">
+            <input
+              type="text"
+              name="pincodeSearch"
+              placeholder="Pincode or area"
+              autocomplete="off"
+              role="combobox"
+              aria-autocomplete="list"
+              aria-controls="uc-pincode-list"
+              [attr.aria-expanded]="pincodeListOpen"
+              [value]="pincodeQuery"
+              (input)="onPincodeSearch($any($event.target).value)"
+              (focus)="pincodeListOpen = true"
+              (click)="pincodeListOpen = true"
+              (blur)="onPincodeBlur()"
+            />
+            <svg class="uc-pincode-caret" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9" /></svg>
+          </div>
+
+          <ul class="uc-pincode-list" id="uc-pincode-list" role="listbox" *ngIf="pincodeListOpen">
+            <li class="uc-pincode-note" *ngIf="pincodeStatus === 'loading'">Loading pincodes…</li>
+            <li class="uc-pincode-note bad" *ngIf="pincodeStatus === 'error'">Could not load pincodes. Type to try again.</li>
+            <li class="uc-pincode-note" *ngIf="pincodeStatus === 'ready' && !pincodeOptions.length">No matching pincode.</li>
+            <ng-container *ngIf="pincodeStatus === 'ready'">
+              <li
+                *ngFor="let option of pincodeOptions"
+                role="option"
+                class="uc-pincode-option"
+                [attr.aria-selected]="option.value === pincodeOption?.value"
+                (mousedown)="$event.preventDefault()"
+                (click)="selectPincode(option)"
+              >
+                {{ option.label }}
+              </li>
+            </ng-container>
+          </ul>
+        </div>
+
+        <ng-container *ngTemplateOutlet="messages"></ng-container>
+
+        <div class="uc-action-btn-row">
+          <button type="submit" class="uc-continue-btn" [class.loading]="isLoading" [disabled]="!canSaveAddress">
+            <span *ngIf="!isLoading">Save address</span>
+            <ng-container *ngIf="isLoading"><ng-container *ngTemplateOutlet="loader"></ng-container></ng-container>
+          </button>
+        </div>
       </form>
 
       <!-- STEP: Change password (logged in) -->

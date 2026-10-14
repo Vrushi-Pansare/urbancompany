@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, isDevMode } from '@angular/core';
 import { BehaviorSubject, map } from 'rxjs';
-import { API_URLS, COMPANY_SUBDOMAIN, CUSTOMER_ROLE_ID } from '../constants/urls';
+import { API_URLS, COMPANY_SUBDOMAIN, CUSTOMER_CREATE_URL, CUSTOMER_ROLE_ID, CUSTOMER_TYPE_ID, PINCODES_URL } from '../constants/urls';
 
 export interface UserProfile {
   phoneNumber: string;
@@ -23,6 +23,22 @@ export interface RegisterDetails {
   firstName: string;
   lastName: string;
   password: string;
+}
+
+/** What the Customer record is created from (register step 2) */
+export interface CustomerDetails {
+  firstName: string;
+  lastName: string;
+  email: string;
+  pincode: string; // 6 digits, e.g. "380009"
+  masterPincodeId: string; // the picked pincode option's value
+}
+
+/** A master pincode record, e.g. { value: "6a7af8e2…", label: "380001 — Raipur (Ahmedabad), Ahmedabad(GJ)", code: "380001" } */
+export interface PincodeOption {
+  value: string;
+  label: string;
+  code: string;
 }
 
 /** API failure. `invalidCredentials` = wrong password (or current password, on change-password) */
@@ -70,6 +86,15 @@ export class AuthService {
     return !!this.userSubject.value?.isLoggedIn;
   }
 
+  /** Bearer token for the authenticated module-config APIs (null when logged out) */
+  get accessToken(): string | null {
+    return this.session?.accessToken ?? null;
+  }
+
+  /** The logged-in user right now (the value currentUser$ last emitted) */
+  get currentUser(): UserProfile | null {
+    return this.userSubject.value;
+  }
   /** "9876543210" -> "+919876543210", the format the user APIs use for username/phone/contact */
   toE164(phone: string): string {
     return `${COUNTRY_CODE}${phone.replace(/\D/g, '').slice(-10)}`;
@@ -121,7 +146,10 @@ export class AuthService {
     this.writeStorage(USER_KEY, user);
   }
 
-  /** Creates the account, then logs in */
+  /**
+   * Register step 1: creates the user account (public API), then logs in -- the pincode
+   * dropdown and the customers API in step 2 both need the token.
+   */
   async register(phone: string, details: RegisterDetails): Promise<void> {
     const e164 = this.toE164(phone);
     const firstName = details.firstName.trim();
@@ -138,7 +166,62 @@ export class AuthService {
         password: details.password
       }
     });
+
     await this.login(phone, details.password);
+  }
+
+  /**
+   * Register step 2: the logged-in user's Customer record, with the address picked in the
+   * pincode dropdown -- booking reads the customer and address from it.
+   */
+  async createCustomer(phone: string, details: CustomerDetails): Promise<void> {
+    await this.post(
+      CUSTOMER_CREATE_URL,
+      {
+        firstName: details.firstName.trim(),
+        lastName: details.lastName.trim(),
+        phoneNumber: phone.replace(/\D/g, '').slice(-10), // 10 digits, as the Customer API stores it
+        email: details.email.trim(),
+        customerTypeId: CUSTOMER_TYPE_ID,
+        addresses: [{ masterPincodeId: details.masterPincodeId, pincode: details.pincode }]
+      },
+      this.authHeader()
+    );
+  }
+
+  /**
+   * Pincode dropdown options (first page when `search` is empty). Each option's value is the
+   * masterPincodeId. Needs the user's token, so the register popup shows it after signup.
+   */
+  async searchPincodes(search: string): Promise<PincodeOption[]> {
+    const params: Record<string, string> = { page: '1', limit: '25' };
+    if (search) params['search'] = search;
+    let res: Response;
+    try {
+      res = await fetch(`${PINCODES_URL}?${new URLSearchParams(params)}`, {
+        headers: { Accept: 'application/json', ...this.authHeader() }
+      });
+    } catch {
+      throw new AuthError('Network error. Check your connection and try again.', 0);
+    }
+    const body = await res.json().catch(() => null);
+    if (!res.ok || body?.success === false) throw new AuthError('Could not load pincodes. Please try again.', res.status);
+
+    const list: any[] = [body?.data, body?.data?.data, body?.data?.items, body?.data?.options].find(Array.isArray) ?? [];
+    if (isDevMode()) console.log('[auth] pincodes', { results: list.length, itemKeys: Object.keys(list[0] ?? {}) });
+    return list
+      .map((o) => {
+        const code = String(o?.code ?? o?.pincode ?? '');
+        const area = o?.areaName ?? o?.area ?? o?.name ?? o?.city ?? '';
+        const label = String(o?.label ?? (area ? `${code} — ${area}` : code));
+        return { value: o?.value ?? o?.id ?? o?._id, label, code: code || (label.match(/^\d{6}/)?.[0] ?? '') };
+      })
+      .filter((o) => typeof o.value === 'string' && !!o.value);
+  }
+
+  private authHeader(): Record<string, string> {
+    if (!this.session?.accessToken) throw new AuthError('Please log in again.', 401);
+    return { Authorization: `Bearer ${this.session.accessToken}` };
   }
 
   async changePassword(currentPassword: string, newPassword: string): Promise<void> {

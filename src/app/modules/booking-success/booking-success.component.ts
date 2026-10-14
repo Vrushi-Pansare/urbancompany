@@ -2,12 +2,15 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { ASSET_URLS } from '../../constants/urls';
+import { BookingService } from '../../services/booking.service';
 
 export interface BookingSummary {
   title: string;
   items: number;
   amount: number;
   address: string;
+  slot: string;
+  callId: string; // the created Inquiry Call
 }
 
 const REDIRECT_SECONDS = 10;
@@ -23,11 +26,13 @@ export class BookingSuccessComponent implements OnInit, OnDestroy {
   logoUrl = ASSET_URLS.LOGO;
 
   booking: BookingSummary | null = null;
+  // Booking reference as the server stored it (read back after create); falls back to the id
+  bookingRef = '';
   secondsLeft = REDIRECT_SECONDS;
 
   private timer?: ReturnType<typeof setInterval>;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private bookingService: BookingService) {}
 
   ngOnInit(): void {
     // Set by CheckoutComponent.pay(); missing on a direct visit or refresh — nothing to confirm, so go home
@@ -37,6 +42,14 @@ export class BookingSuccessComponent implements OnInit, OnDestroy {
       return;
     }
 
+    this.bookingRef = this.booking.callId;
+    this.bookingService
+      .getCall(this.booking.callId)
+      .then((call) => (this.bookingRef = call.code || call.id || this.bookingRef))
+      .catch(() => {
+        /* the call was created; a failed read-back just leaves the id showing */
+      });
+
     this.timer = setInterval(() => {
       this.secondsLeft--;
       if (this.secondsLeft <= 0) this.goHome();
@@ -45,6 +58,11 @@ export class BookingSuccessComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     clearInterval(this.timer);
+  }
+
+  viewBookings(): void {
+    clearInterval(this.timer);
+    this.router.navigate(['/bookings'], { replaceUrl: true });
   }
 
   goHome(): void {

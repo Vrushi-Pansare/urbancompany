@@ -124,6 +124,15 @@
   }
 }
 
+.bs-secondary-link {
+  margin-top: 14px;
+  color: var(--bs-ink);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .bs-redirect {
   margin: 12px 0 0;
   color: var(--bs-muted);

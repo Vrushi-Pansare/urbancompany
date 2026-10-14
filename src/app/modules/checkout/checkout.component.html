@@ -38,19 +38,92 @@
             </span>
             <div class="co-step-body">
               <span class="co-step-label">Send booking details to</span>
-              <span class="co-step-value">{{ user.countryCode }} {{ user.phoneNumber }}</span>
+              <!-- From the Customer record (reference-options/{customerId}); login phone until it loads -->
+              <span class="co-step-value" *ngIf="customer as c; else loginPhone">
+                {{ c.customerFirstName }} {{ c.customerLastName }} · {{ c.customerPhoneNumber || user.phoneNumber }}
+              </span>
+              <ng-template #loginPhone>
+                <span class="co-step-value">{{ user.countryCode }} {{ user.phoneNumber }}</span>
+              </ng-template>
             </div>
           </div>
 
-          <div class="co-step">
-            <span class="co-step-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#0f0f0f" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
-            </span>
-            <div class="co-step-body co-step-grow">
-              <span class="co-step-label">Address</span>
-              <span class="co-step-value">{{ addressLine }}</span>
+          <div class="co-step co-step-col">
+            <div class="co-step-head">
+              <span class="co-step-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#0f0f0f" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
+              </span>
+              <div class="co-step-body co-step-grow">
+                <span class="co-step-label">Address</span>
+                <ng-container [ngSwitch]="customerState">
+                  <span class="co-step-value" *ngSwitchCase="'loading'">Loading your address…</span>
+                  <span class="co-step-value co-step-error" *ngSwitchCase="'error'">{{ customerError }}</span>
+                  <ng-container *ngSwitchCase="'ready'">
+                    <span class="co-step-value co-step-wrap" *ngIf="selectedAddress">{{ selectedAddress.formattedAddress }}</span>
+                    <span class="co-step-value co-step-error" *ngIf="!selectedAddress">
+                      {{ customer ? 'No saved address on your profile.' : 'We could not find your customer profile.' }}
+                    </span>
+                  </ng-container>
+                </ng-container>
+              </div>
+              <button type="button" class="co-ghost-btn" *ngIf="customerState === 'error'" (click)="retryCustomer()">Retry</button>
+              <button
+                type="button"
+                class="co-ghost-btn"
+                *ngIf="customerState === 'ready' && selectedAddress"
+                [attr.aria-expanded]="showAddressPicker"
+                (click)="editAddress()"
+              >
+                {{ showAddressPicker ? 'Close' : 'Edit' }}
+              </button>
             </div>
-            <button type="button" class="co-ghost-btn" (click)="editAddress()">Edit</button>
+
+            <div class="co-options" *ngIf="showAddressPicker" role="radiogroup" aria-label="Choose an address">
+              <button
+                type="button"
+                class="co-address-opt"
+                role="radio"
+                *ngFor="let a of customer?.addresses"
+                [class.active]="a === selectedAddress"
+                [attr.aria-checked]="a === selectedAddress"
+                (click)="selectAddress(a)"
+              >
+                <span class="co-radio" aria-hidden="true"></span>
+                <span class="co-address-text">{{ a.formattedAddress }}</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="co-step co-step-col">
+            <div class="co-step-head">
+              <span class="co-step-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#0f0f0f" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+              </span>
+              <div class="co-step-body co-step-grow">
+                <span class="co-step-label">Select a slot</span>
+                <span class="co-step-value" *ngIf="slotsState === 'loading'">Loading slots…</span>
+                <span class="co-step-value co-step-error" *ngIf="slotsState === 'error'">Couldn’t load slots.</span>
+                <span class="co-step-value" *ngIf="slotsState === 'ready' && !slots.length">No slots available right now.</span>
+                <span class="co-step-value" *ngIf="slotsState === 'ready' && slots.length">
+                  {{ selectedSlot ? selectedSlot.label : 'When should the professional arrive?' }}
+                </span>
+              </div>
+              <button type="button" class="co-ghost-btn" *ngIf="slotsState === 'error'" (click)="loadSlots()">Retry</button>
+            </div>
+
+            <div class="co-slots" *ngIf="slotsState === 'ready' && slots.length" role="radiogroup" aria-label="Time slot">
+              <button
+                type="button"
+                class="co-slot"
+                role="radio"
+                *ngFor="let s of slots"
+                [class.active]="s.id === selectedSlotId"
+                [attr.aria-checked]="s.id === selectedSlotId"
+                (click)="selectSlot(s)"
+              >
+                {{ s.label }}
+              </button>
+            </div>
           </div>
 
           <div class="co-step co-step-disabled">
@@ -91,6 +164,10 @@
             <li>{{ row.service.note }}</li>
           </ul>
         </div>
+
+        <p class="co-step-error co-product-error" *ngIf="productError" role="alert">
+          {{ productError }} <a class="co-link" (click)="loadProducts()">Retry</a>
+        </p>
 
         <a class="co-link co-edit-package" (click)="editPackage()">Edit package</a>
 
@@ -164,13 +241,15 @@
 
   <!-- Sticky bottom bar -->
   <div class="co-bottombar" *ngIf="rows.length">
+    <p class="co-bottombar-error" *ngIf="submitError" role="alert">{{ submitError }}</p>
     <div class="co-bottombar-inner">
       <span class="co-bottombar-info">
         <span class="co-bottombar-amt">Amount to pay <strong>{{ formatPrice(amountToPay) }}</strong></span>
         <a class="co-link" (click)="viewBreakup()">View breakup</a>
       </span>
-      <button type="button" class="co-primary-btn" (click)="pay()">
-        {{ user ? 'Proceed to pay' : 'Login to pay' }}
+      <!-- Stays clickable while incomplete so pay() can say what's missing; only blocked mid-request -->
+      <button type="button" class="co-primary-btn" [disabled]="submitting" [attr.aria-busy]="submitting" (click)="pay()">
+        {{ !user ? 'Login to pay' : submitting ? 'Booking…' : 'Proceed to pay' }}
       </button>
     </div>
   </div>

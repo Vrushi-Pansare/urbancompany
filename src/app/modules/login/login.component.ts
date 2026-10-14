@@ -2,15 +2,16 @@ import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { AuthError, AuthService } from '../../services/auth.service';
+import { AuthError, AuthService, PincodeOption } from '../../services/auth.service';
 import { ASSET_URLS } from '../../constants/urls';
 
 /**
  * login           phone + password (checks the number exists first)
- * register        phone + name + password → account created → logged in
+ * register        phone + name + email + password → account created → logged in → address
+ * address         register step 2: pincode dropdown (needs the new login's token) → Customer record
  * change-password logged-in users, opened from the profile menu
  */
-type Step = 'login' | 'register' | 'change-password' | 'success';
+type Step = 'login' | 'register' | 'address' | 'change-password' | 'success';
 
 @Component({
   selector: 'app-login',
@@ -36,6 +37,14 @@ export class LoginComponent implements OnInit, OnDestroy {
   // Register
   firstName = '';
   lastName = '';
+  email = '';
+  // Pincode dropdown (the Customer's address)
+  pincodeQuery = '';
+  pincodeOptions: PincodeOption[] = [];
+  pincodeOption: PincodeOption | null = null; // picked option; its value is the masterPincodeId
+  pincodeStatus: 'idle' | 'loading' | 'ready' | 'error' = 'idle';
+  pincodeListOpen = false;
+  private pincodeTimer?: ReturnType<typeof setTimeout>;
   newPassword = '';
   confirmPassword = '';
 
@@ -83,7 +92,55 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   get canRegister(): boolean {
-    return this.isPhoneValid && !!this.firstName.trim() && !!this.lastName.trim() && this.passwordsReady && !this.isLoading;
+    return (
+      this.isPhoneValid &&
+      !!this.firstName.trim() &&
+      !!this.lastName.trim() &&
+      this.isEmailValid &&
+      this.passwordsReady &&
+      !this.isLoading
+    );
+  }
+
+  get canSaveAddress(): boolean {
+    return !!this.pincodeOption && !this.isLoading;
+  }
+
+  get isEmailValid(): boolean {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email.trim());
+  }
+
+  /** Pincode dropdown: search as the user types (pincode digits or area name) */
+  onPincodeSearch(query: string): void {
+    this.pincodeQuery = query;
+    this.pincodeOption = null; // typing again un-picks the previous choice
+    clearTimeout(this.pincodeTimer);
+    // Empty box = back to the full first page; otherwise search the API (debounced)
+    this.pincodeStatus = 'loading';
+    this.pincodeListOpen = true;
+    this.pincodeTimer = setTimeout(() => this.loadPincodes(query.trim()), query.trim() ? 300 : 0);
+  }
+
+  selectPincode(option: PincodeOption): void {
+    this.pincodeOption = option;
+    this.pincodeQuery = option.label;
+    this.pincodeListOpen = false;
+  }
+
+  /** Close the list when focus leaves the field (after a click on an option has landed) */
+  onPincodeBlur(): void {
+    setTimeout(() => (this.pincodeListOpen = false), 150);
+  }
+
+  private async loadPincodes(query: string): Promise<void> {
+    try {
+      const options = await this.authService.searchPincodes(query);
+      if (query !== this.pincodeQuery.trim()) return; // typed on meanwhile
+      this.pincodeOptions = options;
+      this.pincodeStatus = 'ready';
+    } catch {
+      if (query === this.pincodeQuery.trim()) this.pincodeStatus = 'error';
+    }
   }
 
   get canChangePassword(): boolean {
@@ -144,7 +201,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.goTo('login');
   }
 
-  /** Register: create the account (unless the number already has one), then log in */
+  /** Register step 1: create the account (unless the number already has one), log in, go to address */
   async onRegister(): Promise<void> {
     if (!this.canRegister || !this.checkPasswordsMatch()) return;
     await this.run(async () => {
@@ -156,6 +213,25 @@ export class LoginComponent implements OnInit, OnDestroy {
         firstName: this.firstName,
         lastName: this.lastName,
         password: this.newPassword
+      });
+      this.goTo('address');
+      // Logged in now, so the pincode API (needs the token) can fill the dropdown
+      this.pincodeStatus = 'loading';
+      this.loadPincodes('');
+    });
+  }
+
+  /** Register step 2: create the Customer with the picked pincode as its address */
+  async onSaveAddress(): Promise<void> {
+    const pincode = this.pincodeOption;
+    if (!this.canSaveAddress || !pincode) return;
+    await this.run(async () => {
+      await this.authService.createCustomer(this.phoneNumber, {
+        firstName: this.firstName,
+        lastName: this.lastName,
+        email: this.email,
+        masterPincodeId: pincode.value,
+        pincode: pincode.code
       });
       this.finish('Account created!');
     });
@@ -236,6 +312,13 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.notRegistered = false;
     this.firstName = '';
     this.lastName = '';
+    this.email = '';
+    this.pincodeQuery = '';
+    this.pincodeOptions = [];
+    this.pincodeOption = null;
+    this.pincodeStatus = 'idle';
+    this.pincodeListOpen = false;
+    clearTimeout(this.pincodeTimer);
     this.newPassword = '';
     this.confirmPassword = '';
     this.currentPassword = '';

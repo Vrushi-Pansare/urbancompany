@@ -52,7 +52,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   showCityPicker = false;
   manualAreas = MANUAL_AREAS;
   currentUser: UserProfile | null = null;
-  activeMobileTab: 'home' | 'account' = 'home';
+  activeMobileTab: 'home' | 'account' | 'beauty' = 'home';
   // Service listing pages have their own mobile top bar
   isServicePage = false;
   cartCount = 0;
@@ -84,11 +84,16 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     this.router.navigate(['/checkout']);
   }
 
+  openBookings(): void {
+    this.showProfileDropdown = false;
+    this.router.navigate(['/bookings']);
+  }
+
   @HostListener('window:scroll', [])
   onWindowScroll(): void {
     if (typeof window !== 'undefined') {
       const scrollY = window.scrollY || document.documentElement.scrollTop || 0;
-      this.isScrolled = scrollY > 40;
+      this.isScrolled = scrollY > 20;
     }
   }
 
