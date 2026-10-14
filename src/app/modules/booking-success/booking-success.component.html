@@ -17,12 +17,20 @@
 
     <section class="bs-card">
       <div class="bs-row">
+        <span>Booking ID</span>
+        <span>{{ bookingRef }}</span>
+      </div>
+      <div class="bs-row">
         <span>Service</span>
         <span>{{ booking.title }}</span>
       </div>
       <div class="bs-row">
         <span>Items</span>
         <span>{{ booking.items }}</span>
+      </div>
+      <div class="bs-row" *ngIf="booking.slot">
+        <span>Slot</span>
+        <span>{{ booking.slot }}</span>
       </div>
       <div class="bs-row">
         <span>Address</span>
@@ -35,6 +43,7 @@
     </section>
 
     <button type="button" class="bs-primary-btn" (click)="goHome()">Back to home</button>
+    <a class="bs-secondary-link" (click)="viewBookings()">View my bookings</a>
     <p class="bs-redirect" aria-live="polite">
       Redirecting to home in {{ secondsLeft }} {{ secondsLeft === 1 ? 'second' : 'seconds' }}…
     </p>
