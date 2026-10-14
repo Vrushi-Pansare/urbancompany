@@ -1,6 +1,6 @@
 {
   "/api": {
-    "target": "https://mygenie.netraax.com",
+    "target": "https://mygenie.staging.netraax.com",
     "secure": true,
     "changeOrigin": true
   }

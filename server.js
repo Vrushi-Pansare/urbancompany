@@ -7,7 +7,7 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const API_TARGET = process.env.API_TARGET || 'https://mygenie.netraax.com';
+const API_TARGET = process.env.API_TARGET || 'https://mygenie.staging.netraax.com';
 const DIST_DIR = path.join(__dirname, 'dist', 'urbancompany', 'browser');
 
 // Proxy API calls to the backend, preserving the full /api/... path.
