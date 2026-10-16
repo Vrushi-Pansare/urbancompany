@@ -10,3 +10,47 @@ html, body {
   max-width: 100vw;
   overflow-x: hidden;
 }
+
+/* ──────────────────────────────────────────────────────────────
+   Browse-only mode (area not serviceable):
+   users can explore the site and still see every service, but prices
+   are replaced with a "Not available at your location" notice.
+   Add-to-cart / purchase controls stay visible and instead surface an
+   "expanding soon" toast on tap (handled in the components).
+   Toggled via body.browse-only.
+   ────────────────────────────────────────────────────────────── */
+body.browse-only {
+  /* Single-value price elements: blank the value, show the notice via ::after */
+  .uc-sl-service-price,
+  .uc-popular-price,
+  .uc-search-item-price {
+    font-size: 0 !important;
+    color: transparent !important;
+  }
+
+  /* Multi-span price rows: hide the amounts, show the notice on the row */
+  .uc-cleaning-essentials-price-row > *,
+  .uc-appliance-price-row > *,
+  .uc-home-repairs-price-row > *,
+  .uc-instahelp-price-row > * {
+    display: none !important;
+  }
+
+  .uc-sl-service-price::after,
+  .uc-popular-price::after,
+  .uc-search-item-price::after,
+  .uc-cleaning-essentials-price-row::after,
+  .uc-appliance-price-row::after,
+  .uc-home-repairs-price-row::after,
+  .uc-instahelp-price-row::after {
+    content: "Not available at your location";
+    display: inline-block;
+    max-width: 100%;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    line-height: 1.25;
+    letter-spacing: 0;
+    color: #b45309 !important; /* amber-700 */
+    white-space: normal;
+  }
+}

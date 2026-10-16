@@ -1,0 +1,74 @@
+<div class="bk-page">
+  <header class="bk-topbar">
+    <button type="button" class="bk-back" aria-label="Back" (click)="goBack()">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#0f0f0f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
+    </button>
+    <a routerLink="/" class="bk-brand" aria-label="MyGenie home">
+      <img [src]="logoUrl" alt="MyGenie" class="bk-logo" />
+    </a>
+    <span class="bk-topbar-title">My bookings</span>
+  </header>
+
+  <main class="bk-body">
+    <!-- Logged out -->
+    <section class="bk-card bk-center" *ngIf="!user">
+      <h2 class="bk-title">Login to see your bookings</h2>
+      <button type="button" class="bk-primary-btn" (click)="login()">Login</button>
+    </section>
+
+    <ng-container *ngIf="user">
+      <!-- Empty -->
+      <section class="bk-card bk-center" *ngIf="!loading && !error && !calls.length">
+        <h2 class="bk-title">No bookings yet</h2>
+        <p class="bk-muted">Services you book will show up here.</p>
+        <a routerLink="/" class="bk-primary-btn">Browse services</a>
+      </section>
+
+      <ul class="bk-list" *ngIf="calls.length">
+        <li class="bk-card bk-item" *ngFor="let call of calls" [class.open]="openId === call.id">
+          <button type="button" class="bk-item-head" [attr.aria-expanded]="openId === call.id" (click)="toggle(call)">
+            <span class="bk-item-main">
+              <span class="bk-item-title">{{ view(call).slotLabel || 'Booking' }}</span>
+              <span class="bk-muted bk-ellipsis">{{ view(call).formattedAddress || view(call).address }}</span>
+            </span>
+            <span class="bk-item-side">
+              <span class="bk-item-amt" *ngIf="view(call).total">{{ formatPrice(view(call).total) }}</span>
+              <span class="bk-muted" *ngIf="call.createdAt">{{ call.createdAt | date: 'd MMM, h:mm a' }}</span>
+            </span>
+          </button>
+
+          <div class="bk-details" *ngIf="openId === call.id">
+            <div class="bk-row">
+              <span>Booking ID</span>
+              <span>{{ view(call).code || call.id }}</span>
+            </div>
+            <div class="bk-row" *ngIf="view(call).status">
+              <span>Status</span>
+              <span class="bk-status">{{ view(call).status }}</span>
+            </div>
+            <div class="bk-row" *ngIf="view(call).formattedAddress">
+              <span>Address</span>
+              <span>{{ view(call).formattedAddress }}</span>
+            </div>
+            <div class="bk-row" *ngFor="let p of view(call).products">
+              <span>{{ p.name || 'Service' }}</span>
+              <span>{{ formatPrice(p.unitPrice) }}</span>
+            </div>
+            <p class="bk-error" *ngIf="detailError">{{ detailError }}</p>
+          </div>
+        </li>
+      </ul>
+
+      <p class="bk-muted bk-center-text" *ngIf="loading">Loading bookings…</p>
+
+      <section class="bk-card bk-center" *ngIf="error">
+        <p class="bk-error">{{ error }}</p>
+        <button type="button" class="bk-ghost-btn" (click)="loadMore()">Retry</button>
+      </section>
+
+      <button type="button" class="bk-ghost-btn bk-more" *ngIf="hasNext && !loading && !error" (click)="loadMore()">
+        Load more
+      </button>
+    </ng-container>
+  </main>
+</div>

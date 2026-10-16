@@ -1,0 +1,146 @@
+<!-- Floating launcher -->
+<button
+  type="button"
+  class="ai-fab"
+  [class.is-open]="open"
+  (click)="toggle()"
+  [attr.aria-expanded]="open"
+  aria-controls="ai-assistant-panel"
+  [attr.aria-label]="open ? 'Close MyGenie Assistant' : 'Ask MyGenie Assistant'"
+>
+  <svg *ngIf="!open" class="ai-fab-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="M12 2.5c.6 4.8 2.6 7.3 7.5 8-4.9.7-6.9 3.2-7.5 8-.6-4.8-2.6-7.3-7.5-8 4.9-.7 6.9-3.2 7.5-8Z" fill="currentColor" />
+    <path d="M19 15.5c.25 1.9 1 2.8 3 3.1-2 .3-2.75 1.2-3 3.1-.25-1.9-1-2.8-3-3.1 2-.3 2.75-1.2 3-3.1Z" fill="currentColor" />
+  </svg>
+  <svg *ngIf="open" class="ai-fab-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+  </svg>
+  <span class="ai-fab-label" *ngIf="!open">Ask AI</span>
+</button>
+
+<!-- Chat popup -->
+<section
+  *ngIf="open"
+  id="ai-assistant-panel"
+  class="ai-panel"
+  role="dialog"
+  aria-modal="false"
+  aria-labelledby="ai-panel-title"
+>
+  <header class="ai-panel-header">
+    <span class="ai-avatar" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="M12 3c.55 4.4 2.4 6.7 6.9 7.3-4.5.6-6.35 2.9-6.9 7.3-.55-4.4-2.4-6.7-6.9-7.3C9.6 9.7 11.45 7.4 12 3Z" fill="currentColor" />
+      </svg>
+    </span>
+    <div class="ai-panel-titles">
+      <h2 id="ai-panel-title" class="ai-panel-title">MyGenie Assistant</h2>
+      <span class="ai-panel-subtitle">
+        <span class="ai-status-dot" [class.is-off]="!aiAvailable"></span>
+        {{ aiAvailable ? 'AI · answers from MyGenie services' : 'Unavailable' }}
+      </span>
+    </div>
+    <button type="button" class="ai-close" (click)="toggle(false)" aria-label="Close assistant">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+      </svg>
+    </button>
+  </header>
+
+  <div class="ai-thread" #thread aria-live="polite">
+    <ng-container *ngFor="let message of messages; trackBy: trackByIndex">
+      <div *ngIf="message.role === 'user'" class="ai-bubble ai-bubble-user">{{ message.text }}</div>
+
+      <ng-container *ngIf="message.role === 'assistant'">
+        <div class="ai-bubble ai-bubble-bot" [class.is-notice]="message.notice">{{ message.text }}</div>
+
+        <div class="ai-cards" *ngIf="message.services?.length">
+          <button
+            type="button"
+            class="ai-card"
+            *ngFor="let item of message.services"
+            (click)="openService(item)"
+          >
+            <span class="ai-card-media">
+              <img *ngIf="serviceImage(item) as img" [src]="img" alt="" loading="lazy" />
+            </span>
+            <span class="ai-card-body">
+              <span class="ai-card-title">{{ serviceTitle(item) }}</span>
+              <span class="ai-card-sub">{{ serviceSubtitle(item) }}</span>
+              <span class="ai-card-price" [class.is-unavailable]="browseOnly">
+                {{ browseOnly ? 'Not available at your location' : formatPrice(item.unitPrice) }}
+              </span>
+            </span>
+            <span class="ai-card-go" aria-hidden="true">
+              <svg viewBox="0 0 20 20" fill="none">
+                <path d="M7.5 4.5 13 10l-5.5 5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
+          </button>
+        </div>
+
+        <div class="ai-links" *ngIf="message.groups?.length">
+          <button type="button" class="ai-link" *ngFor="let group of message.groups" (click)="openGroup(group)">
+            View {{ group.label }} services →
+          </button>
+        </div>
+      </ng-container>
+    </ng-container>
+
+    <div *ngIf="sending" class="ai-bubble ai-bubble-bot ai-typing" aria-label="Assistant is typing">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+
+  <div class="ai-suggestions" *ngIf="messages.length === 1">
+    <button
+      type="button"
+      class="ai-suggestion"
+      *ngFor="let s of suggestions"
+      (click)="ask(s)"
+      [disabled]="sending"
+    >
+      {{ s }}
+    </button>
+  </div>
+
+  <form class="ai-input" (ngSubmit)="ask(draft)">
+    <input
+      #input
+      type="text"
+      name="question"
+      [(ngModel)]="draft"
+      [maxlength]="maxLength"
+      [placeholder]="listening ? 'Listening… pause to send, tap ■ to stop' : knowledge.ready() ? 'Ask about any service…' : 'Loading services…'"
+      [class.is-listening]="listening"
+      autocomplete="off"
+      aria-label="Ask the assistant"
+    />
+    <!-- Speech-to-text: fills the box live and sends after a 3s pause;
+         tapping it again stops without sending. Hidden in browsers without
+         speech recognition (e.g. Firefox). -->
+    <button
+      *ngIf="voiceSupported"
+      type="button"
+      class="ai-mic"
+      [class.is-listening]="listening"
+      (click)="toggleVoice()"
+      [attr.aria-pressed]="listening"
+      [attr.aria-label]="listening ? 'Stop voice input' : 'Speak your question'"
+      [title]="listening ? 'Stop listening' : 'Speak your question'"
+    >
+      <svg *ngIf="listening" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <rect x="5.5" y="5.5" width="9" height="9" rx="1.5" fill="currentColor" />
+      </svg>
+      <svg *ngIf="!listening" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <rect x="7" y="2.5" width="6" height="10" rx="3" stroke="currentColor" stroke-width="1.6" />
+        <path d="M4.5 9.5a5.5 5.5 0 0 0 11 0M10 15v2.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+      </svg>
+    </button>
+    <button type="submit" class="ai-send" [disabled]="sending || !draft.trim()" aria-label="Send">
+      <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <path d="M3 10h13M11 4.5 16.5 10 11 15.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </button>
+  </form>
+</section>

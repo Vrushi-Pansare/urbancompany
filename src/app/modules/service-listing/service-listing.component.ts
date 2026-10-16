@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ListingItem, ListingService } from '../../services/listing.service';
+import { LocationService } from '../../services/location.service';
+import { NotifyService } from '../../services/notify.service';
+import { CartRow, CartService } from '../../services/cart.service';
 import { ServiceIconComponent } from '../service-icon/service-icon.component';
 import { byLabel, groupImage, productImage, toTitleCase } from '../../constants/listing-display';
 
@@ -40,22 +43,42 @@ export class ServiceListingComponent implements OnInit, OnDestroy {
   siblings: SiblingGroup[] = [];
   services: ServiceRow[] = [];
 
-  // In-page cart, kept while switching groups — not persisted yet
-  cart = new Map<string, { service: ServiceRow; qty: number }>();
+  readonly sectionTabs = [
+    { id: 'sl-services', label: 'Services' },
+    { id: 'sl-process', label: 'Our Process' },
+    { id: 'sl-rate-card', label: 'Std. Rate Card' },
+  ];
+  activeSection = 'sl-services';
+
+  readonly processSteps = [
+    { title: 'Book a slot', text: 'Pick a service and a time that suits you.' },
+    { title: 'Inspection', text: 'A verified professional checks the issue at your doorstep.' },
+    { title: 'Upfront quote', text: 'You approve the price before any work begins.' },
+    { title: 'Service & clean-up', text: 'Work is completed and the area is left clean.' },
+  ];
 
   highlightedId: string | null = null;
   private highlightTimer?: ReturnType<typeof setTimeout>;
+  private scrollToServicesOnLoad = false;
 
   private listing: ListingItem[] = [];
   private sub = new Subscription();
 
+  private canTransact = false;
+  private isUnserviceable = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private listingService: ListingService
+    private listingService: ListingService,
+    private locationService: LocationService,
+    private notify: NotifyService,
+    private cartService: CartService
   ) {}
 
   ngOnInit(): void {
+    this.sub.add(this.locationService.canTransact$.subscribe((can) => (this.canTransact = can)));
+    this.sub.add(this.locationService.isUnserviceable$.subscribe((v) => (this.isUnserviceable = v)));
     this.sub.add(
       this.route.paramMap.subscribe(async (params) => {
         this.categoryCode = params.get('category') ?? '';
@@ -69,6 +92,10 @@ export class ServiceListingComponent implements OnInit, OnDestroy {
         this.buildPage();
         this.isLoading = false;
         this.highlightFromQuery();
+        if (this.scrollToServicesOnLoad) {
+          this.scrollToServicesOnLoad = false;
+          this.scrollToServices();
+        }
       })
     );
     // Search results link to a specific service via ?service=<id>
@@ -91,30 +118,66 @@ export class ServiceListingComponent implements OnInit, OnDestroy {
     this.highlightTimer = setTimeout(() => (this.highlightedId = null), 2600);
   }
 
-  get cartRows(): { service: ServiceRow; qty: number }[] {
-    return [...this.cart.values()];
+  /** Mobile stacks banner + tiles above the list, so jump to the list after picking a tile */
+  onSiblingPick(code: string): void {
+    if (!this.isMobile()) return;
+    if (code === this.groupCode) this.scrollToServices(); // same group: no navigation happens
+    else this.scrollToServicesOnLoad = true;
+  }
+
+  private scrollToServices(): void {
+    // Same delay as highlightFromQuery — let the list render and the router's scroll-to-top run first
+    setTimeout(() => document.getElementById('sl-services')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
+  }
+
+  /** Section tabs: Services / Our Process / Std. Rate Card */
+  goToSection(id: string): void {
+    this.activeSection = id;
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  private isMobile(): boolean {
+    return typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches;
+  }
+
+  get cartRows(): CartRow[] {
+    return this.cartService.rows;
   }
 
   get cartCount(): number {
-    return this.cartRows.reduce((sum, row) => sum + row.qty, 0);
+    return this.cartService.count;
   }
 
   get cartTotal(): number {
-    return this.cartRows.reduce((sum, row) => sum + row.service.price * row.qty, 0);
+    return this.cartService.total;
   }
 
   qty(id: string): number {
-    return this.cart.get(id)?.qty ?? 0;
+    return this.cartService.qty(id);
   }
 
   add(service: ServiceRow): void {
-    this.cart.set(service.id, { service, qty: this.qty(service.id) + 1 });
+    // Adding to cart needs a serviceable location.
+    if (!this.canTransact) {
+      if (this.isUnserviceable) {
+        // We know the city — it's just not served yet.
+        this.notify.show("MyGenie isn't available in your area yet — we're expanding soon!");
+      } else {
+        // No location yet — invite the user to turn it on and reopen the location sheet.
+        this.notify.show('Enable location to add services to your cart.');
+        this.locationService.promptEnable();
+      }
+      return;
+    }
+    this.cartService.add({ ...service, groupName: this.groupName, categoryName: this.categoryName });
   }
 
   remove(service: ServiceRow): void {
-    const next = this.qty(service.id) - 1;
-    if (next > 0) this.cart.set(service.id, { service, qty: next });
-    else this.cart.delete(service.id);
+    this.cartService.remove(service.id);
+  }
+
+  goToCheckout(): void {
+    this.router.navigate(['/checkout']);
   }
 
   formatPrice(value: number): string {

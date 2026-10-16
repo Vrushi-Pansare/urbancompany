@@ -46,12 +46,13 @@
     .uc-logo-link {
       display: flex;
       align-items: center;
-      height: 38px;
+      height: 42px;
 
       .uc-logo-img {
         height: 100%;
         object-fit: contain;
-        aspect-ratio: 3 / 1;
+        /* Match the artwork (500×114) — a narrower box letterboxes the logo and shrinks it */
+        aspect-ratio: 500 / 114;
       }
     }
   }
@@ -101,7 +102,7 @@
             left: 0;
             right: 0;
             height: 2px;
-            background-color: #0f0f0f;
+            background-color: #8342fe;
           }
         }
       }
@@ -141,6 +142,7 @@
 
   /* Location Box */
   .uc-location-box {
+    position: relative;
     width: 240px;
     cursor: pointer;
 
@@ -187,7 +189,7 @@
         transition: all 0.2s ease;
 
         &:hover {
-          border-color: #0f0f0f;
+          border-color: #8342fe;
           background-color: #f8f8f8;
         }
 
@@ -199,9 +201,48 @@
           }
         }
 
+        &.uc-cart-btn {
+          position: relative;
+        }
+
+        .uc-cart-badge {
+          position: absolute;
+          top: -4px;
+          right: -4px;
+          min-width: 18px;
+          height: 18px;
+          padding: 0 5px;
+          border-radius: 9px;
+          background-color: #8342fe;
+          color: #ffffff;
+          font-size: 11px;
+          font-weight: 700;
+          line-height: 18px;
+          text-align: center;
+        }
+
         .uc-btn-icon {
           width: 20px;
           height: 20px;
+        }
+      }
+
+      // Logged-out state (replaces the profile icon until the user logs in)
+      .uc-header-login-btn {
+        height: 40px;
+        padding: 0 20px;
+        border: none;
+        border-radius: 8px;
+        background-color: #8342fe;
+        color: #ffffff;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.15s ease;
+
+        &:hover {
+          background-color: rgb(97, 54, 212);
         }
       }
 
@@ -221,34 +262,25 @@
           overflow: hidden;
           animation: dropdownFadeIn 0.15s ease-out;
 
-          .uc-login-dropdown-btn {
-            display: flex;
-            align-items: center;
-            height: 36px;
-            padding: 0 16px;
-            background-color: #ffffff;
-            cursor: pointer;
-            user-select: none;
-            border-radius: 8px;
-            transition: background-color 0.15s ease;
-
-            &:hover {
-              background-color: #f5f5f5;
-            }
-
-            p {
-              font-size: 13px;
-              color: #0f0f0f;
-              font-weight: 500;
-              margin: 0;
-            }
-          }
-
           .uc-profile-menu-card {
             display: flex;
             flex-direction: column;
             min-width: 170px;
             padding: 6px 0;
+
+            .uc-profile-menu-name {
+              padding: 8px 20px 10px;
+              margin-bottom: 4px;
+              border-bottom: 1px solid #eeeeee;
+              font-size: 14px;
+              line-height: 20px;
+              font-weight: 700;
+              color: #0f0f0f;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              max-width: 240px;
+            }
 
             .uc-profile-menu-item {
               display: block;
@@ -272,6 +304,62 @@
           }
         }
       }
+    }
+  }
+
+  /* Manual location picker (dropdown under the location box) */
+  .uc-city-picker {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    z-index: 1050;
+    min-width: 220px;
+    padding: 6px 0;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.06);
+    cursor: default;
+    animation: dropdownFadeIn 0.15s ease-out;
+
+    .uc-city-picker-title {
+      margin: 0;
+      padding: 10px 16px 4px;
+      font-size: 11.5px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      color: #757575;
+      border-top: 1px solid #eaeaea;
+    }
+
+    .uc-city-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding: 10px 16px;
+      border: none;
+      background: none;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 500;
+      color: #0f0f0f;
+      text-align: left;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+
+      &:hover {
+        background-color: #f7f7f7;
+      }
+
+      &.selected {
+        color: #8342fe;
+        font-weight: 600;
+      }
+    }
+
+    .uc-city-current {
+      color: #8342fe;
     }
   }
 
@@ -301,14 +389,64 @@
 
 /* Mobile Responsiveness (< 768px) */
 @media (max-width: 768px) {
-  /* Hide Desktop Header on Mobile */
+  /* Mobile now uses the same chrome as desktop — no separate mobile header/nav.
+     Stack it into two rows: logo + actions on top, location + search full-width below. */
   .uc-desktop-header {
-    display: none !important;
+    padding: 10px 14px;
+
+    .uc-header-inner {
+      flex-wrap: wrap;
+      align-items: center;
+      row-gap: 10px;
+      column-gap: 8px;
+    }
+
+    /* Row 1 — logo (left) ... actions (right) */
+    .uc-logo-col {
+      order: 1;
+
+      .uc-logo-link {
+        height: 32px;
+      }
+    }
+
+    .uc-spacer {
+      order: 2;
+    }
+
+    .uc-actions-col {
+      order: 3;
+      padding-left: 8px;
+
+      .uc-actions-group {
+        gap: 10px;
+      }
+    }
+
+    /* Row 2 — location + search as one full-width component */
+    .uc-search-col {
+      order: 4;
+      flex: 0 0 100%;
+      width: 100%;
+      gap: 8px;
+    }
+
+    .uc-location-box {
+      width: auto;
+      max-width: 132px;
+      flex-shrink: 0;
+      padding: 0 10px;
+    }
+
+    /* Inline search fills the rest of the full-width row */
+    app-service-search {
+      flex: 1;
+      min-width: 0;
+    }
   }
 
-  /* Mobile Top Header Bar */
   .uc-mobile-header {
-    display: flex;
+    display: none !important;
     flex-direction: column;
     background-color: rgb(17, 146, 232);
     padding: 14px 16px 16px 16px;
@@ -580,7 +718,7 @@
 
   /* Mobile Bottom Navigation Bar */
   .uc-mobile-bottom-nav {
-    display: flex;
+    display: none !important;
     justify-content: space-around;
     align-items: center;
     position: fixed;
@@ -653,8 +791,8 @@
 
         .uc-bottom-icon-box {
           .uc-bottom-logo-badge {
-            background: #0f0f0f;
-            border-color: #0f0f0f;
+            background: #8342fe;
+            border-color: #8342fe;
             color: #ffffff;
           }
 

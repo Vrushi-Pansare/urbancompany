@@ -2,9 +2,16 @@ import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { AuthService } from '../../services/auth.service';
-import { SmsService } from '../../services/sms.service';
+import { AuthError, AuthService, PincodeOption } from '../../services/auth.service';
 import { ASSET_URLS } from '../../constants/urls';
+
+/**
+ * login           phone + password (checks the number exists first)
+ * register        phone + name + email + password → account created → logged in → address
+ * address         register step 2: pincode dropdown (needs the new login's token) → Customer record
+ * change-password logged-in users, opened from the profile menu
+ */
+type Step = 'login' | 'register' | 'address' | 'change-password' | 'success';
 
 @Component({
   selector: 'app-login',
@@ -16,37 +23,50 @@ import { ASSET_URLS } from '../../constants/urls';
 export class LoginComponent implements OnInit, OnDestroy {
   logoUrl = ASSET_URLS.LOGO;
   isOpen = false;
-  currentStep: 'phone' | 'otp' | 'success' = 'phone';
+  currentStep: Step = 'login';
 
-  phoneNumber = '';
   countryCode = '+91';
   countryMaxLength = 10;
+  phoneNumber = '';
+  password = '';
+  showPassword = false;
+
+  /** Login found no account for the number: offer Register */
+  notRegistered = false;
+
+  // Register
+  firstName = '';
+  lastName = '';
+  email = '';
+  // Pincode dropdown (the Customer's address)
+  pincodeQuery = '';
+  pincodeOptions: PincodeOption[] = [];
+  pincodeOption: PincodeOption | null = null; // picked option; its value is the masterPincodeId
+  pincodeStatus: 'idle' | 'loading' | 'ready' | 'error' = 'idle';
+  pincodeListOpen = false;
+  private pincodeTimer?: ReturnType<typeof setTimeout>;
+  newPassword = '';
+  confirmPassword = '';
+
+  // Change password
+  currentPassword = '';
+
   isLoading = false;
+  errorMessage = '';
+  infoMessage = '';
+  successTitle = '';
 
-  // Cloudflare Turnstile verification state
-  showCaptcha = false;
-  isCaptchaVerified = false;
-  isCaptchaLoading = false;
-
-  // OTP State (6 Digits)
-  otpValue = '';
-  isOtpFocused = true;
-  countdown = 28;
-  generatedOtp = '';
-  private countdownTimer: any;
   private sub = new Subscription();
 
-  constructor(
-    private authService: AuthService,
-    private smsService: SmsService
-  ) {}
+  constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
     this.sub.add(
-      this.authService.isLoginModalOpen$.subscribe((open) => {
-        this.isOpen = open;
-        if (open) {
+      this.authService.modalView$.subscribe((view) => {
+        this.isOpen = view !== null;
+        if (view) {
           this.resetForm();
+          this.currentStep = view === 'change-password' ? 'change-password' : 'login';
         }
       })
     );
@@ -54,7 +74,6 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.sub.unsubscribe();
-    this.clearCountdown();
   }
 
   @HostListener('document:keydown.escape')
@@ -65,153 +84,182 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   get isPhoneValid(): boolean {
-    const cleanNumber = this.phoneNumber.replace(/\D/g, '');
-    return cleanNumber.length === this.countryMaxLength;
+    return this.phoneNumber.replace(/\D/g, '').length === this.countryMaxLength;
   }
 
-  get isContinueEnabled(): boolean {
-    return this.isPhoneValid && this.isCaptchaVerified && !this.isLoading;
+  get canLogin(): boolean {
+    return this.isPhoneValid && !!this.password && !this.isLoading;
   }
 
-  get isOtpValid(): boolean {
-    return this.otpValue.length === 6;
+  get canRegister(): boolean {
+    return (
+      this.isPhoneValid &&
+      !!this.firstName.trim() &&
+      !!this.lastName.trim() &&
+      this.isEmailValid &&
+      this.passwordsReady &&
+      !this.isLoading
+    );
   }
 
-  get formattedCountdown(): string {
-    const secs = this.countdown < 10 ? '0' + this.countdown : this.countdown.toString();
-    return `00:${secs}`;
+  get canSaveAddress(): boolean {
+    return !!this.pincodeOption && !this.isLoading;
+  }
+
+  get isEmailValid(): boolean {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email.trim());
+  }
+
+  /** Pincode dropdown: search as the user types (pincode digits or area name) */
+  onPincodeSearch(query: string): void {
+    this.pincodeQuery = query;
+    this.pincodeOption = null; // typing again un-picks the previous choice
+    clearTimeout(this.pincodeTimer);
+    // Empty box = back to the full first page; otherwise search the API (debounced)
+    this.pincodeStatus = 'loading';
+    this.pincodeListOpen = true;
+    this.pincodeTimer = setTimeout(() => this.loadPincodes(query.trim()), query.trim() ? 300 : 0);
+  }
+
+  selectPincode(option: PincodeOption): void {
+    this.pincodeOption = option;
+    this.pincodeQuery = option.label;
+    this.pincodeListOpen = false;
+  }
+
+  /** Close the list when focus leaves the field (after a click on an option has landed) */
+  onPincodeBlur(): void {
+    setTimeout(() => (this.pincodeListOpen = false), 150);
+  }
+
+  private async loadPincodes(query: string): Promise<void> {
+    try {
+      const options = await this.authService.searchPincodes(query);
+      if (query !== this.pincodeQuery.trim()) return; // typed on meanwhile
+      this.pincodeOptions = options;
+      this.pincodeStatus = 'ready';
+    } catch {
+      if (query === this.pincodeQuery.trim()) this.pincodeStatus = 'error';
+    }
+  }
+
+  get canChangePassword(): boolean {
+    return !!this.currentPassword && this.passwordsReady && !this.isLoading;
+  }
+
+  /** New password typed twice */
+  get passwordsReady(): boolean {
+    return !!this.newPassword && !!this.confirmPassword;
   }
 
   onPhoneInput(event: Event): void {
     const input = event.target as HTMLInputElement;
-    const rawValue = input.value.replace(/\D/g, '');
-    const clean = rawValue.slice(0, this.countryMaxLength);
-    this.phoneNumber = clean;
-
-    if (clean.length === this.countryMaxLength) {
-      this.loadVerification();
-    } else {
-      this.showCaptcha = false;
-      this.isCaptchaVerified = false;
-      this.isCaptchaLoading = false;
-    }
-  }
-
-  loadVerification(): void {
-    this.showCaptcha = true;
-    this.isCaptchaLoading = true;
-    this.isCaptchaVerified = false;
-
-    // Simulate Cloudflare Turnstile automatic verification on 10 digits
-    setTimeout(() => {
-      this.isCaptchaLoading = false;
-      this.isCaptchaVerified = true;
-    }, 700);
-  }
-
-  toggleCaptcha(): void {
-    if (this.isCaptchaVerified) return;
-    this.loadVerification();
-  }
-
-  async onSendOtp(): Promise<void> {
-    if (!this.isContinueEnabled) return;
-    this.isLoading = true;
-    this.otpValue = '';
-
-    // Generate 6-digit OTP
-    this.generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
-
-    // Call Fast2SMS / Alert API
-    await this.smsService.sendOtpSms(this.phoneNumber, this.generatedOtp);
-
-    // Transition to OTP step
-    setTimeout(() => {
-      this.isLoading = false;
-      this.currentStep = 'otp';
-      this.startCountdown();
-      setTimeout(() => this.focusOtpInput(), 100);
-    }, 800);
-  }
-
-  focusOtpInput(): void {
-    const input = document.getElementById('real-otp-input') as HTMLInputElement;
-    if (input) {
-      input.focus();
-      this.isOtpFocused = true;
-    }
-  }
-
-  onOtpChange(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const clean = input.value.replace(/\D/g, '').slice(0, 6);
-    this.otpValue = clean;
-    input.value = clean;
-  }
-
-  goToPhoneStep(): void {
-    this.currentStep = 'phone';
-    this.clearCountdown();
-    this.otpValue = '';
-  }
-
-  startCountdown(): void {
-    this.clearCountdown();
-    this.countdown = 28;
-    this.countdownTimer = setInterval(() => {
-      if (this.countdown > 0) {
-        this.countdown--;
-      } else {
-        this.clearCountdown();
-      }
-    }, 1000);
-  }
-
-  clearCountdown(): void {
-    if (this.countdownTimer) {
-      clearInterval(this.countdownTimer);
-      this.countdownTimer = null;
-    }
+    this.phoneNumber = input.value.replace(/\D/g, '').slice(0, this.countryMaxLength);
+    input.value = this.phoneNumber;
+    // A different number needs a fresh "does it exist?" check
+    this.notRegistered = false;
+    this.errorMessage = '';
   }
 
   clearPhone(): void {
     this.phoneNumber = '';
-    this.showCaptcha = false;
-    this.isCaptchaVerified = false;
-    this.isCaptchaLoading = false;
+    this.notRegistered = false;
+    this.errorMessage = '';
   }
 
-  async resendVia(type: 'sms' | 'whatsapp' = 'sms'): Promise<void> {
-    this.generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
-    this.otpValue = '';
+  /** Login: check the number exists, then log in with the password */
+  async onLogin(): Promise<void> {
+    if (!this.canLogin) return;
+    await this.run(async () => {
+      if (!(await this.authService.phoneExists(this.phoneNumber))) {
+        // Not an error: the "You're new here" box offers Register instead
+        this.notRegistered = true;
+        return;
+      }
+      try {
+        await this.authService.login(this.phoneNumber, this.password);
+      } catch (err) {
+        if (err instanceof AuthError && err.invalidCredentials) {
+          this.errorMessage = "That password doesn't match this number. Please check it and try again.";
+          return;
+        }
+        throw err;
+      }
+      this.finish('Logged in successfully!');
+    });
+  }
 
-    if (type === 'whatsapp') {
-      this.smsService.sendWhatsAppOtp(this.phoneNumber, this.generatedOtp);
+  goToRegister(): void {
+    this.newPassword = this.password; // keep what they already typed
+    this.confirmPassword = '';
+    this.notRegistered = false;
+    this.goTo('register');
+  }
+
+  goToLogin(): void {
+    this.notRegistered = false;
+    this.goTo('login');
+  }
+
+  /** Register step 1: create the account (unless the number already has one), log in, go to address */
+  async onRegister(): Promise<void> {
+    if (!this.canRegister || !this.checkPasswordsMatch()) return;
+    await this.run(async () => {
+      if (await this.authService.phoneExists(this.phoneNumber)) {
+        this.errorMessage = 'This number already has an account. Please log in instead.';
+        return;
+      }
+      await this.authService.register(this.phoneNumber, {
+        firstName: this.firstName,
+        lastName: this.lastName,
+        password: this.newPassword
+      });
+      this.goTo('address');
+      // Logged in now, so the pincode API (needs the token) can fill the dropdown
+      this.pincodeStatus = 'loading';
+      this.loadPincodes('');
+    });
+  }
+
+  /** Register step 2: create the Customer with the picked pincode as its address */
+  async onSaveAddress(): Promise<void> {
+    const pincode = this.pincodeOption;
+    if (!this.canSaveAddress || !pincode) return;
+    await this.run(async () => {
+      await this.authService.createCustomer(this.phoneNumber, {
+        firstName: this.firstName,
+        lastName: this.lastName,
+        email: this.email,
+        masterPincodeId: pincode.value,
+        pincode: pincode.code
+      });
+      this.finish('Account created!');
+    });
+  }
+
+  async onChangePassword(): Promise<void> {
+    if (!this.canChangePassword || !this.checkPasswordsMatch()) return;
+    await this.run(async () => {
+      try {
+        await this.authService.changePassword(this.currentPassword, this.newPassword);
+      } catch (err) {
+        if (err instanceof AuthError && err.invalidCredentials) {
+          this.errorMessage = "Your current password doesn't match. Please try again.";
+          return;
+        }
+        throw err;
+      }
+      this.finish('Password changed!');
+    });
+  }
+
+  /** Back arrow: one step back, or close from a first step */
+  goBack(): void {
+    if (this.currentStep === 'register') {
+      this.goToLogin();
     } else {
-      await this.smsService.sendOtpSms(this.phoneNumber, this.generatedOtp);
+      this.close();
     }
-
-    this.startCountdown();
-    setTimeout(() => this.focusOtpInput(), 100);
-  }
-
-  resendOtp(): void {
-    this.resendVia('sms');
-  }
-
-  onVerifyOtp(): void {
-    if (!this.isOtpValid || this.isLoading) return;
-    this.isLoading = true;
-
-    // Simulate OTP verification & login
-    setTimeout(() => {
-      this.isLoading = false;
-      this.currentStep = 'success';
-      setTimeout(() => {
-        this.authService.login(this.phoneNumber, this.countryCode);
-        this.close();
-      }, 1000);
-    }, 700);
   }
 
   onBackdropClick(event: MouseEvent): void {
@@ -223,13 +271,59 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.resetForm();
   }
 
+  /** Runs an API action with the loader on, showing the server's message if it fails */
+  private async run(action: () => Promise<void>): Promise<void> {
+    this.isLoading = true;
+    this.errorMessage = '';
+    this.infoMessage = '';
+    try {
+      await action();
+    } catch (err) {
+      this.errorMessage = err instanceof Error ? err.message : 'Something went wrong. Please try again.';
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  private checkPasswordsMatch(): boolean {
+    if (this.newPassword === this.confirmPassword) return true;
+    this.errorMessage = 'Passwords do not match.';
+    return false;
+  }
+
+  private goTo(step: Step): void {
+    this.currentStep = step;
+    this.errorMessage = '';
+    this.infoMessage = '';
+    this.showPassword = false;
+  }
+
+  private finish(title: string): void {
+    this.successTitle = title;
+    this.goTo('success');
+    setTimeout(() => this.close(), 1200);
+  }
+
   private resetForm(): void {
-    this.currentStep = 'phone';
+    this.currentStep = 'login';
     this.phoneNumber = '';
-    this.otpValue = '';
-    this.showCaptcha = false;
-    this.isCaptchaVerified = false;
-    this.isCaptchaLoading = false;
-    this.clearCountdown();
+    this.password = '';
+    this.showPassword = false;
+    this.notRegistered = false;
+    this.firstName = '';
+    this.lastName = '';
+    this.email = '';
+    this.pincodeQuery = '';
+    this.pincodeOptions = [];
+    this.pincodeOption = null;
+    this.pincodeStatus = 'idle';
+    this.pincodeListOpen = false;
+    clearTimeout(this.pincodeTimer);
+    this.newPassword = '';
+    this.confirmPassword = '';
+    this.currentPassword = '';
+    this.errorMessage = '';
+    this.infoMessage = '';
+    this.isLoading = false;
   }
 }

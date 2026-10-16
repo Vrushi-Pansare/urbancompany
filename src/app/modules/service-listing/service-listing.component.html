@@ -44,6 +44,7 @@
             [class.active]="sibling.code === groupCode"
             [routerLink]="['/services', categoryCode, sibling.code]"
             [attr.aria-current]="sibling.code === groupCode ? 'page' : null"
+            (click)="onSiblingPick(sibling.code)"
           >
             <span class="uc-sl-select-img">
               <img *ngIf="sibling.image; else siblingIcon" [src]="sibling.image" [alt]="sibling.name" loading="lazy" decoding="async" />
@@ -73,7 +74,17 @@
         </div>
       </div>
 
-      <section class="uc-sl-section">
+      <nav class="uc-sl-tabs" aria-label="Page sections">
+        <button
+          *ngFor="let tab of sectionTabs"
+          type="button"
+          class="uc-sl-tab"
+          [class.active]="tab.id === activeSection"
+          (click)="goToSection(tab.id)"
+        >{{ tab.label }}</button>
+      </nav>
+
+      <section class="uc-sl-section" id="sl-services">
         <h2 class="uc-sl-section-title">Services</h2>
 
         <div
@@ -116,9 +127,41 @@
           </div>
         </div>
       </section>
+
+      <section class="uc-sl-section" id="sl-process">
+        <h2 class="uc-sl-section-title">Our Process</h2>
+        <ol class="uc-sl-process">
+          <li *ngFor="let step of processSteps; let i = index" class="uc-sl-process-step">
+            <span class="uc-sl-process-num">{{ i + 1 }}</span>
+            <div>
+              <h3 class="uc-sl-process-title">{{ step.title }}</h3>
+              <p class="uc-sl-process-text">{{ step.text }}</p>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <section class="uc-sl-section" id="sl-rate-card">
+        <h2 class="uc-sl-section-title">Std. Rate Card</h2>
+        <table class="uc-sl-rate-table">
+          <thead>
+            <tr>
+              <th scope="col">Service</th>
+              <th scope="col">Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let service of services">
+              <td>{{ service.title }}</td>
+              <td class="uc-sl-service-price">{{ formatPrice(service.price) }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="uc-sl-rate-note">Spare parts, if required, are charged extra at actuals after your approval.</p>
+      </section>
     </main>
 
-    <!-- ── Right: cart + UC Promise ───────────────────────── -->
+    <!-- ── Right: cart + MyGenie Promise ───────────────────────── -->
     <aside class="uc-sl-right">
       <div class="uc-sl-box uc-sl-cart">
         <ng-container *ngIf="cartRows.length; else emptyCart">
@@ -136,6 +179,9 @@
             <span>Total</span>
             <span>{{ formatPrice(cartTotal) }}</span>
           </div>
+          <button type="button" class="uc-sl-checkout-btn" (click)="goToCheckout()">
+            Proceed to checkout
+          </button>
         </ng-container>
         <ng-template #emptyCart>
           <div class="uc-sl-cart-empty">
@@ -151,7 +197,7 @@
 
       <div class="uc-sl-box uc-sl-promise">
         <div class="uc-sl-promise-text">
-          <h3 class="uc-sl-box-title">UC Promise</h3>
+          <h3 class="uc-sl-box-title">MyGenie Promise</h3>
           <ul>
             <li>Verified Professionals</li>
             <li>Hassle Free Booking</li>
@@ -159,7 +205,7 @@
           </ul>
         </div>
         <div class="uc-sl-promise-badge" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#6e42e5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#8342fe" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 2.5l7.5 3v5.7c0 4.6-3.2 8.8-7.5 10.3-4.3-1.5-7.5-5.7-7.5-10.3V5.5z" />
             <path d="M8.5 12.2l2.4 2.4 4.6-4.8" />
           </svg>
@@ -169,8 +215,11 @@
   </div>
 
   <!-- Mobile cart bar -->
-  <div class="uc-sl-mobile-cart" *ngIf="cartCount">
-    <span class="uc-sl-mobile-cart-total">{{ formatPrice(cartTotal) }}</span>
-    <span class="uc-sl-mobile-cart-count">{{ cartCount }} {{ cartCount === 1 ? 'item' : 'items' }} added</span>
-  </div>
+  <button type="button" class="uc-sl-mobile-cart" *ngIf="cartCount" (click)="goToCheckout()">
+    <span class="uc-sl-mobile-cart-info">
+      <span class="uc-sl-mobile-cart-total">{{ formatPrice(cartTotal) }}</span>
+      <span class="uc-sl-mobile-cart-count">{{ cartCount }} {{ cartCount === 1 ? 'item' : 'items' }} added</span>
+    </span>
+    <span class="uc-sl-mobile-cart-cta">Checkout ›</span>
+  </button>
 </div>

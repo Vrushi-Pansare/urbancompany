@@ -1,12 +1,13 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService, UserProfile } from '../../services/auth.service';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'
 })
@@ -30,6 +31,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   openLoginModal(): void {
     this.authService.openLoginModal();
+  }
+
+  openChangePassword(): void {
+    this.authService.openChangePasswordModal();
   }
 
   logout(): void {

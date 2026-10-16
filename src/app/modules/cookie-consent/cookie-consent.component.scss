@@ -1,0 +1,107 @@
+.uc-cookie-banner {
+  position: fixed;
+  left: 24px;
+  right: 24px;
+  bottom: 24px;
+  z-index: 100002; /* above every overlay, incl. the location gate (100001), so consent is always reachable */
+  max-width: 920px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 14px 28px;
+  padding: 18px 22px;
+  border: 1px solid #eaeaea;
+  border-radius: 16px;
+  background-color: #ffffff;
+  color: #111111;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.14);
+  animation: uc-cookie-in 0.25s ease-out;
+
+  &.closing {
+    animation: uc-cookie-out 0.2s ease-in forwards;
+  }
+
+  .uc-cookie-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .uc-cookie-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .uc-cookie-desc {
+    font-size: 13.5px;
+    line-height: 1.45;
+    color: #545454;
+  }
+
+  .uc-cookie-actions {
+    flex: none;
+    display: flex;
+    gap: 10px;
+  }
+
+  .uc-cookie-btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .uc-cookie-btn-ghost {
+    border: 1px solid #d6d6d6;
+    background-color: #ffffff;
+    color: #111111;
+
+    &:hover {
+      background-color: #f5f5f5;
+    }
+  }
+
+  .uc-cookie-btn-primary {
+    border: 1px solid #111111;
+    background-color: #111111;
+    color: #ffffff;
+
+    &:hover {
+      background-color: #333333;
+    }
+  }
+
+  @media (max-width: 768px) {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 16px;
+
+    .uc-cookie-title {
+      font-size: 14px;
+    }
+
+    .uc-cookie-desc {
+      font-size: 12.5px;
+    }
+
+    .uc-cookie-btn {
+      flex: 1;
+    }
+  }
+}
+
+@keyframes uc-cookie-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes uc-cookie-out {
+  to { opacity: 0; transform: translateY(8px); }
+}

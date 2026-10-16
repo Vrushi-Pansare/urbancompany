@@ -29,27 +29,27 @@ export class WallPanelsComponent implements OnInit, AfterViewInit {
     {
       id: 'space-0',
       image: 'assets/wall-panels/space-1.jpeg',
-      alt: 'Urban Company Banner 0'
+      alt: 'MyGenie Banner 0'
     },
     {
       id: 'space-1',
       image: 'assets/wall-panels/space-2.jpeg',
-      alt: 'Urban Company Banner 1'
+      alt: 'MyGenie Banner 1'
     },
     {
       id: 'space-2',
       image: 'assets/wall-panels/space-3.jpeg',
-      alt: 'Urban Company Banner 2'
+      alt: 'MyGenie Banner 2'
     },
     {
       id: 'space-3',
       image: 'assets/wall-panels/space-4.jpeg',
-      alt: 'Urban Company Banner 3'
+      alt: 'MyGenie Banner 3'
     },
     {
       id: 'space-4',
       image: 'assets/wall-panels/space-5.jpeg',
-      alt: 'Urban Company Banner 4'
+      alt: 'MyGenie Banner 4'
     }
   ];
 
@@ -58,22 +58,22 @@ export class WallPanelsComponent implements OnInit, AfterViewInit {
     {
       id: 'need-0',
       image: 'assets/wall-panels/need-1.jpeg',
-      alt: 'Urban Company Banner 0'
+      alt: 'MyGenie Banner 0'
     },
     {
       id: 'need-1',
       image: 'assets/wall-panels/need-2.jpeg',
-      alt: 'Urban Company Banner 1'
+      alt: 'MyGenie Banner 1'
     },
     {
       id: 'need-2',
       image: 'assets/wall-panels/need-3.jpeg',
-      alt: 'Urban Company Banner 2'
+      alt: 'MyGenie Banner 2'
     },
     {
       id: 'need-3',
       image: 'assets/wall-panels/need-4.jpeg',
-      alt: 'Urban Company Banner 3'
+      alt: 'MyGenie Banner 3'
     }
   ];
 

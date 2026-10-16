@@ -1,6 +1,6 @@
 <section class="uc-category-grid-section" id="categoryGridSection">
   <!-- Main Title (centered above the card and video) -->
-  <h1 class="uc-main-heading">Home services at your doorstep</h1>
+  <h1 class="uc-main-heading">Home Services At Your Fingertips</h1>
 
   <div class="uc-category-grid-container">
     <div class="uc-category-grid-content">
@@ -40,49 +40,47 @@
       <!-- Trust Markers Section (Below Card) -->
       <div class="uc-trust-markers">
         <div class="uc-trust-item">
-          <svg
-            class="uc-trust-icon"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#0F0F0F"
-            stroke-width="1.5"
-          >
+          <svg class="uc-trust-icon" viewBox="0 0 24 24" fill="#FFB800" stroke="none">
             <polygon
               points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
             />
           </svg>
           <div class="uc-trust-info">
             <span class="uc-trust-val">4.8</span>
-            <span class="uc-trust-lbl">Service Rating*</span>
+            <span class="uc-trust-lbl">Rating</span>
           </div>
         </div>
 
         <div class="uc-trust-item">
-          <svg
-            class="uc-trust-icon"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#0F0F0F"
-            stroke-width="1.5"
-          >
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          <svg class="uc-trust-icon" viewBox="0 0 24 24" fill="#8342FE" stroke="none">
+            <path
+              d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"
+            />
           </svg>
           <div class="uc-trust-info">
-            <span class="uc-trust-val">12M+</span>
-            <span class="uc-trust-lbl">Customers Globally*</span>
+            <span class="uc-trust-val">50+</span>
+            <span class="uc-trust-lbl">Services*</span>
+          </div>
+        </div>
+
+        <div class="uc-trust-item">
+          <svg class="uc-trust-icon" viewBox="0 0 24 24" fill="#FF5A5F" stroke="none">
+            <path
+              d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
+            />
+          </svg>
+          <div class="uc-trust-info">
+            <span class="uc-trust-val">100+</span>
+            <span class="uc-trust-lbl">Pincodes*</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Right Side Hero Video (same top + height as the card) -->
+    <!-- Right Side Hero Video (same top + height as the card; stacks below the card on mobile) -->
     <div class="uc-category-grid-media">
-      <!-- Desktop only (hidden on mobile, so don't download it there). Muted + playsinline are required for autoplay; [muted] sets the DOM property -->
+      <!-- Muted + playsinline are required for autoplay; [muted] sets the DOM property -->
       <video
-        *ngIf="!isMobile"
         class="uc-hero-video"
         [src]="heroVideo"
         autoplay
@@ -91,32 +89,8 @@
         loop
         playsinline
         preload="auto"
-        aria-label="Urban Company professionals at work"
+        aria-label="MyGenie professionals at work"
       ></video>
-    </div>
-  </div>
-</section>
-
-<!-- Popular Categories (unique categories of items tagged "popular") -->
-<section class="uc-popular-section" id="popularCategoriesSection" *ngIf="popularCategories.length">
-  <div class="uc-popular-container">
-    <h2 class="uc-popular-heading">Popular Categories</h2>
-
-    <div class="uc-popular-grid">
-      <button
-        *ngFor="let item of popularCategories"
-        type="button"
-        class="uc-popular-card"
-        (click)="openCategory(item)"
-      >
-        <div class="uc-popular-img-wrap">
-          <img *ngIf="item.image; else popularIcon" [src]="item.image" [alt]="item.name" class="uc-popular-img" />
-          <ng-template #popularIcon>
-            <app-service-icon [code]="item.id"></app-service-icon>
-          </ng-template>
-        </div>
-        <span class="uc-popular-name">{{ item.name }}</span>
-      </button>
     </div>
   </div>
 </section>
@@ -796,7 +770,7 @@
   </ng-template>
 </app-card-carousel>
 
-<!-- Category Dialog (opened from "Home services at your doorstep") -->
+<!-- Category Dialog (opened from "Home Services At Your Fingertips") -->
 <app-category-dialog
   [category]="selectedCategory"
   [groups]="selectedGroups"

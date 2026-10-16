@@ -18,7 +18,7 @@
 
   &:hover,
   &.focused {
-    border-color: #0f0f0f;
+    border-color: #8342fe;
   }
 
   .uc-search-icon {
@@ -281,6 +281,18 @@
 
   .uc-search-item-title {
     font-size: 15px;
+  }
+}
+
+/* Inline search now appears in the (desktop) header on mobile too — let it flex
+   to fill the row and keep its dropdown inside the viewport. */
+@media (max-width: 768px) {
+  .uc-search-inline {
+    width: 100%;
+  }
+
+  .uc-search-dropdown {
+    width: min(420px, calc(100vw - 24px));
   }
 }
 

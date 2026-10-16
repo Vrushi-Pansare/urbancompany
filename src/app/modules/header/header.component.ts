@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, HostListener, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, HostListener, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, NavigationEnd } from '@angular/router';
@@ -6,7 +6,9 @@ import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ASSET_URLS } from '../../constants/urls';
 import { AuthService, UserProfile } from '../../services/auth.service';
-import { LocationService } from '../../services/location.service';
+import { LocationService, MANUAL_AREAS, UserArea } from '../../services/location.service';
+import { NotifyService } from '../../services/notify.service';
+import { CartService } from '../../services/cart.service';
 import { ProfileComponent } from '../profile/profile.component';
 import { ServiceSearchComponent } from '../service-search/service-search.component';
 
@@ -41,23 +43,51 @@ interface Campaign {
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
-export class HeaderComponent implements OnInit, OnDestroy {
+export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   logoUrl = ASSET_URLS.LOGO;
 
   isScrolled = false;
   showProfileDropdown = false;
+  // Manual location picker (opened from the location box)
+  showCityPicker = false;
+  manualAreas = MANUAL_AREAS;
   currentUser: UserProfile | null = null;
-  activeMobileTab: 'home' | 'wall-panels' | 'native' | 'beauty' | 'account' = 'home';
+  activeMobileTab: 'home' | 'account' | 'beauty' = 'home';
   // Service listing pages have their own mobile top bar
   isServicePage = false;
+  cartCount = 0;
+  private canTransact = false;
+  private isUnserviceable = false;
   private authSub = new Subscription();
+  private headerResize?: ResizeObserver;
 
   constructor(
     private authService: AuthService,
     private locationService: LocationService,
+    private notify: NotifyService,
+    private cartService: CartService,
     private elementRef: ElementRef,
     private router: Router
   ) {}
+
+  onCartClick(): void {
+    // No cart outside a serviceable area.
+    if (!this.canTransact) {
+      if (this.isUnserviceable) {
+        this.notify.show("MyGenie isn't available in your area yet — we're expanding soon!");
+      } else {
+        this.notify.show('Enable location to book services near you.');
+        this.locationService.promptEnable();
+      }
+      return;
+    }
+    this.router.navigate(['/checkout']);
+  }
+
+  openBookings(): void {
+    this.showProfileDropdown = false;
+    this.router.navigate(['/bookings']);
+  }
 
   @HostListener('window:scroll', [])
   onWindowScroll(): void {
@@ -71,16 +101,36 @@ export class HeaderComponent implements OnInit, OnDestroy {
   onDocumentClick(event: MouseEvent): void {
     if (!this.elementRef.nativeElement.contains(event.target)) {
       this.showProfileDropdown = false;
+      this.showCityPicker = false;
     }
+  }
+
+  toggleCityPicker(event: Event): void {
+    event.stopPropagation();
+    this.showProfileDropdown = false;
+    this.showCityPicker = !this.showCityPicker;
+  }
+
+  pickArea(area: UserArea, event: Event): void {
+    event.stopPropagation();
+    this.showCityPicker = false;
+    this.locationService.setManualArea(area);
+  }
+
+  useCurrentLocation(event: Event): void {
+    event.stopPropagation();
+    this.showCityPicker = false;
+    this.locationService.useCurrentLocation();
   }
 
 
   toggleProfileDropdown(event: Event): void {
     event.stopPropagation();
+    this.showCityPicker = false;
     this.showProfileDropdown = !this.showProfileDropdown;
   }
 
-  setMobileTab(tab: 'home' | 'wall-panels' | 'native' | 'beauty' | 'account'): void {
+  setMobileTab(tab: 'home' | 'account'): void {
     this.activeMobileTab = tab;
     if (typeof document !== 'undefined') {
       if (tab === 'account') {
@@ -90,13 +140,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       }
     }
 
-    if (tab === 'wall-panels') {
-      this.router.navigate(['/wall-panels']);
-    } else if (tab === 'native') {
-      this.router.navigate(['/native']);
-    } else if (tab === 'beauty') {
-      this.router.navigate(['/beauty']);
-    } else if (tab === 'home') {
+    if (tab === 'home') {
       this.router.navigate(['/']);
     }
   }
@@ -104,6 +148,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
   openLoginModal(): void {
     this.showProfileDropdown = false;
     this.authService.openLoginModal();
+  }
+
+  openChangePassword(): void {
+    this.showProfileDropdown = false;
+    this.authService.openChangePasswordModal();
   }
 
   logout(): void {
@@ -176,7 +225,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   promoBanners: PromoBanner[] = [
     {
       id: 'promo-1',
-      alt: 'Urban Company Offers',
+      alt: 'MyGenie Offers',
       image: 'https://cshare-leader-prod-new.s3.ap-south-1.amazonaws.com/2026-08-27T10:07:49.210Z/banner-1.jpg',
     },
     {
@@ -197,6 +246,19 @@ export class HeaderComponent implements OnInit, OnDestroy {
     // Detect user's current live location
     this.detectUserLiveLocation();
 
+    // Track whether the current area can transact (show/allow prices & cart)
+    this.authSub.add(
+      this.locationService.canTransact$.subscribe((can) => (this.canTransact = can))
+    );
+    this.authSub.add(
+      this.locationService.isUnserviceable$.subscribe((v) => (this.isUnserviceable = v))
+    );
+
+    // Keep the cart badge in sync
+    this.authSub.add(
+      this.cartService.rows$.subscribe((rows) => (this.cartCount = rows.reduce((n, r) => n + r.qty, 0)))
+    );
+
     // Subscribe to current user auth state
     this.authSub.add(
       this.authService.currentUser$.subscribe((user) => {
@@ -206,33 +268,35 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     // Sync active mobile tab with current url
     this.isServicePage = this.router.url.startsWith('/services/');
-    if (this.router.url.includes('wall-panels')) {
-      this.activeMobileTab = 'wall-panels';
-    } else if (this.router.url.includes('native')) {
-      this.activeMobileTab = 'native';
-    } else if (this.router.url.includes('beauty')) {
-      this.activeMobileTab = 'beauty';
-    }
     this.authSub.add(
       this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe((event: any) => {
         this.isServicePage = event.urlAfterRedirects.startsWith('/services/');
-        if (event.url.includes('wall-panels')) {
-          this.activeMobileTab = 'wall-panels';
-        } else if (event.url.includes('native')) {
-          this.activeMobileTab = 'native';
-        } else if (event.url.includes('beauty')) {
-          this.activeMobileTab = 'beauty';
-        } else if (event.url === '/' || event.url === '') {
-          if (this.activeMobileTab !== 'account') {
-            this.activeMobileTab = 'home';
-          }
+        if ((event.url === '/' || event.url === '') && this.activeMobileTab !== 'account') {
+          this.activeMobileTab = 'home';
         }
       })
     );
   }
 
+  /**
+   * The header is position: fixed, so the page needs a top offset equal to its height. That height
+   * changes with breakpoint, logo size and wrapping, so publish the real value as --uc-header-h
+   * (consumed by .app-main in app.component.scss) instead of hard-coding it.
+   */
+  ngAfterViewInit(): void {
+    if (typeof ResizeObserver === 'undefined') return;
+    const header: HTMLElement | null = this.elementRef.nativeElement.querySelector('.uc-desktop-header');
+    if (!header) return;
+    this.headerResize = new ResizeObserver(() => {
+      document.documentElement.style.setProperty('--uc-header-h', `${header.offsetHeight}px`);
+    });
+    this.headerResize.observe(header);
+  }
+
   ngOnDestroy(): void {
     this.authSub.unsubscribe();
+    this.headerResize?.disconnect();
+    document.documentElement.style.removeProperty('--uc-header-h');
     if (typeof document !== 'undefined') {
       document.body.style.overflow = '';
     }
@@ -251,12 +315,22 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   async detectUserLiveLocation(): Promise<void> {
-    // 1. Instant IP-based lookup (no permission prompt required, instant)
+    // 1. Precise area from GPS or the manual picker (permission + reverse geocoding handled by LocationService)
+    this.authSub.add(
+      this.locationService.area$
+        .pipe(filter((area) => !!area))
+        .subscribe((area) => {
+          this.liveUserLocation = area!.label;
+          this.campaigns.forEach(c => c.location = area!.label);
+        })
+    );
+
+    // 2. Instant IP-based lookup (no permission prompt required) — only until a real area is known
     try {
       const ipRes = await fetch('https://ipapi.co/json/');
       if (ipRes.ok) {
         const data = await ipRes.json();
-        if (data.city) {
+        if (data.city && !this.liveUserLocation) {
           const area = data.postal ? `${data.postal}, ${data.city}` : data.city;
           const locStr = `${area}, ${data.region || data.country_name || 'India'}`;
           this.liveUserLocation = locStr;
@@ -266,16 +340,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     } catch (e) {
       console.log('IP geocode fallback running...');
     }
-
-    // 2. Precise area from GPS (permission + reverse geocoding handled by LocationService)
-    this.authSub.add(
-      this.locationService.area$
-        .pipe(filter((area) => !!area))
-        .subscribe((area) => {
-          this.liveUserLocation = area!.label;
-          this.campaigns.forEach(c => c.location = area!.label);
-        })
-    );
   }
 
   // Calculate transform for rolling digit slot

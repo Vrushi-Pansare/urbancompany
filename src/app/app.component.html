@@ -1,14 +1,34 @@
-<ng-container *ngIf="(status$ | async) !== 'unserviceable'; else serviceUnavailable">
-  <app-header [attr.inert]="(isBlocked$ | async) ? '' : null"></app-header>
-  <main class="app-main" [attr.inert]="(isBlocked$ | async) ? '' : null">
-    <router-outlet></router-outlet>
-  </main>
-  <app-footer [attr.inert]="(isBlocked$ | async) ? '' : null"></app-footer>
-  <app-login [attr.inert]="(isBlocked$ | async) ? '' : null"></app-login>
-</ng-container>
+<app-header *ngIf="!hideChrome"></app-header>
+<main class="app-main" [class.no-chrome]="hideChrome">
+  <!-- Location is optional: invite the user to turn it on so they can book near them -->
+  <div class="app-browse-banner" *ngIf="(needsLocation$ | async) && !hideChrome">
+    <span class="app-browse-banner-text">
+      Turn on location to see services and book near you.
+    </span>
+    <button type="button" class="app-browse-banner-btn" (click)="enableLocation()">Enable location</button>
+  </div>
+  <!-- Browse-only notice: area isn't serviceable, but the user can still explore -->
+  <div class="app-browse-banner" *ngIf="(isUnserviceable$ | async) && !hideChrome">
+    <span class="app-browse-banner-text">
+      MyGenie isn't available in {{ (area$ | async)?.city || 'your area' }} yet.
+      You can browse services, but booking isn't available here.
+    </span>
+    <button type="button" class="app-browse-banner-btn" (click)="checkAgain()">Check again</button>
+  </div>
+  <router-outlet></router-outlet>
+</main>
+<app-footer *ngIf="!hideChrome"></app-footer>
+<app-login></app-login>
 
-<ng-template #serviceUnavailable>
-  <app-service-unavailable></app-service-unavailable>
-</ng-template>
+<!-- Floating AI assistant. [hidden] rather than *ngIf so the conversation
+     survives a trip through checkout. -->
+<app-ai-assistant [hidden]="hideChrome"></app-ai-assistant>
 
 <app-location-gate></app-location-gate>
+
+<app-cookie-consent></app-cookie-consent>
+
+<!-- Transient notice (e.g. trying to book outside a serviceable area) -->
+<div class="app-toast" *ngIf="toast$ | async as msg" role="status" aria-live="polite">
+  {{ msg }}
+</div>

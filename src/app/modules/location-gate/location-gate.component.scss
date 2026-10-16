@@ -14,6 +14,7 @@
 
 /* Sheet / Card (Desktop by default — matches login modal) */
 .uc-location-sheet {
+  position: relative;
   width: 100%;
   max-width: 500px;
   max-height: calc(100vh - 32px);
@@ -30,6 +31,34 @@
 
 .uc-sheet-handle {
   display: none;
+}
+
+/* Dismiss ("Not now") — location is optional */
+.uc-location-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background-color: #f5f5f5;
+  cursor: pointer;
+  z-index: 2;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #ececec;
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
+    pointer-events: none;
+  }
 }
 
 /* Brand Logo */
@@ -52,7 +81,7 @@
   width: 56px;
   height: 56px;
   margin-bottom: 18px;
-  color: #6e42e5;
+  color: #8342fe;
 
   .uc-pin-circle {
     position: relative;
@@ -75,7 +104,7 @@
     position: absolute;
     inset: 0;
     border-radius: 50%;
-    background-color: rgba(110, 66, 229, 0.3);
+    background-color: rgba(131, 66, 254, 0.3);
     animation: pinPulse 1.6s ease-out infinite;
   }
 
@@ -126,7 +155,7 @@
   .uc-benefit-check {
     flex-shrink: 0;
     margin-top: 2px;
-    color: #6e42e5;
+    color: #8342fe;
   }
 }
 
@@ -140,7 +169,7 @@
   color: #545454;
 
   strong {
-    color: #6e42e5;
+    color: #8342fe;
     font-weight: 700;
   }
 }
@@ -179,7 +208,7 @@
     height: 22px;
     border-radius: 50%;
     background-color: #f7f5ff;
-    color: #6e42e5;
+    color: #8342fe;
     font-size: 12px;
     font-weight: 700;
     display: flex;
@@ -221,7 +250,7 @@
   height: 48px;
   border-radius: 8px;
   border: none;
-  background-color: rgba(110, 66, 229, 1.00);
+  background-color: rgba(131, 66, 254, 1.00);
   color: #ffffff;
   font-size: 15px;
   font-weight: 700;
@@ -234,7 +263,7 @@
 
   &:hover:not(:disabled) {
     background-color: rgb(97, 54, 212);
-    box-shadow: 0 4px 14px rgba(110, 66, 229, 0.3);
+    box-shadow: 0 4px 14px rgba(131, 66, 254, 0.3);
   }
 
   &:active:not(:disabled) {

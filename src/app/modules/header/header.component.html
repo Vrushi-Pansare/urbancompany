@@ -8,43 +8,24 @@
         (click)="setMobileTab('home')"
         class="uc-logo-link"
       >
-        <img [src]="logoUrl" alt="Urban Company logo" class="uc-logo-img" />
+        <img [src]="logoUrl" alt="MyGenie logo" class="uc-logo-img" />
       </a>
     </div>
 
-    <!-- Navigation Tabs Column -->
-    <div class="uc-header-col uc-nav-col" id="NavTabsColumn">
-      <nav class="uc-nav-tabs">
-        <a
-          href="javascript:void(0)"
-          class="uc-nav-tab"
-          [class.active]="activeMobileTab === 'wall-panels'"
-          (click)="setMobileTab('wall-panels')"
-          >Wall Panels</a
-        >
-        <a
-          href="javascript:void(0)"
-          class="uc-nav-tab"
-          [class.active]="activeMobileTab === 'native'"
-          (click)="setMobileTab('native')"
-          >Native</a
-        >
-        <a
-          href="javascript:void(0)"
-          class="uc-nav-tab"
-          [class.active]="activeMobileTab === 'beauty'"
-          (click)="setMobileTab('beauty')"
-          >Beauty</a
-        >
-      </nav>
-    </div>
-
-    <!-- Location Box next to menu on Left (For Wall Panels, Native, Beauty) -->
+    <!-- Location Box next to menu on Left -->
     <div
       *ngIf="activeMobileTab !== 'home'"
       class="uc-header-col uc-menu-location-col"
     >
-      <div class="uc-search-box uc-location-box">
+      <div
+        class="uc-search-box uc-location-box"
+        role="button"
+        tabindex="0"
+        aria-haspopup="listbox"
+        [attr.aria-expanded]="showCityPicker"
+        (click)="toggleCityPicker($event)"
+        (keydown.enter)="toggleCityPicker($event)"
+      >
         <svg class="uc-icon" viewBox="0 0 24 24" fill="#757575">
           <path
             d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
@@ -60,6 +41,7 @@
             clip-rule="evenodd"
           />
         </svg>
+        <ng-container *ngTemplateOutlet="cityPicker"></ng-container>
       </div>
     </div>
 
@@ -73,7 +55,15 @@
       id="locationSearchColumn"
     >
       <!-- Location Picker Box -->
-      <div class="uc-search-box uc-location-box">
+      <div
+        class="uc-search-box uc-location-box"
+        role="button"
+        tabindex="0"
+        aria-haspopup="listbox"
+        [attr.aria-expanded]="showCityPicker"
+        (click)="toggleCityPicker($event)"
+        (keydown.enter)="toggleCityPicker($event)"
+      >
         <svg class="uc-icon" viewBox="0 0 24 24" fill="#757575">
           <path
             d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
@@ -89,6 +79,7 @@
             clip-rule="evenodd"
           />
         </svg>
+        <ng-container *ngTemplateOutlet="cityPicker"></ng-container>
       </div>
 
       <!-- Service Search (results dropdown) -->
@@ -99,7 +90,8 @@
     <div class="uc-header-col uc-actions-col" id="rightButtonColumn">
       <div class="uc-actions-group">
         <!-- Cart Button -->
-        <button class="uc-action-btn uc-cart-btn" aria-label="Cart">
+        <button class="uc-action-btn uc-cart-btn" aria-label="Cart" (click)="onCartClick()">
+          <span class="uc-cart-badge" *ngIf="cartCount">{{ cartCount }}</span>
           <svg class="uc-btn-icon" viewBox="0 0 24 24" fill="#0F0F0F">
             <path
               fill-rule="evenodd"
@@ -112,8 +104,16 @@
           </svg>
         </button>
 
-        <!-- Profile Button Container -->
-        <div class="uc-profile-btn-wrap">
+        <!-- Logged out: plain Login button -->
+        <button
+          *ngIf="!currentUser"
+          type="button"
+          class="uc-header-login-btn"
+          (click)="openLoginModal()"
+        >Login</button>
+
+        <!-- Logged in: Profile icon + menu -->
+        <div class="uc-profile-btn-wrap" *ngIf="currentUser">
           <button
             class="uc-action-btn uc-profile-btn"
             aria-label="Account Profile"
@@ -128,74 +128,73 @@
             </svg>
           </button>
 
-          <!-- Login Dropdown / Popup shown under Profile Icon matching exact user screenshot markup -->
+          <!-- Profile menu shown under the icon -->
           <div class="uc-profile-dropdown" *ngIf="showProfileDropdown">
-            <ng-container *ngIf="!currentUser; else loggedInUserView">
-              <div
-                tabindex="0"
-                class="uc-login-dropdown-btn css-175oi2r r-lrvibr r-1awozwy r-1pz39u2 r-18u37iz r-1loqt21 r-1otgn73"
-                style="
-                  height: 36px;
-                  background-color: rgb(255, 255, 255);
-                  padding-right: 16px;
-                  padding-left: 16px;
-                  border-radius: 8px;
-                "
-                (click)="openLoginModal()"
+            <div class="uc-profile-menu-card">
+              <span class="uc-profile-menu-name" *ngIf="currentUser.name">{{ currentUser.name }}</span>
+              <a
+                href="javascript:void(0)"
+                class="uc-profile-menu-item"
+                (click)="showProfileDropdown = false"
               >
-                <p
-                  dir="auto"
-                  role="paragraph"
-                  class="css-146c3p1 r-13awgt0"
-                  style="
-                    font-family:
-                      -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;,
-                      Roboto, sans-serif;
-                    font-size: 13px;
-                    line-height: 16px;
-                    color: rgb(15, 15, 15);
-                    text-decoration-line: none;
-                    text-transform: none;
-                    font-weight: 500;
-                    text-align: left;
-                    margin: 0;
-                  "
-                >
-                  Login
-                </p>
-              </div>
-            </ng-container>
-            <ng-template #loggedInUserView>
-              <div class="uc-profile-menu-card">
-                <a
-                  href="javascript:void(0)"
-                  class="uc-profile-menu-item"
-                  (click)="showProfileDropdown = false"
-                >
-                  Help Center
-                </a>
-                <a
-                  href="javascript:void(0)"
-                  class="uc-profile-menu-item"
-                  (click)="showProfileDropdown = false"
-                >
-                  My Bookings
-                </a>
-                <a
-                  href="javascript:void(0)"
-                  class="uc-profile-menu-item uc-logout-item"
-                  (click)="logout()"
-                >
-                  Log out
-                </a>
-              </div>
-            </ng-template>
+                Help Center
+              </a>
+              <a
+                href="javascript:void(0)"
+                class="uc-profile-menu-item"
+                (click)="openBookings()"
+              >
+                My Bookings
+              </a>
+              <a
+                href="javascript:void(0)"
+                class="uc-profile-menu-item"
+                (click)="openChangePassword()"
+              >
+                Change password
+              </a>
+              <a
+                href="javascript:void(0)"
+                class="uc-profile-menu-item uc-logout-item"
+                (click)="logout()"
+              >
+                Log out
+              </a>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 </header>
+
+<!-- Manual location picker, shared by both location boxes above -->
+<ng-template #cityPicker>
+  <div class="uc-city-picker" *ngIf="showCityPicker" role="listbox" aria-label="Choose your city" (click)="$event.stopPropagation()">
+    <button type="button" class="uc-city-option uc-city-current" (click)="useCurrentLocation($event)">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <circle cx="12" cy="12" r="4"></circle>
+        <line x1="12" y1="2" x2="12" y2="5"></line>
+        <line x1="12" y1="19" x2="12" y2="22"></line>
+        <line x1="2" y1="12" x2="5" y2="12"></line>
+        <line x1="19" y1="12" x2="22" y2="12"></line>
+      </svg>
+      Use current location
+    </button>
+    <p class="uc-city-picker-title">Choose your city</p>
+    <button
+      *ngFor="let area of manualAreas"
+      type="button"
+      role="option"
+      class="uc-city-option"
+      [class.selected]="currentLocation === area.label"
+      [attr.aria-selected]="currentLocation === area.label"
+      (click)="pickArea(area, $event)"
+    >
+      {{ area.label }}
+    </button>
+  </div>
+</ng-template>
 
 <!-- Mobile Top Header Bar (Shown only on Home tab) -->
 <div
@@ -416,65 +415,9 @@
     (click)="setMobileTab('home')"
   >
     <div class="uc-bottom-icon-box">
-      <span class="uc-bottom-logo-badge">uc</span>
+      <span class="uc-bottom-logo-badge">mg</span>
     </div>
-    <span class="uc-bottom-nav-label">UC</span>
-  </a>
-
-  <a
-    href="javascript:void(0)"
-    class="uc-bottom-nav-item"
-    [class.active]="activeMobileTab === 'wall-panels'"
-    (click)="setMobileTab('wall-panels')"
-  >
-    <div class="uc-bottom-icon-box">
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        width="20"
-        height="20"
-      >
-        <rect x="3" y="3" width="8" height="18" rx="1"></rect>
-        <rect x="13" y="3" width="8" height="18" rx="1"></rect>
-      </svg>
-      <span class="uc-badge-dot"></span>
-    </div>
-    <span class="uc-bottom-nav-label">Wall Panels</span>
-  </a>
-
-  <a
-    href="javascript:void(0)"
-    class="uc-bottom-nav-item"
-    [class.active]="activeMobileTab === 'native'"
-    (click)="setMobileTab('native')"
-  >
-    <div class="uc-bottom-icon-box">
-      <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-      </svg>
-      <span class="uc-badge-dot"></span>
-    </div>
-    <span class="uc-bottom-nav-label">Native</span>
-  </a>
-
-  <a
-    href="javascript:void(0)"
-    class="uc-bottom-nav-item"
-    [class.active]="activeMobileTab === 'beauty'"
-    (click)="setMobileTab('beauty')"
-  >
-    <div class="uc-bottom-icon-box">
-      <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-        <path
-          d="M12 2a7 7 0 00-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 001 1h6a1 1 0 001-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 00-7-7z"
-        />
-      </svg>
-    </div>
-    <span class="uc-bottom-nav-label">Beauty</span>
+    <span class="uc-bottom-nav-label">MG</span>
   </a>
 
   <a
