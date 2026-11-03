@@ -54,7 +54,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   // Phone OTP (signup verification step, between register and address)
   otp = '';
   otpResending = false;
-  otpCountdown = 0; // seconds left before "Resend" is allowed again (2 min cooldown)
+  otpCountdown = 0; // seconds left before "Resend" is allowed again (1 min cooldown)
   private otpTimer?: ReturnType<typeof setInterval>;
 
   // Change password
@@ -280,10 +280,10 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
   }
 
-  /** Starts (or restarts) the 2-minute resend cooldown countdown */
+  /** Starts (or restarts) the 1-minute resend cooldown countdown */
   private startOtpCountdown(): void {
     clearInterval(this.otpTimer);
-    this.otpCountdown = 120;
+    this.otpCountdown = 60;
     this.otpTimer = setInterval(() => {
       this.otpCountdown = Math.max(0, this.otpCountdown - 1);
       if (this.otpCountdown === 0) clearInterval(this.otpTimer);
