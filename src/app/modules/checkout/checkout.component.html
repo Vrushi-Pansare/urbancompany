@@ -176,17 +176,6 @@
         </label>
       </section>
 
-      <!-- Coupons and offers -->
-      <button type="button" class="co-card co-coupons" (click)="viewOffers()">
-        <span class="co-coupons-icon" aria-hidden="true">%</span>
-        <span class="co-coupons-text">
-          <span class="co-coupons-title">Coupons and offers</span>
-          <span class="co-muted" *ngIf="!user">Login/Sign up to view offers</span>
-          <span class="co-coupons-count" *ngIf="user">14 offers</span>
-        </span>
-        <span class="co-chevron" *ngIf="user" aria-hidden="true">›</span>
-      </button>
-
       <!-- Payment summary (logged out) -->
       <section class="co-card co-summary" *ngIf="!user">
         <h3 class="co-card-title">Payment summary</h3>
@@ -205,7 +194,7 @@
         <p class="co-sum-note">Inclusive of all taxes &amp; charges</p>
       </section>
 
-      <!-- Total bill + tip (logged in) -->
+      <!-- Total bill (logged in) -->
       <ng-container *ngIf="user">
         <button type="button" class="co-card co-totalbill" (click)="viewBreakup()">
           <span class="co-totalbill-left">
@@ -214,26 +203,6 @@
           </span>
           <span class="co-chevron" aria-hidden="true">›</span>
         </button>
-
-        <section class="co-tip">
-          <h3 class="co-tip-title">Add a tip to thank the Professional</h3>
-          <div class="co-tip-options">
-            <button
-              type="button"
-              class="co-tip-btn"
-              *ngFor="let t of tipOptions"
-              [class.active]="tip === t"
-              (click)="setTip(t)"
-            >
-              <span class="co-tip-amt">₹ {{ t }}</span>
-              <span class="co-tip-popular" *ngIf="t === 75">POPULAR</span>
-            </button>
-            <button type="button" class="co-tip-btn" [class.active]="tip && !tipOptions.includes(tip)" (click)="customTip()">
-              <span class="co-tip-amt">Custom</span>
-            </button>
-          </div>
-          <p class="co-muted">100% of the tip goes to the professional.</p>
-        </section>
       </ng-container>
     </div>
   </div>
@@ -250,6 +219,17 @@
       <button type="button" class="co-primary-btn" [disabled]="submitting" [attr.aria-busy]="submitting" (click)="pay()">
         {{ !user ? 'Login to pay' : submitting ? 'Booking…' : 'Proceed to pay' }}
       </button>
+    </div>
+  </div>
+
+  <!-- Payment link dialog -->
+  <div class="co-pay-backdrop" *ngIf="showPaymentDialog" (click)="closePaymentDialog()">
+    <div class="co-pay-dialog" role="dialog" aria-modal="true" aria-labelledby="co-pay-title" (click)="$event.stopPropagation()">
+      <h3 id="co-pay-title" class="co-pay-title">Complete your payment</h3>
+      <p class="co-pay-text">Your booking is created. Complete the payment to confirm it.</p>
+      <p class="co-pay-expiry" *ngIf="paymentExpiresAt">Link expires at {{ paymentExpiresAt | date: 'medium' }}</p>
+      <a class="co-pay-btn" [href]="paymentLink">Pay now</a>
+      <button type="button" class="co-pay-close" (click)="closePaymentDialog()">Done</button>
     </div>
   </div>
 </div>

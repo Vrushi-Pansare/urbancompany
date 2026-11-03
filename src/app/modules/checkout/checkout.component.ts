@@ -36,8 +36,6 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   rows: CartRow[] = [];
 
   avoidCalling = false;
-  tip = 0;
-  tipOptions = [50, 75, 100];
 
   // ── Booking details (loaded once logged in) ──
   customer: BookingCustomer | null = null;
@@ -53,6 +51,12 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   submitting = false;
   submitError = '';
   productError = '';
+
+  // Payment link dialog (shown after the Call + payment request are created)
+  showPaymentDialog = false;
+  paymentLink = '';
+  paymentExpiresAt = '';
+  private pendingSummary: BookingSummary | null = null;
 
   private area: string | null = null;
   private sub = new Subscription();
@@ -104,7 +108,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   }
 
   get amountToPay(): number {
-    return this.itemTotal + (this.user ? this.tip : 0);
+    return this.itemTotal;
   }
 
   formatPrice(value: number): string {
@@ -224,16 +228,6 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     this.submitError = '';
   }
 
-  // ── Tip ──
-  setTip(value: number): void {
-    this.tip = this.tip === value ? 0 : value;
-  }
-
-  customTip(): void {
-    const input = typeof window !== 'undefined' ? window.prompt('Enter tip amount (₹)') : null;
-    const amount = input ? parseInt(input, 10) : NaN;
-    if (!isNaN(amount) && amount >= 0) this.tip = amount;
-  }
 
   // ── Book (creates the Inquiry Call) ──
   async pay(): Promise<void> {
@@ -283,10 +277,11 @@ export class CheckoutComponent implements OnInit, OnDestroy {
 
       // Call is created with no assignment (no create-context lookup)
       const call = await this.booking.createCall({ ...booking, userAssignments: [] }, key);
+      // Create the payment request for this Call, then show the hosted payment link
+      const payment = await this.booking.createPaymentRequest(call.id);
       this.submission = null;
 
-      // Summary goes through router state (not the URL) so a refresh of the success page can't replay it
-      const summary: BookingSummary = {
+      this.pendingSummary = {
         title: this.cardTitle,
         items: this.cart.count,
         amount: this.amountToPay,
@@ -294,8 +289,9 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         slot: this.selectedSlot?.label ?? '',
         callId: call.id
       };
-      // Clear after navigating, otherwise this page flashes its empty-cart state first
-      this.router.navigate(['/booking-success'], { state: { booking: summary } }).then(() => this.cart.clear());
+      this.paymentLink = payment.paymentLink;
+      this.paymentExpiresAt = payment.linkExpiresAt;
+      this.showPaymentDialog = true;
     } catch (err) {
       this.submitError = this.errorMessage(err);
     } finally {
@@ -303,11 +299,20 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     }
   }
 
-  // ── Stubs for the remaining booking steps ──
-  viewOffers(): void {
-    this.notify.show(this.user ? 'Offers are coming soon.' : 'Login or sign up to view offers.');
+  // ── Payment link dialog ──
+  /** Close the payment dialog and go to the booking-success screen */
+  closePaymentDialog(): void {
+    this.showPaymentDialog = false;
+    const summary = this.pendingSummary;
+    this.pendingSummary = null;
+    this.paymentLink = '';
+    this.paymentExpiresAt = '';
+    if (summary) {
+      this.router.navigate(['/booking-success'], { state: { booking: summary } }).then(() => this.cart.clear());
+    }
   }
 
+  // ── Stubs for the remaining booking steps ──
   viewBreakup(): void {
     this.notify.show('Amount to pay is inclusive of all taxes & charges.');
   }

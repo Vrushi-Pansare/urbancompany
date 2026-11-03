@@ -89,6 +89,7 @@ export class AuthService {
   public currentUser$ = this.userSubject.asObservable();
 
   private session: AuthSession | null = this.readStorage<AuthSession>(SESSION_KEY);
+  private refreshPromise: Promise<string | null> | null = null;
 
   constructor() {
     // Users saved by the old OTP mock have no token — make them log in for real
@@ -166,12 +167,15 @@ export class AuthService {
     const apiUser = data.user ?? {};
     const name = apiUser.fullName || [apiUser.firstName, apiUser.lastName].filter(Boolean).join(' ') || undefined;
 
+    const refreshToken = data.refreshToken ?? data.tokens?.refreshToken;
     this.session = {
       accessToken,
-      refreshToken: data.refreshToken ?? data.tokens?.refreshToken,
+      refreshToken,
       response: data
     };
     this.writeStorage(SESSION_KEY, this.session);
+    // Mirror the refresh token into a cookie so /auth/refresh can read it (fetch can't set a Cookie header)
+    if (refreshToken) this.setRefreshCookie(refreshToken);
 
     const user: UserProfile = {
       phoneNumber: phone.replace(/\D/g, '').slice(-10),
@@ -248,12 +252,21 @@ export class AuthService {
   async searchPincodes(search: string): Promise<PincodeOption[]> {
     const params: Record<string, string> = { page: '1', limit: '25' };
     if (search) params['search'] = search;
+    const url = `${PINCODES_URL}?${new URLSearchParams(params)}`;
+    const fetchOnce = (token: string) =>
+      fetch(url, { headers: { Accept: 'application/json', Authorization: `Bearer ${token}` } });
+
     let res: Response;
     try {
-      res = await fetch(`${PINCODES_URL}?${new URLSearchParams(params)}`, {
-        headers: { Accept: 'application/json', ...this.authHeader() }
-      });
-    } catch {
+      if (!this.session?.accessToken) throw new AuthError('Please log in again.', 401);
+      res = await fetchOnce(this.session.accessToken);
+      // Access token expired: refresh once and retry
+      if (res.status === 401) {
+        const newToken = await this.refreshAccessToken();
+        if (newToken) res = await fetchOnce(newToken);
+      }
+    } catch (err) {
+      if (err instanceof AuthError) throw err;
       throw new AuthError('Network error. Check your connection and try again.', 0);
     }
     const body = await res.json().catch(() => null);
@@ -293,6 +306,67 @@ export class AuthService {
     this.userSubject.next(null);
     this.removeStorage(USER_KEY);
     this.removeStorage(SESSION_KEY);
+    this.clearRefreshCookie();
+  }
+
+  /**
+   * Refreshes the access token via POST /auth/refresh (sends the netrax_refresh_token cookie).
+   * Concurrent callers share one in-flight request. Returns the new token, or null (and logs out).
+   */
+  refreshAccessToken(): Promise<string | null> {
+    if (!this.refreshPromise) {
+      this.refreshPromise = this.doRefresh().finally(() => {
+        this.refreshPromise = null;
+      });
+    }
+    return this.refreshPromise;
+  }
+
+  private async doRefresh(): Promise<string | null> {
+    let res: Response;
+    try {
+      res = await fetch(API_URLS.REFRESH, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        credentials: 'include', // send the netrax_refresh_token cookie
+        body: JSON.stringify({ refreshToken: this.session?.refreshToken ?? '' })
+      });
+    } catch {
+      return null; // network error: don't log out, let the caller surface it
+    }
+    const body = await res.json().catch(() => null);
+    if (!res.ok || body?.success === false) {
+      this.logout();
+      return null;
+    }
+    const data = body?.data ?? body ?? {};
+    const token = data.accessToken ?? data.token ?? data.tokens?.accessToken ?? data.access_token;
+    if (!token) {
+      this.logout();
+      return null;
+    }
+    const refreshToken = data.refreshToken ?? data.tokens?.refreshToken ?? this.session?.refreshToken;
+    this.session = { accessToken: token, refreshToken, response: this.session?.response ?? data };
+    this.writeStorage(SESSION_KEY, this.session);
+    if (refreshToken) this.setRefreshCookie(refreshToken);
+    return token;
+  }
+
+  private setRefreshCookie(token: string): void {
+    try {
+      // 14 days; readable so same-origin /api requests forward it through the proxy
+      document.cookie = `netrax_refresh_token=${token}; path=/; max-age=1209600; SameSite=Lax`;
+    } catch {
+      /* SSR / no document */
+    }
+  }
+
+  private clearRefreshCookie(): void {
+    try {
+      document.cookie = 'netrax_refresh_token=; path=/; max-age=0; SameSite=Lax';
+    } catch {
+      /* SSR / no document */
+    }
   }
 
   /** POST JSON; throws AuthError with the server's message on failure */
@@ -305,7 +379,13 @@ export class AuthService {
     return this.sendJson('PATCH', url, payload, headers);
   }
 
-  private async sendJson(method: 'POST' | 'PATCH', url: string, payload: unknown, headers: Record<string, string> = {}): Promise<any> {
+  private async sendJson(
+    method: 'POST' | 'PATCH',
+    url: string,
+    payload: unknown,
+    headers: Record<string, string> = {},
+    retried = false
+  ): Promise<any> {
     let res: Response;
     try {
       res = await fetch(url, {
@@ -319,6 +399,14 @@ export class AuthService {
 
     const body = await res.json().catch(() => null);
     if (res.ok && body?.success !== false) return body;
+
+    // Access token expired on an authenticated call: refresh once and retry
+    if (res.status === 401 && !retried && headers['Authorization']) {
+      const newToken = await this.refreshAccessToken();
+      if (newToken) {
+        return this.sendJson(method, url, payload, { ...headers, Authorization: `Bearer ${newToken}` }, true);
+      }
+    }
 
     const error = body?.error;
     const message: string =

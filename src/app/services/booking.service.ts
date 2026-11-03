@@ -25,6 +25,12 @@ export interface BookingSlot {
   label: string;
 }
 
+/** Hosted payment link returned when a payment request is created for a Call */
+export interface PaymentRequest {
+  paymentLink: string;
+  linkExpiresAt: string;
+}
+
 export interface CallProduct {
   customerProductId: null;
   categoryId: string;
@@ -236,6 +242,16 @@ export class BookingService {
     return this.toCall(body?.data ?? body);
   }
 
+  /** Creates the payment request for a just-created Call; returns the hosted payment link */
+  async createPaymentRequest(callId: string): Promise<PaymentRequest> {
+    const body = await this.request('POST', BOOKING_URLS.PAYMENT_REQUESTS, { source: 'CALL', sourceRecordId: callId });
+    const data = body?.data ?? body ?? {};
+    return {
+      paymentLink: data.paymentLink ?? '',
+      linkExpiresAt: data.linkExpiresAt ?? ''
+    };
+  }
+
   /** The user's active bookings, newest first */
   async listCalls(page = 1, limit = 25): Promise<{ calls: BookingCall[]; pagination: Pagination | null }> {
     const body = await this.get(BOOKING_URLS.CALLS, {
@@ -344,7 +360,8 @@ export class BookingService {
     method: 'GET' | 'POST',
     url: string,
     payload?: unknown,
-    headers: Record<string, string> = {}
+    headers: Record<string, string> = {},
+    retried = false
   ): Promise<any> {
     const token = this.auth.accessToken;
     if (!token) throw new BookingError('Please log in to continue.', 401);
@@ -369,7 +386,11 @@ export class BookingService {
     if (res.ok && body?.success !== false) return body;
 
     if (res.status === 401) {
-      // Token expired / revoked -- same handling as AuthService.changePassword
+      // Access token expired: refresh once and retry before giving up
+      if (!retried) {
+        const newToken = await this.auth.refreshAccessToken();
+        if (newToken) return this.request(method, url, payload, headers, true);
+      }
       this.auth.logout();
       throw new BookingError('Your session has expired. Please log in again.', 401);
     }

@@ -7,7 +7,8 @@ export const API_URLS = {
   PUBLIC_LISTING: '/api/v1/public/listing',
   PUBLIC_CREATE: '/api/v1/public/create',
   LOGIN: '/api/v1/auth/login',
-  CHANGE_PASSWORD: '/api/v1/auth/change-password'
+  CHANGE_PASSWORD: '/api/v1/auth/change-password',
+  REFRESH: '/api/v1/auth/refresh'
 };
 
 // Company the auth APIs log users into
@@ -39,7 +40,9 @@ export const BOOKING_URLS = {
   PRODUCT_OPTIONS: `${MODULE_CONFIGS}/${CALL_MODULE_ID}/fields/${CALL_PRODUCT_FIELD_ID}/reference-options`,
   SLOT_RECORDS: `/api/v1/company-dropdown-configs/${SLOT_DROPDOWN_CONFIG_ID}/records`,
   CALL_CREATE_CONTEXT: `${MODULE_CONFIGS}/${CALL_MODULE_ID}/calls/create-context`,
-  CALLS: `${MODULE_CONFIGS}/${CALL_MODULE_ID}/calls`
+  CALLS: `${MODULE_CONFIGS}/${CALL_MODULE_ID}/calls`,
+  // Payment request created for a Call, right after the Call is created
+  PAYMENT_REQUESTS: `${MODULE_CONFIGS}/${CALL_MODULE_ID}/payments/requests`
 };
 
 // Role of the professionals a new Inquiry Call can be assigned to
