@@ -8,7 +8,10 @@ export const API_URLS = {
   PUBLIC_CREATE: '/api/v1/public/create',
   LOGIN: '/api/v1/auth/login',
   CHANGE_PASSWORD: '/api/v1/auth/change-password',
-  REFRESH: '/api/v1/auth/refresh'
+  REFRESH: '/api/v1/auth/refresh',
+  // OTP (public) -- used to verify the phone number before registration
+  OTP_CREATE: '/api/v1/public/otp/create',
+  OTP_VALIDATE: '/api/v1/public/otp/validate'
 };
 
 // Company the auth APIs log users into

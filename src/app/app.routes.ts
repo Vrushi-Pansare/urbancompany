@@ -9,6 +9,8 @@ export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'services/:category/:group', component: ServiceListingComponent },
   { path: 'checkout', component: CheckoutComponent },
+  // Cart lives on the checkout page; alias so a payment cancel/return to /cart lands here
+  { path: 'cart', redirectTo: 'checkout', pathMatch: 'full' },
   { path: 'booking-success', component: BookingSuccessComponent },
   { path: 'bookings', component: BookingsComponent },
   { path: '**', redirectTo: '' }

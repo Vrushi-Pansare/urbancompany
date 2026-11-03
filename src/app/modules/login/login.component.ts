@@ -11,7 +11,7 @@ import { ASSET_URLS } from '../../constants/urls';
  * address         register step 2: pincode dropdown (needs the new login's token) → Customer record
  * change-password logged-in users, opened from the profile menu
  */
-type Step = 'login' | 'register' | 'address' | 'change-password' | 'success';
+type Step = 'login' | 'register' | 'otp' | 'address' | 'change-password' | 'success';
 
 @Component({
   selector: 'app-login',
@@ -51,6 +51,12 @@ export class LoginComponent implements OnInit, OnDestroy {
   newPassword = '';
   confirmPassword = '';
 
+  // Phone OTP (signup verification step, between register and address)
+  otp = '';
+  otpResending = false;
+  otpCountdown = 0; // seconds left before "Resend" is allowed again (2 min cooldown)
+  private otpTimer?: ReturnType<typeof setInterval>;
+
   // Change password
   currentPassword = '';
 
@@ -83,6 +89,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.sub.unsubscribe();
+    clearInterval(this.otpTimer);
   }
 
   @HostListener('document:keydown.escape')
@@ -210,7 +217,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.goTo('login');
   }
 
-  /** Register step 1: create the account (unless the number already has one), log in, go to address */
+  /** Register step 1: verify the number is free, send an OTP, then go to the OTP step */
   async onRegister(): Promise<void> {
     if (!this.canRegister || !this.checkPasswordsMatch()) return;
     await this.run(async () => {
@@ -218,6 +225,22 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.errorMessage = 'This number already has an account. Please log in instead.';
         return;
       }
+      await this.authService.sendOtp(this.phoneNumber);
+      this.otp = '';
+      this.startOtpCountdown();
+      this.goTo('otp');
+    });
+  }
+
+  get canVerifyOtp(): boolean {
+    return /^\d{4,8}$/.test(this.otp.trim()) && !this.isLoading;
+  }
+
+  /** OTP step: validate the code, then create the account, log in, and go to address */
+  async onVerifyOtp(): Promise<void> {
+    if (!this.canVerifyOtp) return;
+    await this.run(async () => {
+      await this.authService.verifyOtp(this.phoneNumber, this.otp);
       await this.authService.register(this.phoneNumber, {
         firstName: this.firstName,
         lastName: this.lastName,
@@ -228,6 +251,43 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.pincodeStatus = 'loading';
       this.loadPincodes('');
     });
+  }
+
+  get canResendOtp(): boolean {
+    return this.otpCountdown === 0 && !this.otpResending && !this.isLoading;
+  }
+
+  /** m:ss left on the resend cooldown, e.g. "1:59" */
+  get otpCountdownText(): string {
+    const m = Math.floor(this.otpCountdown / 60);
+    const s = this.otpCountdown % 60;
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  }
+
+  /** Resend the signup OTP (allowed once the 2-minute cooldown elapses) */
+  async resendOtp(): Promise<void> {
+    if (!this.canResendOtp) return;
+    this.otpResending = true;
+    this.errorMessage = '';
+    try {
+      await this.authService.sendOtp(this.phoneNumber);
+      this.infoMessage = 'A new code has been sent.';
+      this.startOtpCountdown();
+    } catch (err) {
+      this.errorMessage = err instanceof Error ? err.message : 'Could not resend the code. Please try again.';
+    } finally {
+      this.otpResending = false;
+    }
+  }
+
+  /** Starts (or restarts) the 2-minute resend cooldown countdown */
+  private startOtpCountdown(): void {
+    clearInterval(this.otpTimer);
+    this.otpCountdown = 120;
+    this.otpTimer = setInterval(() => {
+      this.otpCountdown = Math.max(0, this.otpCountdown - 1);
+      if (this.otpCountdown === 0) clearInterval(this.otpTimer);
+    }, 1000);
   }
 
   /** Register step 2: create the Customer with the picked pincode as its address */
@@ -303,6 +363,8 @@ export class LoginComponent implements OnInit, OnDestroy {
   goBack(): void {
     if (this.currentStep === 'register') {
       this.goToLogin();
+    } else if (this.currentStep === 'otp') {
+      this.goTo('register');
     } else {
       this.close();
     }
@@ -371,6 +433,10 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.newPassword = '';
     this.confirmPassword = '';
     this.currentPassword = '';
+    this.otp = '';
+    this.otpResending = false;
+    this.otpCountdown = 0;
+    clearInterval(this.otpTimer);
     this.errorMessage = '';
     this.infoMessage = '';
     this.isLoading = false;

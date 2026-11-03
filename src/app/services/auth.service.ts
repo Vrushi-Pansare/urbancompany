@@ -187,6 +187,16 @@ export class AuthService {
     this.writeStorage(USER_KEY, user);
   }
 
+  /** Sends a signup OTP to the phone number (also used for "resend") */
+  async sendOtp(phone: string, purposeCode = 'SIGNUP'): Promise<void> {
+    await this.post(API_URLS.OTP_CREATE, { contact: this.toE164(phone), purposeCode });
+  }
+
+  /** Validates the OTP the user entered; throws AuthError with the server message on failure */
+  async verifyOtp(phone: string, otp: string, purposeCode = 'SIGNUP'): Promise<void> {
+    await this.post(API_URLS.OTP_VALIDATE, { contact: this.toE164(phone), purposeCode, otp: otp.trim() });
+  }
+
   /**
    * Register step 1: creates the user account (public API), then logs in -- the pincode
    * dropdown and the customers API in step 2 both need the token.

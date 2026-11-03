@@ -116,6 +116,40 @@
         <ng-container *ngTemplateOutlet="policy"></ng-container>
       </form>
 
+      <!-- STEP: OTP (verify the phone number before the account is created) -->
+      <form class="uc-step-otp" *ngIf="currentStep === 'otp'" (ngSubmit)="onVerifyOtp()">
+        <h1 class="uc-modal-heading">Verify your number</h1>
+        <p class="uc-modal-subheading">Enter the code sent to {{ countryCode }} {{ phoneNumber }}.</p>
+
+        <div class="uc-text-field">
+          <input
+            type="text"
+            name="otp"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            maxlength="8"
+            placeholder="Enter OTP"
+            [(ngModel)]="otp"
+          />
+        </div>
+
+        <ng-container *ngTemplateOutlet="messages"></ng-container>
+
+        <div class="uc-action-btn-row">
+          <button type="submit" class="uc-continue-btn" [class.loading]="isLoading" [disabled]="!canVerifyOtp">
+            <span *ngIf="!isLoading">Verify &amp; continue</span>
+            <ng-container *ngIf="isLoading"><ng-container *ngTemplateOutlet="loader"></ng-container></ng-container>
+          </button>
+        </div>
+
+        <p class="uc-switch-row">
+          Didn't get the code?
+          <button type="button" class="uc-link-btn" [disabled]="!canResendOtp" (click)="resendOtp()">
+            {{ otpResending ? 'Resending…' : otpCountdown > 0 ? ('Resend in ' + otpCountdownText) : 'Resend' }}
+          </button>
+        </p>
+      </form>
+
       <!-- STEP: Address (register step 2 -- logged in now, so the pincode API can be called) -->
       <form class="uc-step-address" *ngIf="currentStep === 'address'" (ngSubmit)="onSaveAddress()">
         <h1 class="uc-modal-heading">{{ editingAddress ? 'Update your address' : 'Add your address' }}</h1>
