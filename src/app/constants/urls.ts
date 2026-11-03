@@ -14,11 +14,12 @@ export const API_URLS = {
 export const COMPANY_SUBDOMAIN = 'mygenie';
 
 // Role given to every self-registered customer (from the MyGenie Public APIs Postman collection)
-export const CUSTOMER_ROLE_ID = '6ac7575ed27273d53e3ddade';
+export const CUSTOMER_ROLE_ID = '6ad209407f35a5a6ecccb545';
 
 // Registration also creates the user's Customer record (needed for booking)
-export const CUSTOMER_CREATE_URL = '/api/v1/module-configs/6aaa8985b572f6609c2a7e00/customers';
-export const CUSTOMER_TYPE_ID = '6aad1dc3739f6daeac755e9d';
+export const CUSTOMER_MODULE_ID = '6ad0c11c72189af6ea6e8f2d';
+export const CUSTOMER_CREATE_URL = `/api/v1/module-configs/${CUSTOMER_MODULE_ID}/customers`;
+export const CUSTOMER_TYPE_ID = '6adb76439c858153e5e883f1';
 
 // Master pincodes for the register address dropdown (authenticated). Each item's id is a masterPincodeId
 export const PINCODES_URL = '/api/v1/master-metadata/pincodes';
@@ -26,11 +27,11 @@ export const PINCODES_URL = '/api/v1/master-metadata/pincodes';
 // Booking (Inquiry Call) APIs -- authenticated, called with the login access token
 const MODULE_CONFIGS = '/api/v1/module-configs';
 // Company dropdown that holds the bookable time slots ("10-11 AM", ...)
-const SLOT_DROPDOWN_CONFIG_ID = '6ac9ed126feb65d785a78ea0';
-const CALL_MODULE_ID = '6aaa8997b572f6609c2a7e03';
+const SLOT_DROPDOWN_CONFIG_ID = '6ad0dacf72189af6ea6e90fe';
+const CALL_MODULE_ID = '6ad0d78872189af6ea6e9090';
 // Reference fields on the Inquiry Call form; their options are Customer / Product records
-const CALL_CUSTOMER_FIELD_ID = '6aaa8a67b572f6609c2a7e28';
-const CALL_PRODUCT_FIELD_ID = '6aaa8aafb572f6609c2a7e3a';
+const CALL_CUSTOMER_FIELD_ID = '6ad0da6972189af6ea6e90e4';
+const CALL_PRODUCT_FIELD_ID = '6ad0db0472189af6ea6e910d';
 
 export const BOOKING_URLS = {
   // GET /<id> returns { value, data: <record> }

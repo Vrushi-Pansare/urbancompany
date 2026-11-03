@@ -59,7 +59,7 @@
                   <span class="co-step-value" *ngSwitchCase="'loading'">Loading your address…</span>
                   <span class="co-step-value co-step-error" *ngSwitchCase="'error'">{{ customerError }}</span>
                   <ng-container *ngSwitchCase="'ready'">
-                    <span class="co-step-value co-step-wrap" *ngIf="selectedAddress">{{ selectedAddress.formattedAddress }}</span>
+                    <span class="co-step-value co-step-wrap" *ngIf="selectedAddress">{{ selectedAddress.address || selectedAddress.formattedAddress }}</span>
                     <span class="co-step-value co-step-error" *ngIf="!selectedAddress">
                       {{ customer ? 'No saved address on your profile.' : 'We could not find your customer profile.' }}
                     </span>
@@ -71,10 +71,9 @@
                 type="button"
                 class="co-ghost-btn"
                 *ngIf="customerState === 'ready' && selectedAddress"
-                [attr.aria-expanded]="showAddressPicker"
                 (click)="editAddress()"
               >
-                {{ showAddressPicker ? 'Close' : 'Edit' }}
+                Edit
               </button>
             </div>
 
@@ -89,7 +88,7 @@
                 (click)="selectAddress(a)"
               >
                 <span class="co-radio" aria-hidden="true"></span>
-                <span class="co-address-text">{{ a.formattedAddress }}</span>
+                <span class="co-address-text">{{ a.address || a.formattedAddress }}</span>
               </button>
             </div>
           </div>

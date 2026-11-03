@@ -1,5 +1,5 @@
 import { Injectable, isDevMode } from '@angular/core';
-import { BehaviorSubject, map } from 'rxjs';
+import { BehaviorSubject, Subject, map } from 'rxjs';
 import { API_URLS, COMPANY_SUBDOMAIN, CUSTOMER_CREATE_URL, CUSTOMER_ROLE_ID, CUSTOMER_TYPE_ID, PINCODES_URL } from '../constants/urls';
 
 export interface UserProfile {
@@ -16,8 +16,26 @@ interface AuthSession {
   response: unknown;
 }
 
-/** Which auth popup is open: the login flow, or change password (logged-in users) */
-export type AuthModalView = 'login' | 'change-password' | null;
+/** Which auth popup is open: the login flow, change password, or editing a saved address */
+export type AuthModalView = 'login' | 'change-password' | 'edit-address' | null;
+
+/** Prefill passed to the address dialog when editing an existing address from checkout */
+export interface AddressEditPrefill {
+  customerId: string;
+  phone: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  address: string;
+  pincodeOption: PincodeOption;
+}
+
+/** The address just saved from the edit dialog, so checkout can show it without a re-fetch */
+export interface AddressUpdate {
+  masterPincodeId: string;
+  pincode: string;
+  address: string;
+}
 
 export interface RegisterDetails {
   firstName: string;
@@ -30,6 +48,7 @@ export interface CustomerDetails {
   firstName: string;
   lastName: string;
   email: string;
+  address: string; // free-text address (house/flat, street, landmark)
   pincode: string; // 6 digits, e.g. "380009"
   masterPincodeId: string; // the picked pincode option's value
 }
@@ -60,6 +79,12 @@ export class AuthService {
   public modalView$ = this.modalViewSubject.asObservable();
   public isLoginModalOpen$ = this.modalView$.pipe(map((view) => view !== null));
 
+  /** Prefill for the address dialog when opened in edit mode (checkout "Edit") */
+  addressEditPrefill: AddressEditPrefill | null = null;
+  private addressUpdatedSubject = new Subject<AddressUpdate>();
+  /** Emits the saved address after an edit, so checkout can show it without a re-fetch */
+  public addressUpdated$ = this.addressUpdatedSubject.asObservable();
+
   private userSubject = new BehaviorSubject<UserProfile | null>(this.readStorage<UserProfile>(USER_KEY));
   public currentUser$ = this.userSubject.asObservable();
 
@@ -78,8 +103,20 @@ export class AuthService {
     this.modalViewSubject.next('change-password');
   }
 
+  /** Open the address dialog prefilled, to edit an existing saved address */
+  openEditAddressModal(prefill: AddressEditPrefill): void {
+    this.addressEditPrefill = prefill;
+    this.modalViewSubject.next('edit-address');
+  }
+
+  /** Called by the address dialog after an edit is saved */
+  notifyAddressUpdated(update: AddressUpdate): void {
+    this.addressUpdatedSubject.next(update);
+  }
+
   closeLoginModal(): void {
     this.modalViewSubject.next(null);
+    this.addressEditPrefill = null;
   }
 
   isLoggedIn(): boolean {
@@ -161,7 +198,7 @@ export class AuthService {
         fullName: `${firstName} ${lastName}`.trim(),
         firstName,
         lastName,
-        phoneNumber: e164,
+        phoneNumber: phone.replace(/\D/g, '').slice(-10), // 10 digits only, no country code
         roleId: CUSTOMER_ROLE_ID,
         password: details.password
       }
@@ -183,7 +220,22 @@ export class AuthService {
         phoneNumber: phone.replace(/\D/g, '').slice(-10), // 10 digits, as the Customer API stores it
         email: details.email.trim(),
         customerTypeId: CUSTOMER_TYPE_ID,
-        addresses: [{ masterPincodeId: details.masterPincodeId, pincode: details.pincode }]
+        addresses: [{ masterPincodeId: details.masterPincodeId, pincode: details.pincode, address: details.address.trim() }]
+      },
+      this.authHeader()
+    );
+  }
+
+  /** Update the primary address on the logged-in user's Customer record (checkout "Edit") */
+  async updateCustomerAddress(details: { customerId: string; masterPincodeId: string; pincode: string; address: string }): Promise<void> {
+    await this.patch(
+      `${CUSTOMER_CREATE_URL}/${encodeURIComponent(details.customerId)}`,
+      {
+        primaryAddressPatch: {
+          masterPincodeId: details.masterPincodeId,
+          pincode: details.pincode,
+          address: details.address.trim()
+        }
       },
       this.authHeader()
     );
@@ -244,11 +296,20 @@ export class AuthService {
   }
 
   /** POST JSON; throws AuthError with the server's message on failure */
-  private async post(url: string, payload: unknown, headers: Record<string, string> = {}): Promise<any> {
+  private post(url: string, payload: unknown, headers: Record<string, string> = {}): Promise<any> {
+    return this.sendJson('POST', url, payload, headers);
+  }
+
+  /** PATCH JSON; throws AuthError with the server's message on failure */
+  private patch(url: string, payload: unknown, headers: Record<string, string> = {}): Promise<any> {
+    return this.sendJson('PATCH', url, payload, headers);
+  }
+
+  private async sendJson(method: 'POST' | 'PATCH', url: string, payload: unknown, headers: Record<string, string> = {}): Promise<any> {
     let res: Response;
     try {
       res = await fetch(url, {
-        method: 'POST',
+        method,
         headers: { 'Content-Type': 'application/json', ...headers },
         body: JSON.stringify(payload)
       });

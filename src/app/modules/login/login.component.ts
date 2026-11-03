@@ -44,6 +44,9 @@ export class LoginComponent implements OnInit, OnDestroy {
   pincodeOption: PincodeOption | null = null; // picked option; its value is the masterPincodeId
   pincodeStatus: 'idle' | 'loading' | 'ready' | 'error' = 'idle';
   pincodeListOpen = false;
+  addressLine = ''; // free-text address (house/flat, street, landmark)
+  editingAddress = false; // address step opened from checkout "Edit" (vs. register step 2)
+  private editCustomerId = ''; // the customer being edited (checkout "Edit")
   private pincodeTimer?: ReturnType<typeof setTimeout>;
   newPassword = '';
   confirmPassword = '';
@@ -66,7 +69,13 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.isOpen = view !== null;
         if (view) {
           this.resetForm();
-          this.currentStep = view === 'change-password' ? 'change-password' : 'login';
+          if (view === 'change-password') {
+            this.currentStep = 'change-password';
+          } else if (view === 'edit-address') {
+            this.applyAddressPrefill();
+          } else {
+            this.currentStep = 'login';
+          }
         }
       })
     );
@@ -103,7 +112,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   get canSaveAddress(): boolean {
-    return !!this.pincodeOption && !this.isLoading;
+    return !!this.pincodeOption && !!this.addressLine.trim() && !this.isLoading;
   }
 
   get isEmailValid(): boolean {
@@ -226,15 +235,52 @@ export class LoginComponent implements OnInit, OnDestroy {
     const pincode = this.pincodeOption;
     if (!this.canSaveAddress || !pincode) return;
     await this.run(async () => {
+      // Editing from checkout: send only the addresses array, no name/phone/email/customerTypeId
+      if (this.editingAddress) {
+        await this.authService.updateCustomerAddress({
+          customerId: this.editCustomerId,
+          masterPincodeId: pincode.value,
+          pincode: pincode.code,
+          address: this.addressLine
+        });
+        this.authService.notifyAddressUpdated({
+          masterPincodeId: pincode.value,
+          pincode: pincode.code,
+          address: this.addressLine.trim()
+        });
+        this.finish('Address updated!');
+        return;
+      }
       await this.authService.createCustomer(this.phoneNumber, {
         firstName: this.firstName,
         lastName: this.lastName,
         email: this.email,
+        address: this.addressLine,
         masterPincodeId: pincode.value,
         pincode: pincode.code
       });
       this.finish('Account created!');
     });
+  }
+
+  /** Fill the address step from the record being edited (checkout "Edit") */
+  private applyAddressPrefill(): void {
+    const prefill = this.authService.addressEditPrefill;
+    if (!prefill) {
+      this.currentStep = 'login';
+      return;
+    }
+    this.editingAddress = true;
+    this.editCustomerId = prefill.customerId;
+    this.phoneNumber = prefill.phone;
+    this.firstName = prefill.firstName;
+    this.lastName = prefill.lastName;
+    this.email = prefill.email;
+    this.addressLine = prefill.address;
+    this.pincodeOption = prefill.pincodeOption;
+    this.pincodeQuery = prefill.pincodeOption.label;
+    this.pincodeStatus = 'ready';
+    this.currentStep = 'address';
   }
 
   async onChangePassword(): Promise<void> {
@@ -318,6 +364,9 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.pincodeOption = null;
     this.pincodeStatus = 'idle';
     this.pincodeListOpen = false;
+    this.addressLine = '';
+    this.editingAddress = false;
+    this.editCustomerId = '';
     clearTimeout(this.pincodeTimer);
     this.newPassword = '';
     this.confirmPassword = '';

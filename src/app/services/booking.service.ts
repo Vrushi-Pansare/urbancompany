@@ -1,12 +1,13 @@
 import { Injectable, isDevMode } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { BOOKING_URLS, ASSIGNEE_ROLE_ID } from '../constants/urls';
+import { BOOKING_URLS, CUSTOMER_CREATE_URL } from '../constants/urls';
 import { AuthService } from './auth.service';
 
 export interface CustomerAddress {
   masterPincodeId: string;
   address: string;
   formattedAddress: string;
+  pincode?: string; // 6-digit code, when the record carries it (used to prefill the edit dialog)
 }
 
 /** The logged-in user's Customer record, in the field names the Inquiry Call API expects */
@@ -15,6 +16,7 @@ export interface BookingCustomer {
   customerFirstName: string;
   customerLastName: string;
   customerPhoneNumber: string;
+  email: string;
   addresses: CustomerAddress[];
 }
 
@@ -31,17 +33,26 @@ export interface CallProduct {
   unitPrice: number;
 }
 
+/** callProducts[] entry as the create-call API expects it (no customerProductId) */
+export interface CallProductPayload {
+  categoryId: string;
+  groupId: string;
+  productId: string;
+  unitPrice: number;
+}
+
 export interface CreateCallPayload {
   customerId: string;
-  customerFirstName: string;
-  customerLastName: string;
+  customerFullName: string;
   customerPhoneNumber: string;
+  customerEmail: string;
+  customerTypeId: string;
   addressMasterPincodeId: string;
-  formattedAddress: string;
   address: string;
-  callProducts: CallProduct[];
-  userAssignments: { userId: string }[];
   slots: string;
+  remarks: string;
+  callProducts: CallProductPayload[];
+  userAssignments: { userId: string }[];
 }
 
 /** One Inquiry Call as read back from the calls API (only the fields the UI uses) */
@@ -108,12 +119,15 @@ export class BookingService {
     if (!phone) return;
     this.customerPhone = phone;
     this.customerSubject.next({ status: 'loading', customer: null });
+    if (isDevMode()) console.log('[booking] loadCustomer start', { phone });
 
     try {
       const customer = await this.getCustomer(phone);
+      if (isDevMode()) console.log('[booking] loadCustomer resolved', { stale: phone !== this.customerPhone, hasCustomer: !!customer, addresses: customer?.addresses.length ?? 0 });
       if (phone !== this.customerPhone) return; // logged out / switched user meanwhile
       this.customerSubject.next({ status: 'ready', customer });
     } catch (err) {
+      if (isDevMode()) console.log('[booking] loadCustomer error', { stale: phone !== this.customerPhone, err });
       if (phone !== this.customerPhone) return;
       const error = err instanceof BookingError ? err.message : 'Could not load your details.';
       this.customerSubject.next({ status: 'error', customer: null, error });
@@ -121,42 +135,48 @@ export class BookingService {
   }
 
   /**
-   * 1. GET reference-options?search=<phone> -> the matching option's `value` is the customerId
-   * 2. GET reference-options/{customerId}    -> the Customer's data
+   * Loads the Customer from the customers module (GET /module-configs/<id>/customers?search=<phone>),
+   * then matches the record whose phone equals the logged-in number and reads its addresses[].
    */
   private async getCustomer(phone: string): Promise<BookingCustomer | null> {
     const digits = phone.replace(/\D/g, '').slice(-10);
-    const body = await this.get(BOOKING_URLS.CUSTOMER_OPTIONS, { page: 1, limit: 25, search: digits });
-    const options = this.optionList(body);
-    // Labels look like "First Last — 06352328542": take the option whose number matches, else the top result
-    const option = options.find((o) => o.label.replace(/\D/g, '').slice(-10) === digits) ?? options[0];
+    const body = await this.get(CUSTOMER_CREATE_URL, { page: 1, limit: 25, search: digits });
+    // The list of customer records, wherever it is nested in the response
+    const records = this.findList(body, (r) => ({ id: r?.id ?? r?._id, raw: r })).map((x) => x.raw);
+    // Only accept the record whose number matches -- never show someone else's address
+    const record = records.find(
+      (r: any) => String(r?.phoneNumber ?? r?.contact ?? r?.mobile ?? '').replace(/\D/g, '').slice(-10) === digits
+    );
     if (isDevMode()) {
-      console.log('[booking] customer search', { results: options.length, customerId: option?.value ?? null, responseShape: this.shape(body) });
+      console.log('[booking] customer (customers module)', { results: records.length, matched: !!record, responseShape: this.shape(body) });
     }
-    if (!option) return null;
+    if (!record) return null;
 
-    const customerId = option.value;
-    const detail = await this.get(`${BOOKING_URLS.CUSTOMER_OPTIONS}/${encodeURIComponent(customerId)}`);
-    if (isDevMode()) console.log('[booking] customer detail', { responseShape: this.shape(detail) });
-    const ref = detail?.data ?? {};
-    const record = ref.data && typeof ref.data === 'object' ? ref.data : ref;
-    const masterPincodeId = this.refId(record.masterPincodeId);
     return {
-      customerId: ref.value ?? customerId,
+      customerId: this.refId(record.id ?? record._id ?? record.value),
       customerFirstName: record.firstName ?? '',
       customerLastName: record.lastName ?? '',
-      customerPhoneNumber: record.phoneNumber ?? '',
-      // The reference record carries the customer's first address
-      addresses: masterPincodeId
-        ? [
-            {
-              masterPincodeId,
-              address: record.address ?? '',
-              formattedAddress: record.formattedAddress || record.address || ''
-            }
-          ]
-        : []
+      customerPhoneNumber: record.phoneNumber ?? record.contact ?? record.mobile ?? '',
+      email: record.email ?? '',
+      addresses: this.mapAddresses(record.addresses)
     };
+  }
+
+  /** Customer record's addresses[] -> the shape the booking flow uses (drops entries with no pincode) */
+  private mapAddresses(list: any): CustomerAddress[] {
+    if (!Array.isArray(list)) return [];
+    return list
+      .map((a) => {
+        const masterPincodeId = this.refId(a?.masterPincodeId);
+        if (!masterPincodeId) return null;
+        return {
+          masterPincodeId,
+          address: a?.address ?? '',
+          formattedAddress: a?.formattedAddress || a?.address || '',
+          pincode: a?.pincode ?? ''
+        } as CustomerAddress;
+      })
+      .filter((a): a is CustomerAddress => !!a);
   }
 
   /**
@@ -208,22 +228,6 @@ export class BookingService {
   }
 
   /**
-   * Picks a random eligible professional for this address PIN (Service Engineer role only; no
-   * category). null when nobody covers it -- the call is then created with no assignment.
-   */
-  async pickAssignee(masterPincodeId: string): Promise<string | null> {
-    const body = await this.get(BOOKING_URLS.CALL_CREATE_CONTEXT, {
-      assignmentPurpose: 'create',
-      roleId: ASSIGNEE_ROLE_ID,
-      addressMasterPincodeId: masterPincodeId,
-      page: 1,
-      limit: 25
-    });
-    const ids = this.assigneeIds(body?.data ?? body);
-    return ids.length ? ids[Math.floor(Math.random() * ids.length)] : null;
-  }
-
-  /**
    * Creates the Inquiry Call. Pass the same idempotencyKey when retrying one submission,
    * so a request that reached the server but whose response was lost isn't booked twice.
    */
@@ -272,14 +276,6 @@ export class BookingService {
     return slots.map(({ id, label }) => ({ id, label }));
   }
 
-  /** The options list in a reference-options response */
-  private optionList(body: any): Array<{ id: string; value: string; label: string }> {
-    return this.findList(body, (o) => ({ id: o?.value ?? o?.id, label: String(o?.label ?? '') })).map((o) => ({
-      ...o,
-      value: o.id
-    }));
-  }
-
   /**
    * The first list in a response, wherever it's nested (data[], data.data[], data.options[], ...),
    * mapped by `pick`; items without a string id are dropped.
@@ -314,15 +310,6 @@ export class BookingService {
       return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, this.shape(v, depth + 1)]));
     }
     return value === null ? 'null' : typeof value;
-  }
-
-  /**
-   * Eligible professionals from create-context: data.assignment.candidates.items[].userId.
-   * The backend already applied the serviceable-area rules; no candidates = empty list, no fallback.
-   */
-  private assigneeIds(data: any): string[] {
-    const items: any[] = data?.assignment?.candidates?.items ?? [];
-    return items.map((u) => u?.userId).filter((id): id is string => typeof id === 'string' && !!id);
   }
 
   private toCall(r: any): BookingCall {

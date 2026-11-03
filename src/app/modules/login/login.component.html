@@ -118,7 +118,7 @@
 
       <!-- STEP: Address (register step 2 -- logged in now, so the pincode API can be called) -->
       <form class="uc-step-address" *ngIf="currentStep === 'address'" (ngSubmit)="onSaveAddress()">
-        <h1 class="uc-modal-heading">Add your address</h1>
+        <h1 class="uc-modal-heading">{{ editingAddress ? 'Update your address' : 'Add your address' }}</h1>
         <p class="uc-modal-subheading">Pick your pincode so we can send professionals near you.</p>
 
         <!-- Pincode dropdown: filled from the pincode API, searchable -->
@@ -161,11 +161,16 @@
           </ul>
         </div>
 
+        <!-- Free-text address (house/flat, street, landmark) -->
+        <div class="uc-text-field">
+          <input type="text" name="addressLine" [(ngModel)]="addressLine" placeholder="House / flat, street, landmark" autocomplete="street-address" />
+        </div>
+
         <ng-container *ngTemplateOutlet="messages"></ng-container>
 
         <div class="uc-action-btn-row">
           <button type="submit" class="uc-continue-btn" [class.loading]="isLoading" [disabled]="!canSaveAddress">
-            <span *ngIf="!isLoading">Save address</span>
+            <span *ngIf="!isLoading">{{ editingAddress ? 'Update address' : 'Save address' }}</span>
             <ng-container *ngIf="isLoading"><ng-container *ngTemplateOutlet="loader"></ng-container></ng-container>
           </button>
         </div>

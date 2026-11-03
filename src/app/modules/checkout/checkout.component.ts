@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { CartRow, CartService } from '../../services/cart.service';
-import { AuthService, UserProfile } from '../../services/auth.service';
+import { AddressUpdate, AuthService, UserProfile } from '../../services/auth.service';
 import { LocationService } from '../../services/location.service';
 import { NotifyService } from '../../services/notify.service';
 import {
@@ -17,7 +17,7 @@ import {
   CustomerAddress,
   CustomerState
 } from '../../services/booking.service';
-import { ASSET_URLS } from '../../constants/urls';
+import { ASSET_URLS, CUSTOMER_TYPE_ID } from '../../constants/urls';
 import { BookingSummary } from '../booking-success/booking-success.component';
 
 type LoadState = 'idle' | 'loading' | 'ready' | 'error';
@@ -57,7 +57,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   private area: string | null = null;
   private sub = new Subscription();
   // Kept while the booking is unchanged, so retrying after a lost response can't book twice
-  private submission: { fingerprint: string; assigneeId: string | null; key: string } | null = null;
+  private submission: { fingerprint: string; key: string } | null = null;
 
   constructor(
     private cart: CartService,
@@ -89,6 +89,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       })
     );
     this.sub.add(this.booking.customer$.subscribe((state) => this.applyCustomer(state)));
+    // After an address is edited in the dialog, show it immediately (no re-fetch, so it can't get stuck loading)
+    this.sub.add(this.auth.addressUpdated$.subscribe((update) => this.applyAddressUpdate(update)));
     this.sub.add(this.location.area$.subscribe((area) => (this.area = area?.label ?? null)));
   }
 
@@ -115,7 +117,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   }
 
   get addressLine(): string {
-    if (this.selectedAddress) return this.selectedAddress.formattedAddress;
+    if (this.selectedAddress) return this.selectedAddress.address || this.selectedAddress.formattedAddress;
     return this.area ? `Home · ${this.area}` : 'Home';
   }
 
@@ -159,14 +161,51 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   }
 
   editAddress(): void {
-    const count = this.customer?.addresses.length ?? 0;
-    if (count > 1) this.showAddressPicker = !this.showAddressPicker;
-    else this.notify.show(count ? 'This is the only address on your profile.' : 'No saved address on your profile.');
+    const address = this.selectedAddress;
+    if (!this.customer || !address) {
+      this.notify.show('No saved address on your profile.');
+      return;
+    }
+    this.showAddressPicker = false;
+    // Show just the pincode code in the dropdown (not "formattedAddress + pincode")
+    const pin = address.pincode || address.formattedAddress.match(/\b\d{6}\b/)?.[0] || '';
+    // Open the same address dialog, prefilled, so the user can update and save
+    this.auth.openEditAddressModal({
+      customerId: this.customer.customerId,
+      phone: this.customer.customerPhoneNumber || this.user?.phoneNumber || '',
+      firstName: this.customer.customerFirstName,
+      lastName: this.customer.customerLastName,
+      email: this.customer.email,
+      address: address.address,
+      pincodeOption: {
+        value: address.masterPincodeId,
+        label: pin,
+        code: pin
+      }
+    });
   }
 
   selectAddress(address: CustomerAddress): void {
     this.selectedAddress = address;
     this.showAddressPicker = false;
+  }
+
+  /** Show the just-saved address immediately, without re-fetching the Customer */
+  private applyAddressUpdate(update: AddressUpdate): void {
+    const updated: CustomerAddress = {
+      masterPincodeId: update.masterPincodeId,
+      address: update.address,
+      formattedAddress: update.address,
+      pincode: update.pincode
+    };
+    if (this.customer) {
+      const list = this.customer.addresses;
+      const idx = list.findIndex((a) => a.masterPincodeId === (this.selectedAddress?.masterPincodeId ?? update.masterPincodeId));
+      if (idx >= 0) list[idx] = updated;
+      else list.unshift(updated);
+    }
+    this.selectedAddress = updated;
+    this.customerState = 'ready';
   }
 
   // ── Slots ──
@@ -216,31 +255,34 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     this.submitError = '';
     try {
       const address = this.selectedAddress;
+      const products = await this.callProducts();
       const booking: Omit<CreateCallPayload, 'userAssignments'> = {
         customerId: this.customer.customerId,
-        customerFirstName: this.customer.customerFirstName,
-        customerLastName: this.customer.customerLastName,
+        customerFullName: `${this.customer.customerFirstName} ${this.customer.customerLastName}`.trim(),
         customerPhoneNumber: this.customer.customerPhoneNumber,
+        customerEmail: this.customer.email,
+        customerTypeId: CUSTOMER_TYPE_ID,
         addressMasterPincodeId: address.masterPincodeId,
-        formattedAddress: address.formattedAddress,
         address: address.address,
-        callProducts: await this.callProducts(),
-        slots: this.selectedSlotId
+        slots: this.selectedSlotId,
+        remarks: 'Enquiry from app',
+        callProducts: products.map((p) => ({
+          categoryId: p.categoryId,
+          groupId: p.groupId,
+          productId: p.productId,
+          unitPrice: p.unitPrice
+        }))
       };
 
-      // A retry of the same booking re-sends the exact same request (same key, same assignee)
+      // A retry of the same booking re-sends the exact same request (same key)
       const fingerprint = JSON.stringify(booking);
       if (this.submission?.fingerprint !== fingerprint) {
-        // No eligible professional is allowed: the call is created unassigned
-        const assigneeId = await this.booking.pickAssignee(address.masterPincodeId);
-        this.submission = { fingerprint, assigneeId, key: this.booking.newIdempotencyKey() };
+        this.submission = { fingerprint, key: this.booking.newIdempotencyKey() };
       }
-      const { assigneeId, key } = this.submission;
+      const { key } = this.submission;
 
-      const call = await this.booking.createCall(
-        { ...booking, userAssignments: assigneeId ? [{ userId: assigneeId }] : [] },
-        key
-      );
+      // Call is created with no assignment (no create-context lookup)
+      const call = await this.booking.createCall({ ...booking, userAssignments: [] }, key);
       this.submission = null;
 
       // Summary goes through router state (not the URL) so a refresh of the success page can't replay it
