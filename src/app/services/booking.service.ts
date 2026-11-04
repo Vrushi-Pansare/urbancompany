@@ -1,6 +1,6 @@
 import { Injectable, isDevMode } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { BOOKING_URLS, CUSTOMER_CREATE_URL } from '../constants/urls';
+import { ASSIGNEE_ROLE_ID, BOOKING_URLS, CUSTOMER_CREATE_URL } from '../constants/urls';
 import { AuthService } from './auth.service';
 
 export interface CustomerAddress {
@@ -231,6 +231,27 @@ export class BookingService {
       });
     }
     return this.slotsRequest;
+  }
+
+  /**
+   * Fetches eligible service engineers for the given address PIN (create-context, serviceable
+   * assignment) and returns one candidate's userId at random. Returns null when the backend
+   * offers no eligible candidate, so the Call is then created with an empty assignment.
+   */
+  async getRandomAssigneeUserId(addressMasterPincodeId: string): Promise<string | null> {
+    if (!addressMasterPincodeId) return null;
+    const body = await this.get(BOOKING_URLS.CALL_CREATE_CONTEXT, {
+      assignmentPurpose: 'create',
+      roleId: ASSIGNEE_ROLE_ID,
+      addressMasterPincodeId,
+      page: 1,
+      limit: 50
+    });
+    const items: any[] = body?.data?.assignment?.candidates?.items;
+    if (isDevMode()) console.log('[booking] assignee candidates', { count: Array.isArray(items) ? items.length : 0 });
+    if (!Array.isArray(items) || !items.length) return null;
+    const chosen = items[Math.floor(Math.random() * items.length)];
+    return this.refId(chosen?.userId ?? chosen?.id ?? chosen?._id) || null;
   }
 
   /**

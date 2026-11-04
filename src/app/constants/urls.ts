@@ -49,4 +49,4 @@ export const BOOKING_URLS = {
 };
 
 // Role of the professionals a new Inquiry Call can be assigned to
-export const ASSIGNEE_ROLE_ID = '6aa7ea40def5ae2dc9f647dc';
+export const ASSIGNEE_ROLE_ID = '6ad0c09a72189af6ea6e8f1d';

@@ -275,8 +275,11 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       }
       const { key } = this.submission;
 
-      // Call is created with no assignment (no create-context lookup)
-      const call = await this.booking.createCall({ ...booking, userAssignments: [] }, key);
+      // Look up eligible service engineers for this address PIN and assign one at random;
+      // an empty candidate list books with no assignment ([]).
+      const assigneeUserId = await this.booking.getRandomAssigneeUserId(address.masterPincodeId);
+      const userAssignments = assigneeUserId ? [{ userId: assigneeUserId }] : [];
+      const call = await this.booking.createCall({ ...booking, userAssignments }, key);
       // Create the payment request for this Call, then show the hosted payment link
       const payment = await this.booking.createPaymentRequest(call.id);
       this.submission = null;
