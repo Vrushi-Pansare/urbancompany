@@ -3,7 +3,7 @@
 set -euo pipefail
 test "$#" -eq 0 || { echo 'Usage: ./deploy.sh (EC2 production only)'; exit 1; }
 cd "$(dirname "$0")"
-KEY="${DEPLOY_KEY:-/Users/sandip/Desktop/pem/netrax-staging-ec2-key.pem}"
+KEY="${DEPLOY_KEY:-/Users/mihir/Desktop/netrax-staging-ec2-key.pem}"
 HOST=ubuntu@13.205.130.159
 for tool in git npm ssh tar curl; do
   command -v "$tool" >/dev/null || { echo "Missing command: $tool"; exit 1; }
