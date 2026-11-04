@@ -8,6 +8,13 @@ import { BookingCall, BookingError, BookingService } from '../../services/bookin
 
 const PAGE_SIZE = 25;
 
+/** Bookings sharing one calendar day, shown under a date header */
+interface BookingGroup {
+  key: string;
+  label: string;
+  items: BookingCall[];
+}
+
 /** "My bookings": the user's active Inquiry Calls, newest first */
 @Component({
   selector: 'app-bookings',
@@ -90,6 +97,35 @@ export class BookingsComponent implements OnInit, OnDestroy {
   /** Details once loaded, otherwise the list row (the list may already carry everything) */
   view(call: BookingCall): BookingCall {
     return this.details.get(call.id) ?? call;
+  }
+
+  /** The loaded bookings grouped by calendar day, newest group first (calls are already desc) */
+  get groups(): BookingGroup[] {
+    const map = new Map<string, BookingGroup>();
+    const order: string[] = [];
+    for (const call of this.calls) {
+      const { key, label } = this.groupFor(call.createdAt);
+      let group = map.get(key);
+      if (!group) {
+        group = { key, label, items: [] };
+        map.set(key, group);
+        order.push(key);
+      }
+      group.items.push(call);
+    }
+    return order.map((k) => map.get(k)!);
+  }
+
+  /** The date-group key + human label for a booking's createdAt (Today / Yesterday / d MMM yyyy) */
+  private groupFor(createdAt?: string): { key: string; label: string } {
+    const d = createdAt ? new Date(createdAt) : null;
+    if (!d || isNaN(d.getTime())) return { key: 'undated', label: 'Earlier' };
+    const dayStart = (x: Date) => new Date(x.getFullYear(), x.getMonth(), x.getDate());
+    const diffDays = Math.round((dayStart(new Date()).getTime() - dayStart(d).getTime()) / 86400000);
+    const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    if (diffDays === 0) return { key, label: 'Today' };
+    if (diffDays === 1) return { key, label: 'Yesterday' };
+    return { key, label: d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) };
   }
 
   login(): void {
