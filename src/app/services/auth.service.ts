@@ -198,6 +198,14 @@ export class AuthService {
   }
 
   /**
+   * Forgot-password: set a new password after the FORGOT_PASSWORD OTP has been verified.
+   * Public endpoint (no token) -- the verified OTP is what authorises the reset server-side.
+   */
+  async resetPassword(phone: string, newPassword: string): Promise<void> {
+    await this.post(API_URLS.RESET_PASSWORD, { contact: this.toE164(phone), newPassword });
+  }
+
+  /**
    * Register step 1: creates the user account (public API), then logs in -- the pincode
    * dropdown and the customers API in step 2 both need the token.
    */

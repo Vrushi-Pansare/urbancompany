@@ -11,7 +11,16 @@ import { ASSET_URLS } from '../../constants/urls';
  * address         register step 2: pincode dropdown (needs the new login's token) → Customer record
  * change-password logged-in users, opened from the profile menu
  */
-type Step = 'login' | 'register' | 'otp' | 'address' | 'change-password' | 'success';
+type Step =
+  | 'login'
+  | 'register'
+  | 'otp'
+  | 'address'
+  | 'change-password'
+  | 'forgot'
+  | 'forgot-otp'
+  | 'forgot-reset'
+  | 'success';
 
 @Component({
   selector: 'app-login',
@@ -56,6 +65,8 @@ export class LoginComponent implements OnInit, OnDestroy {
   otpResending = false;
   otpCountdown = 0; // seconds left before "Resend" is allowed again (1 min cooldown)
   private otpTimer?: ReturnType<typeof setInterval>;
+  // Which OTP flow is active, so send/resend/verify use the right purpose
+  otpPurpose: 'SIGNUP' | 'FORGOT_PASSWORD' = 'SIGNUP';
 
   // Change password
   currentPassword = '';
@@ -225,7 +236,8 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.errorMessage = 'This number already has an account. Please log in instead.';
         return;
       }
-      await this.authService.sendOtp(this.phoneNumber);
+      this.otpPurpose = 'SIGNUP';
+      await this.authService.sendOtp(this.phoneNumber, this.otpPurpose);
       this.otp = '';
       this.startOtpCountdown();
       this.goTo('otp');
@@ -270,7 +282,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.otpResending = true;
     this.errorMessage = '';
     try {
-      await this.authService.sendOtp(this.phoneNumber);
+      await this.authService.sendOtp(this.phoneNumber, this.otpPurpose);
       this.infoMessage = 'A new code has been sent.';
       this.startOtpCountdown();
     } catch (err) {
@@ -359,12 +371,80 @@ export class LoginComponent implements OnInit, OnDestroy {
     });
   }
 
+  // ── Forgot password ──────────────────────────────────────────
+  /** Open the forgot-password flow from the login step (keeps the typed number) */
+  goToForgot(): void {
+    this.password = '';
+    this.notRegistered = false;
+    this.otp = '';
+    this.newPassword = '';
+    this.confirmPassword = '';
+    this.goTo('forgot');
+  }
+
+  get canSubmitForgot(): boolean {
+    return this.isPhoneValid && !this.isLoading;
+  }
+
+  /** New password is valid for reset: typed twice and at least 8 characters */
+  get canResetPassword(): boolean {
+    return this.passwordsReady && this.newPassword.trim().length >= 8 && !this.isLoading;
+  }
+
+  /** Forgot step 1: confirm the number has an account, then send a FORGOT_PASSWORD OTP */
+  async onForgotSubmit(): Promise<void> {
+    if (!this.canSubmitForgot) return;
+    await this.run(async () => {
+      if (!(await this.authService.phoneExists(this.phoneNumber))) {
+        this.errorMessage = `No MyGenie account found for ${this.countryCode} ${this.phoneNumber}.`;
+        return;
+      }
+      this.otpPurpose = 'FORGOT_PASSWORD';
+      await this.authService.sendOtp(this.phoneNumber, this.otpPurpose);
+      this.otp = '';
+      this.startOtpCountdown();
+      this.goTo('forgot-otp');
+    });
+  }
+
+  /** Forgot step 2: validate the OTP, then move to choosing a new password */
+  async onForgotVerifyOtp(): Promise<void> {
+    if (!this.canVerifyOtp) return;
+    await this.run(async () => {
+      await this.authService.verifyOtp(this.phoneNumber, this.otp, 'FORGOT_PASSWORD');
+      this.newPassword = '';
+      this.confirmPassword = '';
+      this.goTo('forgot-reset');
+    });
+  }
+
+  /** Forgot step 3: set the new password, then return to login (prefilled) */
+  async onResetPassword(): Promise<void> {
+    if (!this.canResetPassword || !this.checkPasswordsMatch()) return;
+    await this.run(async () => {
+      await this.authService.resetPassword(this.phoneNumber, this.newPassword);
+      // "Redirect to login": back to the login step with the number kept and a nudge to sign in
+      this.password = '';
+      this.newPassword = '';
+      this.confirmPassword = '';
+      this.otp = '';
+      this.goTo('login');
+      this.infoMessage = 'Password reset. Please log in with your new password.';
+    });
+  }
+
   /** Back arrow: one step back, or close from a first step */
   goBack(): void {
     if (this.currentStep === 'register') {
       this.goToLogin();
     } else if (this.currentStep === 'otp') {
       this.goTo('register');
+    } else if (this.currentStep === 'forgot') {
+      this.goToLogin();
+    } else if (this.currentStep === 'forgot-otp') {
+      this.goTo('forgot');
+    } else if (this.currentStep === 'forgot-reset') {
+      this.goTo('forgot-otp');
     } else {
       this.close();
     }
@@ -436,6 +516,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.otp = '';
     this.otpResending = false;
     this.otpCountdown = 0;
+    this.otpPurpose = 'SIGNUP';
     clearInterval(this.otpTimer);
     this.errorMessage = '';
     this.infoMessage = '';

@@ -9,6 +9,8 @@ export const API_URLS = {
   LOGIN: '/api/v1/auth/login',
   CHANGE_PASSWORD: '/api/v1/auth/change-password',
   REFRESH: '/api/v1/auth/refresh',
+  // Forgot password (public) -- reset the password after a FORGOT_PASSWORD OTP is verified
+  RESET_PASSWORD: '/api/v1/public/auth/reset-password',
   // OTP (public) -- used to verify the phone number before registration
   OTP_CREATE: '/api/v1/public/otp/create',
   OTP_VALIDATE: '/api/v1/public/otp/validate'

@@ -333,6 +333,17 @@
   }
 }
 
+/* "Forgot password?" link under the password field */
+.uc-forgot-row {
+  display: flex;
+  justify-content: flex-end;
+  margin: -4px 0 2px;
+
+  .uc-link-btn {
+    font-size: 13px;
+  }
+}
+
 /* "New to MyGenie? Register" / "Already have an account? Log in" */
 .uc-switch-row {
   margin: 0 0 4px;
