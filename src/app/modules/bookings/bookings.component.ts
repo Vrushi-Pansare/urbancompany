@@ -30,6 +30,9 @@ export class BookingsComponent implements OnInit, OnDestroy {
   details = new Map<string, BookingCall>();
   detailError = '';
 
+  // Placeholder rows shown while the first page is loading
+  readonly skeletons = [0, 1, 2];
+
   private page = 0;
   private sub = new Subscription();
 
@@ -100,5 +103,15 @@ export class BookingsComponent implements OnInit, OnDestroy {
 
   formatPrice(value: number): string {
     return `₹${value.toLocaleString('en-IN')}`;
+  }
+
+  /** Maps a booking status to a colour tone used by the badge/avatar (data-tone attribute) */
+  statusTone(status?: string): 'ok' | 'warn' | 'info' | 'bad' | 'neutral' {
+    const s = (status || '').toUpperCase();
+    if (['ACTIVE', 'CONFIRMED', 'APPROVED', 'SCHEDULED', 'ASSIGNED'].includes(s)) return 'ok';
+    if (['PENDING', 'IN_PROGRESS', 'PROCESSING', 'OPEN', 'ON_HOLD'].includes(s)) return 'warn';
+    if (['COMPLETED', 'DONE', 'CLOSED', 'RESOLVED'].includes(s)) return 'info';
+    if (['CANCELLED', 'CANCELED', 'REJECTED', 'FAILED'].includes(s)) return 'bad';
+    return 'neutral';
   }
 }

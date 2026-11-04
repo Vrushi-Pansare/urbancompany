@@ -1,7 +1,7 @@
 <div class="bk-page">
   <header class="bk-topbar">
     <button type="button" class="bk-back" aria-label="Back" (click)="goBack()">
-      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#0f0f0f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
     </button>
     <a routerLink="/" class="bk-brand" aria-label="MyGenie home">
       <img [src]="logoUrl" alt="MyGenie" class="bk-logo" />
@@ -10,58 +10,124 @@
   </header>
 
   <main class="bk-body">
+    <!-- Hero summary (only once we have bookings to show) -->
+    <section class="bk-hero" *ngIf="user && calls.length">
+      <div class="bk-hero-text">
+        <span class="bk-hero-eyebrow">Your services</span>
+        <h1 class="bk-hero-title">My bookings</h1>
+        <p class="bk-hero-sub">{{ calls.length }} {{ calls.length === 1 ? 'booking' : 'bookings' }} · newest first</p>
+      </div>
+      <a routerLink="/" class="bk-hero-cta">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New booking
+      </a>
+    </section>
+
     <!-- Logged out -->
-    <section class="bk-card bk-center" *ngIf="!user">
+    <section class="bk-card bk-state" *ngIf="!user">
+      <span class="bk-state-icon">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </span>
       <h2 class="bk-title">Login to see your bookings</h2>
+      <p class="bk-muted">Track your service bookings and their status in one place.</p>
       <button type="button" class="bk-primary-btn" (click)="login()">Login</button>
     </section>
 
     <ng-container *ngIf="user">
+      <!-- Skeleton (first load) -->
+      <ul class="bk-list" *ngIf="loading && !calls.length" aria-hidden="true">
+        <li class="bk-card bk-skel" *ngFor="let s of skeletons">
+          <span class="bk-skel-avatar"></span>
+          <span class="bk-skel-lines">
+            <span class="bk-skel-line w55"></span>
+            <span class="bk-skel-line w80"></span>
+          </span>
+          <span class="bk-skel-amt"></span>
+        </li>
+      </ul>
+
       <!-- Empty -->
-      <section class="bk-card bk-center" *ngIf="!loading && !error && !calls.length">
+      <section class="bk-card bk-state" *ngIf="!loading && !error && !calls.length">
+        <span class="bk-state-icon">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </span>
         <h2 class="bk-title">No bookings yet</h2>
         <p class="bk-muted">Services you book will show up here.</p>
         <a routerLink="/" class="bk-primary-btn">Browse services</a>
       </section>
 
+      <!-- List -->
       <ul class="bk-list" *ngIf="calls.length">
         <li class="bk-card bk-item" *ngFor="let call of calls" [class.open]="openId === call.id">
           <button type="button" class="bk-item-head" [attr.aria-expanded]="openId === call.id" (click)="toggle(call)">
-            <span class="bk-item-main">
-              <span class="bk-item-title">{{ view(call).slotLabel || 'Booking' }}</span>
-              <span class="bk-muted bk-ellipsis">{{ view(call).formattedAddress || view(call).address }}</span>
+            <span class="bk-avatar" [attr.data-tone]="statusTone(view(call).status)">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
             </span>
+
+            <span class="bk-item-main">
+              <span class="bk-item-title-row">
+                <span class="bk-item-title">{{ view(call).slotLabel || 'Booking' }}</span>
+                <span class="bk-badge" [attr.data-tone]="statusTone(view(call).status)" *ngIf="view(call).status">{{ view(call).status | titlecase }}</span>
+              </span>
+              <span class="bk-sub bk-ellipsis">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                {{ view(call).formattedAddress || view(call).address || 'Address on file' }}
+              </span>
+              <span class="bk-meta">
+                <span *ngIf="call.createdAt">{{ call.createdAt | date: 'd MMM, h:mm a' }}</span>
+                <span class="bk-dot" *ngIf="call.createdAt && view(call).products.length">•</span>
+                <span *ngIf="view(call).products.length">{{ view(call).products.length }} {{ view(call).products.length === 1 ? 'service' : 'services' }}</span>
+              </span>
+            </span>
+
             <span class="bk-item-side">
               <span class="bk-item-amt" *ngIf="view(call).total">{{ formatPrice(view(call).total) }}</span>
-              <span class="bk-muted" *ngIf="call.createdAt">{{ call.createdAt | date: 'd MMM, h:mm a' }}</span>
+              <svg class="bk-chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
             </span>
           </button>
 
           <div class="bk-details" *ngIf="openId === call.id">
-            <div class="bk-row">
-              <span>Booking ID</span>
-              <span>{{ view(call).code || call.id }}</span>
+            <div class="bk-detail-grid">
+              <div class="bk-row">
+                <span>Booking ID</span>
+                <span class="bk-mono">{{ view(call).code || call.id }}</span>
+              </div>
+              <div class="bk-row" *ngIf="view(call).status">
+                <span>Status</span>
+                <span class="bk-badge" [attr.data-tone]="statusTone(view(call).status)">{{ view(call).status | titlecase }}</span>
+              </div>
+              <div class="bk-row" *ngIf="view(call).slotLabel">
+                <span>Slot</span>
+                <span>{{ view(call).slotLabel }}</span>
+              </div>
+              <div class="bk-row" *ngIf="view(call).formattedAddress || view(call).address">
+                <span>Address</span>
+                <span>{{ view(call).formattedAddress || view(call).address }}</span>
+              </div>
             </div>
-            <div class="bk-row" *ngIf="view(call).status">
-              <span>Status</span>
-              <span class="bk-status">{{ view(call).status }}</span>
+
+            <div class="bk-products" *ngIf="view(call).products.length">
+              <span class="bk-products-label">Services</span>
+              <div class="bk-product" *ngFor="let p of view(call).products">
+                <span class="bk-ellipsis">{{ p.name || 'Service' }}</span>
+                <span>{{ formatPrice(p.unitPrice) }}</span>
+              </div>
+              <div class="bk-product bk-total" *ngIf="view(call).total">
+                <span>Total</span>
+                <span>{{ formatPrice(view(call).total) }}</span>
+              </div>
             </div>
-            <div class="bk-row" *ngIf="view(call).formattedAddress">
-              <span>Address</span>
-              <span>{{ view(call).formattedAddress }}</span>
-            </div>
-            <div class="bk-row" *ngFor="let p of view(call).products">
-              <span>{{ p.name || 'Service' }}</span>
-              <span>{{ formatPrice(p.unitPrice) }}</span>
-            </div>
+
             <p class="bk-error" *ngIf="detailError">{{ detailError }}</p>
           </div>
         </li>
       </ul>
 
-      <p class="bk-muted bk-center-text" *ngIf="loading">Loading bookings…</p>
+      <!-- Loading more -->
+      <p class="bk-muted bk-center-text" *ngIf="loading && calls.length">Loading more…</p>
 
-      <section class="bk-card bk-center" *ngIf="error">
+      <!-- Error -->
+      <section class="bk-card bk-state" *ngIf="error">
         <p class="bk-error">{{ error }}</p>
         <button type="button" class="bk-ghost-btn" (click)="loadMore()">Retry</button>
       </section>
