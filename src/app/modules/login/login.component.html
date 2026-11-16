@@ -31,32 +31,18 @@
 
     <!-- Modal Card Body -->
     <div class="uc-modal-body">
-      <!-- STEP: Login (phone + password) -->
+      <!-- STEP: Login (phone + OTP) -->
       <form class="uc-step-login" *ngIf="currentStep === 'login'" (ngSubmit)="onLogin()">
         <div class="uc-brand-logo-row">
           <img [src]="logoUrl" alt="MyGenie" class="uc-login-logo-img" />
         </div>
 
         <h1 class="uc-modal-heading">Log in</h1>
-        <p class="uc-modal-subheading">Use your phone number and password.</p>
+        <p class="uc-modal-subheading">Use your phone number and the code we send you.</p>
 
-        <ng-container *ngTemplateOutlet="phoneInput"></ng-container>
+        <ng-container *ngTemplateOutlet="phoneInput; context: { $implicit: true }"></ng-container>
 
-        <div class="uc-text-field">
-          <input
-            [type]="showPassword ? 'text' : 'password'"
-            name="password"
-            [(ngModel)]="password"
-            (ngModelChange)="errorMessage = ''"
-            placeholder="Password"
-            autocomplete="current-password"
-          />
-          <ng-container *ngTemplateOutlet="passwordToggle"></ng-container>
-        </div>
-
-        <div class="uc-forgot-row">
-          <button type="button" class="uc-link-btn" (click)="goToForgot()">Forgot password?</button>
-        </div>
+        <ng-container *ngTemplateOutlet="otpInput"></ng-container>
 
         <!-- Number not registered: offer sign-up instead of an error -->
         <div class="uc-register-offer" *ngIf="notRegistered">
@@ -87,7 +73,9 @@
         <h1 class="uc-modal-heading">Create your account</h1>
         <p class="uc-modal-subheading">Sign up with your phone number.</p>
 
-        <ng-container *ngTemplateOutlet="phoneInput"></ng-container>
+        <ng-container *ngTemplateOutlet="phoneInput; context: { $implicit: true }"></ng-container>
+
+        <ng-container *ngTemplateOutlet="otpInput"></ng-container>
 
         <div class="uc-name-row">
           <div class="uc-text-field">
@@ -98,11 +86,6 @@
           </div>
         </div>
 
-        <div class="uc-text-field">
-          <input type="email" name="email" [(ngModel)]="email" placeholder="Email" autocomplete="email" />
-        </div>
-
-        <ng-container *ngTemplateOutlet="newPasswordFields"></ng-container>
         <ng-container *ngTemplateOutlet="messages"></ng-container>
 
         <div class="uc-action-btn-row">
@@ -118,40 +101,6 @@
         </p>
 
         <ng-container *ngTemplateOutlet="policy"></ng-container>
-      </form>
-
-      <!-- STEP: OTP (verify the phone number before the account is created) -->
-      <form class="uc-step-otp" *ngIf="currentStep === 'otp'" (ngSubmit)="onVerifyOtp()">
-        <h1 class="uc-modal-heading">Verify your number</h1>
-        <p class="uc-modal-subheading">Enter the code sent to {{ countryCode }} {{ phoneNumber }}.</p>
-
-        <div class="uc-text-field">
-          <input
-            type="text"
-            name="otp"
-            inputmode="numeric"
-            autocomplete="one-time-code"
-            maxlength="8"
-            placeholder="Enter OTP"
-            [(ngModel)]="otp"
-          />
-        </div>
-
-        <ng-container *ngTemplateOutlet="messages"></ng-container>
-
-        <div class="uc-action-btn-row">
-          <button type="submit" class="uc-continue-btn" [class.loading]="isLoading" [disabled]="!canVerifyOtp">
-            <span *ngIf="!isLoading">Verify &amp; continue</span>
-            <ng-container *ngIf="isLoading"><ng-container *ngTemplateOutlet="loader"></ng-container></ng-container>
-          </button>
-        </div>
-
-        <p class="uc-switch-row">
-          Didn't get the code?
-          <button type="button" class="uc-link-btn" [disabled]="!canResendOtp" (click)="resendOtp()">
-            {{ otpResending ? 'Resending…' : otpCountdown > 0 ? ('Resend in ' + otpCountdownText) : 'Resend' }}
-          </button>
-        </p>
       </form>
 
       <!-- STEP: Address (register step 2 -- logged in now, so the pincode API can be called) -->
@@ -214,105 +163,6 @@
         </div>
       </form>
 
-      <!-- STEP: Change password (logged in) -->
-      <form class="uc-step-change" *ngIf="currentStep === 'change-password'" (ngSubmit)="onChangePassword()">
-        <h1 class="uc-modal-heading">Change password</h1>
-        <p class="uc-modal-subheading">Enter your current password, then choose a new one.</p>
-
-        <div class="uc-text-field">
-          <input
-            [type]="showPassword ? 'text' : 'password'"
-            name="currentPassword"
-            [(ngModel)]="currentPassword"
-            (ngModelChange)="errorMessage = ''"
-            placeholder="Current password"
-            autocomplete="current-password"
-          />
-          <ng-container *ngTemplateOutlet="passwordToggle"></ng-container>
-        </div>
-
-        <ng-container *ngTemplateOutlet="newPasswordFields"></ng-container>
-        <ng-container *ngTemplateOutlet="messages"></ng-container>
-
-        <div class="uc-action-btn-row">
-          <button type="submit" class="uc-continue-btn" [class.loading]="isLoading" [disabled]="!canChangePassword">
-            <span *ngIf="!isLoading">Change password</span>
-            <ng-container *ngIf="isLoading"><ng-container *ngTemplateOutlet="loader"></ng-container></ng-container>
-          </button>
-        </div>
-      </form>
-
-      <!-- STEP: Forgot password — enter the registered number -->
-      <form class="uc-step-forgot" *ngIf="currentStep === 'forgot'" (ngSubmit)="onForgotSubmit()">
-        <h1 class="uc-modal-heading">Reset password</h1>
-        <p class="uc-modal-subheading">Enter your registered phone number and we'll send a verification code.</p>
-
-        <ng-container *ngTemplateOutlet="phoneInput"></ng-container>
-        <ng-container *ngTemplateOutlet="messages"></ng-container>
-
-        <div class="uc-action-btn-row">
-          <button type="submit" class="uc-continue-btn" [class.loading]="isLoading" [disabled]="!canSubmitForgot">
-            <span *ngIf="!isLoading">Send code</span>
-            <ng-container *ngIf="isLoading"><ng-container *ngTemplateOutlet="loader"></ng-container></ng-container>
-          </button>
-        </div>
-
-        <p class="uc-switch-row">
-          Remembered your password?
-          <button type="button" class="uc-link-btn" (click)="goToLogin()">Log in</button>
-        </p>
-      </form>
-
-      <!-- STEP: Forgot password — verify the OTP -->
-      <form class="uc-step-forgot-otp" *ngIf="currentStep === 'forgot-otp'" (ngSubmit)="onForgotVerifyOtp()">
-        <h1 class="uc-modal-heading">Verify your number</h1>
-        <p class="uc-modal-subheading">Enter the code sent to {{ countryCode }} {{ phoneNumber }}.</p>
-
-        <div class="uc-text-field">
-          <input
-            type="text"
-            name="forgotOtp"
-            inputmode="numeric"
-            autocomplete="one-time-code"
-            maxlength="8"
-            placeholder="Enter OTP"
-            [(ngModel)]="otp"
-          />
-        </div>
-
-        <ng-container *ngTemplateOutlet="messages"></ng-container>
-
-        <div class="uc-action-btn-row">
-          <button type="submit" class="uc-continue-btn" [class.loading]="isLoading" [disabled]="!canVerifyOtp">
-            <span *ngIf="!isLoading">Verify &amp; continue</span>
-            <ng-container *ngIf="isLoading"><ng-container *ngTemplateOutlet="loader"></ng-container></ng-container>
-          </button>
-        </div>
-
-        <p class="uc-switch-row">
-          Didn't get the code?
-          <button type="button" class="uc-link-btn" [disabled]="!canResendOtp" (click)="resendOtp()">
-            {{ otpResending ? 'Resending…' : otpCountdown > 0 ? ('Resend in ' + otpCountdownText) : 'Resend' }}
-          </button>
-        </p>
-      </form>
-
-      <!-- STEP: Forgot password — set a new password -->
-      <form class="uc-step-forgot-reset" *ngIf="currentStep === 'forgot-reset'" (ngSubmit)="onResetPassword()">
-        <h1 class="uc-modal-heading">Set a new password</h1>
-        <p class="uc-modal-subheading">Choose a new password (at least 8 characters).</p>
-
-        <ng-container *ngTemplateOutlet="newPasswordFields"></ng-container>
-        <ng-container *ngTemplateOutlet="messages"></ng-container>
-
-        <div class="uc-action-btn-row">
-          <button type="submit" class="uc-continue-btn" [class.loading]="isLoading" [disabled]="!canResetPassword">
-            <span *ngIf="!isLoading">Reset password</span>
-            <ng-container *ngIf="isLoading"><ng-container *ngTemplateOutlet="loader"></ng-container></ng-container>
-          </button>
-        </div>
-      </form>
-
       <!-- STEP: Success -->
       <div class="uc-step-success" *ngIf="currentStep === 'success'">
         <div class="uc-success-circle">
@@ -330,7 +180,7 @@
 <!-- ── Shared pieces ─────────────────────────────────────────── -->
 
 <!-- +91 phone number field (login + register) -->
-<ng-template #phoneInput>
+<ng-template #phoneInput let-showGetOtp>
   <div class="uc-phone-input-group">
     <div class="uc-country-box">
       <span class="uc-country-code-text">{{ countryCode }}</span>
@@ -356,49 +206,34 @@
           <path fill-rule="evenodd" clip-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12zm6.293 2.293L10.586 12 8.293 9.707l1.414-1.414L12 10.586l2.293-2.293 1.414 1.414L13.414 12l2.293 2.293-1.414 1.414L12 13.414l-2.293 2.293-1.414-1.414z" fill="#757575"/>
         </svg>
       </button>
+      <!-- Login / register: send / resend the OTP from inside the box -->
+      <button
+        type="button"
+        class="uc-get-otp-btn"
+        *ngIf="showGetOtp"
+        [disabled]="!canGetOtp"
+        (click)="getOtp()"
+      >
+        {{ getOtpLabel }}
+      </button>
     </div>
   </div>
 </ng-template>
 
-<!-- New password + confirm (register, change) -->
-<ng-template #newPasswordFields>
-  <div class="uc-text-field">
+<!-- OTP field (login + register), shown once "Get OTP" has sent a code -->
+<ng-template #otpInput>
+  <div class="uc-text-field" *ngIf="otpSent">
     <input
-      [type]="showPassword ? 'text' : 'password'"
-      name="newPassword"
-      [(ngModel)]="newPassword"
+      type="text"
+      name="otp"
+      inputmode="numeric"
+      autocomplete="one-time-code"
+      maxlength="8"
+      placeholder="Enter OTP"
+      [(ngModel)]="otp"
       (ngModelChange)="errorMessage = ''"
-      placeholder="New password"
-      autocomplete="new-password"
-    />
-    <ng-container *ngTemplateOutlet="passwordToggle"></ng-container>
-  </div>
-  <div class="uc-text-field">
-    <input
-      [type]="showPassword ? 'text' : 'password'"
-      name="confirmPassword"
-      [(ngModel)]="confirmPassword"
-      (ngModelChange)="errorMessage = ''"
-      placeholder="Confirm new password"
-      autocomplete="new-password"
     />
   </div>
-</ng-template>
-
-<ng-template #passwordToggle>
-  <button
-    type="button"
-    class="uc-eye-btn"
-    [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
-    [attr.aria-pressed]="showPassword"
-    (click)="showPassword = !showPassword"
-  >
-    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#757575" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"></path>
-      <circle cx="12" cy="12" r="3"></circle>
-      <line *ngIf="showPassword" x1="3" y1="3" x2="21" y2="21"></line>
-    </svg>
-  </button>
 </ng-template>
 
 <ng-template #messages>

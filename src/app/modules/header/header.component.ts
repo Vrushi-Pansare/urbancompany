@@ -150,11 +150,6 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     this.authService.openLoginModal();
   }
 
-  openChangePassword(): void {
-    this.showProfileDropdown = false;
-    this.authService.openChangePasswordModal();
-  }
-
   logout(): void {
     this.showProfileDropdown = false;
     this.authService.logout();

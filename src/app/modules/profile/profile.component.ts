@@ -33,10 +33,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.authService.openLoginModal();
   }
 
-  openChangePassword(): void {
-    this.authService.openChangePasswordModal();
-  }
-
   logout(): void {
     this.authService.logout();
   }

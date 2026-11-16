@@ -16,8 +16,8 @@ interface AuthSession {
   response: unknown;
 }
 
-/** Which auth popup is open: the login flow, change password, or editing a saved address */
-export type AuthModalView = 'login' | 'change-password' | 'edit-address' | null;
+/** Which auth popup is open: the login flow, or editing a saved address */
+export type AuthModalView = 'login' | 'edit-address' | null;
 
 /** Prefill passed to the address dialog when editing an existing address from checkout */
 export interface AddressEditPrefill {
@@ -47,7 +47,6 @@ export interface RegisterDetails {
 export interface CustomerDetails {
   firstName: string;
   lastName: string;
-  email: string;
   address: string; // free-text address (house/flat, street, landmark)
   pincode: string; // 6 digits, e.g. "380009"
   masterPincodeId: string; // the picked pincode option's value
@@ -60,7 +59,7 @@ export interface PincodeOption {
   code: string;
 }
 
-/** API failure. `invalidCredentials` = wrong password (or current password, on change-password) */
+/** API failure. `invalidCredentials` = wrong password */
 export class AuthError extends Error {
   constructor(message: string, readonly status: number, readonly invalidCredentials = false) {
     super(message);
@@ -98,10 +97,6 @@ export class AuthService {
 
   openLoginModal(): void {
     this.modalViewSubject.next('login');
-  }
-
-  openChangePasswordModal(): void {
-    this.modalViewSubject.next('change-password');
   }
 
   /** Open the address dialog prefilled, to edit an existing saved address */
@@ -240,7 +235,6 @@ export class AuthService {
         firstName: details.firstName.trim(),
         lastName: details.lastName.trim(),
         phoneNumber: phone.replace(/\D/g, '').slice(-10), // 10 digits, as the Customer API stores it
-        email: details.email.trim(),
         customerTypeId: CUSTOMER_TYPE_ID,
         addresses: [{ masterPincodeId: details.masterPincodeId, pincode: details.pincode, address: details.address.trim() }]
       },
@@ -305,18 +299,6 @@ export class AuthService {
   private authHeader(): Record<string, string> {
     if (!this.session?.accessToken) throw new AuthError('Please log in again.', 401);
     return { Authorization: `Bearer ${this.session.accessToken}` };
-  }
-
-  async changePassword(currentPassword: string, newPassword: string): Promise<void> {
-    if (!this.session?.accessToken) {
-      this.logout();
-      throw new AuthError('Your session has expired. Please log in again.', 401);
-    }
-    await this.post(
-      API_URLS.CHANGE_PASSWORD,
-      { currentPassword, newPassword },
-      { Authorization: `Bearer ${this.session.accessToken}` }
-    );
   }
 
   logout(): void {

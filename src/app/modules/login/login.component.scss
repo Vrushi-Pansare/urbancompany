@@ -200,6 +200,27 @@
       justify-content: center;
       border-radius: 50%;
     }
+
+    /* "Get OTP" / "Resend in 0:59" on the right edge of the phone box (register) */
+    .uc-get-otp-btn {
+      flex-shrink: 0;
+      margin-left: 8px;
+      padding: 6px 0 6px 10px;
+      border: none;
+      border-left: 1px solid #e5e7eb;
+      background: transparent;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      color: #8342fe;
+      white-space: nowrap;
+      cursor: pointer;
+
+      &:disabled {
+        color: #a3a3a3;
+        cursor: not-allowed;
+      }
+    }
   }
 }
 
@@ -235,23 +256,6 @@
     &::placeholder {
       color: #757575;
       font-weight: 400;
-    }
-  }
-
-  .uc-eye-btn {
-    width: 40px;
-    height: 40px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-
-    &:hover {
-      background-color: #f5f5f5;
     }
   }
 }
@@ -333,16 +337,6 @@
   }
 }
 
-/* "Forgot password?" link under the password field */
-.uc-forgot-row {
-  display: flex;
-  justify-content: flex-end;
-  margin: -4px 0 2px;
-
-  .uc-link-btn {
-    font-size: 13px;
-  }
-}
 
 /* "New to MyGenie? Register" / "Already have an account? Log in" */
 .uc-switch-row {

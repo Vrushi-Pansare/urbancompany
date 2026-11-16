@@ -2,24 +2,18 @@ import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { AuthError, AuthService, PincodeOption } from '../../services/auth.service';
+import { AuthService, PincodeOption } from '../../services/auth.service';
 import { ASSET_URLS } from '../../constants/urls';
 
 /**
- * login           phone + password (checks the number exists first)
- * register        phone + name + email + password → account created → logged in → address
+ * login           phone (Get OTP in the box) + OTP → password reset to the OTP in the background → logged in
+ * register        phone (Get OTP in the box) + OTP + name → account created (OTP as password) → logged in → address
  * address         register step 2: pincode dropdown (needs the new login's token) → Customer record
- * change-password logged-in users, opened from the profile menu
  */
 type Step =
   | 'login'
   | 'register'
-  | 'otp'
   | 'address'
-  | 'change-password'
-  | 'forgot'
-  | 'forgot-otp'
-  | 'forgot-reset'
   | 'success';
 
 @Component({
@@ -37,8 +31,6 @@ export class LoginComponent implements OnInit, OnDestroy {
   countryCode = '+91';
   countryMaxLength = 10;
   phoneNumber = '';
-  password = '';
-  showPassword = false;
 
   /** Login found no account for the number: offer Register */
   notRegistered = false;
@@ -46,7 +38,6 @@ export class LoginComponent implements OnInit, OnDestroy {
   // Register
   firstName = '';
   lastName = '';
-  email = '';
   // Pincode dropdown (the Customer's address)
   pincodeQuery = '';
   pincodeOptions: PincodeOption[] = [];
@@ -57,19 +48,14 @@ export class LoginComponent implements OnInit, OnDestroy {
   editingAddress = false; // address step opened from checkout "Edit" (vs. register step 2)
   private editCustomerId = ''; // the customer being edited (checkout "Edit")
   private pincodeTimer?: ReturnType<typeof setTimeout>;
-  newPassword = '';
-  confirmPassword = '';
 
-  // Phone OTP (signup verification step, between register and address)
+  // Phone OTP (sent from the "Get OTP" button in the login / register phone box)
   otp = '';
+  otpSent = false; // signup: a code has been sent to the current phone number
   otpResending = false;
   otpCountdown = 0; // seconds left before "Resend" is allowed again (1 min cooldown)
   private otpTimer?: ReturnType<typeof setInterval>;
-  // Which OTP flow is active, so send/resend/verify use the right purpose
-  otpPurpose: 'SIGNUP' | 'FORGOT_PASSWORD' = 'SIGNUP';
 
-  // Change password
-  currentPassword = '';
 
   isLoading = false;
   errorMessage = '';
@@ -86,9 +72,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.isOpen = view !== null;
         if (view) {
           this.resetForm();
-          if (view === 'change-password') {
-            this.currentStep = 'change-password';
-          } else if (view === 'edit-address') {
+          if (view === 'edit-address') {
             this.applyAddressPrefill();
           } else {
             this.currentStep = 'login';
@@ -115,7 +99,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   get canLogin(): boolean {
-    return this.isPhoneValid && !!this.password && !this.isLoading;
+    return this.isPhoneValid && this.otpSent && /^\d{4,8}$/.test(this.otp.trim()) && !this.isLoading;
   }
 
   get canRegister(): boolean {
@@ -123,18 +107,14 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.isPhoneValid &&
       !!this.firstName.trim() &&
       !!this.lastName.trim() &&
-      this.isEmailValid &&
-      this.passwordsReady &&
+      this.otpSent &&
+      /^\d{4,8}$/.test(this.otp.trim()) &&
       !this.isLoading
     );
   }
 
   get canSaveAddress(): boolean {
     return !!this.pincodeOption && !!this.addressLine.trim() && !this.isLoading;
-  }
-
-  get isEmailValid(): boolean {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email.trim());
   }
 
   /** Pincode dropdown: search as the user types (pincode digits or area name) */
@@ -170,103 +150,112 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
   }
 
-  get canChangePassword(): boolean {
-    return !!this.currentPassword && this.passwordsReady && !this.isLoading;
-  }
-
-  /** New password typed twice */
-  get passwordsReady(): boolean {
-    return !!this.newPassword && !!this.confirmPassword;
-  }
-
   onPhoneInput(event: Event): void {
     const input = event.target as HTMLInputElement;
+    const previous = this.phoneNumber;
     this.phoneNumber = input.value.replace(/\D/g, '').slice(0, this.countryMaxLength);
     input.value = this.phoneNumber;
-    // A different number needs a fresh "does it exist?" check
+    if (this.phoneNumber === previous) return;
+    // A different number needs a fresh "does it exist?" check (and a fresh OTP)
     this.notRegistered = false;
     this.errorMessage = '';
+    this.resetOtp();
   }
 
   clearPhone(): void {
     this.phoneNumber = '';
     this.notRegistered = false;
     this.errorMessage = '';
+    this.resetOtp();
   }
 
-  /** Login: check the number exists, then log in with the password */
+  /**
+   * Login: verify the FORGOT_PASSWORD OTP, then (in the background) reset the account's
+   * password to that verified OTP and log in with it -- the user only sees phone + OTP.
+   */
   async onLogin(): Promise<void> {
     if (!this.canLogin) return;
     await this.run(async () => {
-      if (!(await this.authService.phoneExists(this.phoneNumber))) {
-        // Not an error: the "You're new here" box offers Register instead
-        this.notRegistered = true;
-        return;
-      }
-      try {
-        await this.authService.login(this.phoneNumber, this.password);
-      } catch (err) {
-        if (err instanceof AuthError && err.invalidCredentials) {
-          this.errorMessage = "That password doesn't match this number. Please check it and try again.";
-          return;
-        }
-        throw err;
-      }
+      const otp = this.otp.trim();
+      await this.authService.verifyOtp(this.phoneNumber, otp, 'FORGOT_PASSWORD');
+      const password = this.passwordFromOtp(otp);
+      await this.authService.resetPassword(this.phoneNumber, password);
+      await this.authService.login(this.phoneNumber, password);
       this.finish('Logged in successfully!');
     });
   }
 
   goToRegister(): void {
-    this.newPassword = this.password; // keep what they already typed
-    this.confirmPassword = '';
     this.notRegistered = false;
+    this.resetOtp();
     this.goTo('register');
   }
 
   goToLogin(): void {
     this.notRegistered = false;
+    this.resetOtp();
     this.goTo('login');
   }
 
-  /** Register step 1: verify the number is free, send an OTP, then go to the OTP step */
-  async onRegister(): Promise<void> {
-    if (!this.canRegister || !this.checkPasswordsMatch()) return;
-    await this.run(async () => {
-      if (await this.authService.phoneExists(this.phoneNumber)) {
+  /** "Get OTP" in the login / register phone box: send (or resend after the cooldown) */
+  get canGetOtp(): boolean {
+    return this.isPhoneValid && this.otpCountdown === 0 && !this.otpResending && !this.isLoading;
+  }
+
+  get getOtpLabel(): string {
+    if (this.otpResending) return 'Sending…';
+    if (!this.otpSent) return 'Get OTP';
+    return this.otpCountdown > 0 ? `Resend in ${this.otpCountdownText}` : 'Resend OTP';
+  }
+
+  /**
+   * Login: the number must have an account (else offer Register), then a FORGOT_PASSWORD OTP.
+   * Register: the number must be free, then a SIGNUP OTP.
+   */
+  async getOtp(): Promise<void> {
+    if (!this.canGetOtp) return;
+    const isLogin = this.currentStep === 'login';
+    this.otpResending = true;
+    this.errorMessage = '';
+    this.infoMessage = '';
+    this.notRegistered = false;
+    try {
+      const exists = await this.authService.phoneExists(this.phoneNumber);
+      if (isLogin && !exists) {
+        // Not an error: the "You're new here" box offers Register instead
+        this.notRegistered = true;
+        return;
+      }
+      if (!isLogin && exists) {
         this.errorMessage = 'This number already has an account. Please log in instead.';
         return;
       }
-      this.otpPurpose = 'SIGNUP';
-      await this.authService.sendOtp(this.phoneNumber, this.otpPurpose);
-      this.otp = '';
+      await this.authService.sendOtp(this.phoneNumber, isLogin ? 'FORGOT_PASSWORD' : 'SIGNUP');
+      this.infoMessage = this.otpSent ? 'A new code has been sent.' : `Code sent to ${this.countryCode} ${this.phoneNumber}.`;
+      this.otpSent = true;
       this.startOtpCountdown();
-      this.goTo('otp');
-    });
+    } catch (err) {
+      this.errorMessage = err instanceof Error ? err.message : 'Could not send the code. Please try again.';
+    } finally {
+      this.otpResending = false;
+    }
   }
 
-  get canVerifyOtp(): boolean {
-    return /^\d{4,8}$/.test(this.otp.trim()) && !this.isLoading;
-  }
-
-  /** OTP step: validate the code, then create the account, log in, and go to address */
-  async onVerifyOtp(): Promise<void> {
-    if (!this.canVerifyOtp) return;
+  /** Register: validate the OTP, then create the account (the verified OTP is its password), log in, and go to address */
+  async onRegister(): Promise<void> {
+    if (!this.canRegister) return;
     await this.run(async () => {
       await this.authService.verifyOtp(this.phoneNumber, this.otp);
       await this.authService.register(this.phoneNumber, {
         firstName: this.firstName,
         lastName: this.lastName,
-        password: this.newPassword
+        password: this.passwordFromOtp(this.otp.trim())
       });
       this.goTo('address');
       // Logged in now, so the pincode API (needs the token) can fill the dropdown
       this.pincodeStatus = 'loading';
       this.loadPincodes('');
     });
-  }
-
-  get canResendOtp(): boolean {
-    return this.otpCountdown === 0 && !this.otpResending && !this.isLoading;
   }
 
   /** m:ss left on the resend cooldown, e.g. "1:59" */
@@ -276,20 +265,21 @@ export class LoginComponent implements OnInit, OnDestroy {
     return `${m}:${s.toString().padStart(2, '0')}`;
   }
 
-  /** Resend the signup OTP (allowed once the 2-minute cooldown elapses) */
-  async resendOtp(): Promise<void> {
-    if (!this.canResendOtp) return;
-    this.otpResending = true;
-    this.errorMessage = '';
-    try {
-      await this.authService.sendOtp(this.phoneNumber, this.otpPurpose);
-      this.infoMessage = 'A new code has been sent.';
-      this.startOtpCountdown();
-    } catch (err) {
-      this.errorMessage = err instanceof Error ? err.message : 'Could not resend the code. Please try again.';
-    } finally {
-      this.otpResending = false;
-    }
+  /**
+   * The account password made from the verified OTP. The API needs passwords of 8+ characters
+   * and OTPs are shorter, so the OTP is repeated until it is long enough ("193807" → "193807193807").
+   */
+  private passwordFromOtp(otp: string): string {
+    return otp.repeat(Math.ceil(8 / otp.length));
+  }
+
+  /** Number changed/cleared or login⇄register switched: the code already sent no longer applies */
+  private resetOtp(): void {
+    if (!this.otpSent) return;
+    this.otpSent = false;
+    this.otp = '';
+    this.otpCountdown = 0;
+    clearInterval(this.otpTimer);
   }
 
   /** Starts (or restarts) the 1-minute resend cooldown countdown */
@@ -326,7 +316,6 @@ export class LoginComponent implements OnInit, OnDestroy {
       await this.authService.createCustomer(this.phoneNumber, {
         firstName: this.firstName,
         lastName: this.lastName,
-        email: this.email,
         address: this.addressLine,
         masterPincodeId: pincode.value,
         pincode: pincode.code
@@ -347,7 +336,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.phoneNumber = prefill.phone;
     this.firstName = prefill.firstName;
     this.lastName = prefill.lastName;
-    this.email = prefill.email;
     this.addressLine = prefill.address;
     this.pincodeOption = prefill.pincodeOption;
     this.pincodeQuery = prefill.pincodeOption.label;
@@ -355,96 +343,10 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.currentStep = 'address';
   }
 
-  async onChangePassword(): Promise<void> {
-    if (!this.canChangePassword || !this.checkPasswordsMatch()) return;
-    await this.run(async () => {
-      try {
-        await this.authService.changePassword(this.currentPassword, this.newPassword);
-      } catch (err) {
-        if (err instanceof AuthError && err.invalidCredentials) {
-          this.errorMessage = "Your current password doesn't match. Please try again.";
-          return;
-        }
-        throw err;
-      }
-      this.finish('Password changed!');
-    });
-  }
-
-  // ── Forgot password ──────────────────────────────────────────
-  /** Open the forgot-password flow from the login step (keeps the typed number) */
-  goToForgot(): void {
-    this.password = '';
-    this.notRegistered = false;
-    this.otp = '';
-    this.newPassword = '';
-    this.confirmPassword = '';
-    this.goTo('forgot');
-  }
-
-  get canSubmitForgot(): boolean {
-    return this.isPhoneValid && !this.isLoading;
-  }
-
-  /** New password is valid for reset: typed twice and at least 8 characters */
-  get canResetPassword(): boolean {
-    return this.passwordsReady && this.newPassword.trim().length >= 8 && !this.isLoading;
-  }
-
-  /** Forgot step 1: confirm the number has an account, then send a FORGOT_PASSWORD OTP */
-  async onForgotSubmit(): Promise<void> {
-    if (!this.canSubmitForgot) return;
-    await this.run(async () => {
-      if (!(await this.authService.phoneExists(this.phoneNumber))) {
-        this.errorMessage = `No MyGenie account found for ${this.countryCode} ${this.phoneNumber}.`;
-        return;
-      }
-      this.otpPurpose = 'FORGOT_PASSWORD';
-      await this.authService.sendOtp(this.phoneNumber, this.otpPurpose);
-      this.otp = '';
-      this.startOtpCountdown();
-      this.goTo('forgot-otp');
-    });
-  }
-
-  /** Forgot step 2: validate the OTP, then move to choosing a new password */
-  async onForgotVerifyOtp(): Promise<void> {
-    if (!this.canVerifyOtp) return;
-    await this.run(async () => {
-      await this.authService.verifyOtp(this.phoneNumber, this.otp, 'FORGOT_PASSWORD');
-      this.newPassword = '';
-      this.confirmPassword = '';
-      this.goTo('forgot-reset');
-    });
-  }
-
-  /** Forgot step 3: set the new password, then return to login (prefilled) */
-  async onResetPassword(): Promise<void> {
-    if (!this.canResetPassword || !this.checkPasswordsMatch()) return;
-    await this.run(async () => {
-      await this.authService.resetPassword(this.phoneNumber, this.newPassword);
-      // "Redirect to login": back to the login step with the number kept and a nudge to sign in
-      this.password = '';
-      this.newPassword = '';
-      this.confirmPassword = '';
-      this.otp = '';
-      this.goTo('login');
-      this.infoMessage = 'Password reset. Please log in with your new password.';
-    });
-  }
-
   /** Back arrow: one step back, or close from a first step */
   goBack(): void {
     if (this.currentStep === 'register') {
       this.goToLogin();
-    } else if (this.currentStep === 'otp') {
-      this.goTo('register');
-    } else if (this.currentStep === 'forgot') {
-      this.goToLogin();
-    } else if (this.currentStep === 'forgot-otp') {
-      this.goTo('forgot');
-    } else if (this.currentStep === 'forgot-reset') {
-      this.goTo('forgot-otp');
     } else {
       this.close();
     }
@@ -473,17 +375,10 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
   }
 
-  private checkPasswordsMatch(): boolean {
-    if (this.newPassword === this.confirmPassword) return true;
-    this.errorMessage = 'Passwords do not match.';
-    return false;
-  }
-
   private goTo(step: Step): void {
     this.currentStep = step;
     this.errorMessage = '';
     this.infoMessage = '';
-    this.showPassword = false;
   }
 
   private finish(title: string): void {
@@ -495,12 +390,9 @@ export class LoginComponent implements OnInit, OnDestroy {
   private resetForm(): void {
     this.currentStep = 'login';
     this.phoneNumber = '';
-    this.password = '';
-    this.showPassword = false;
     this.notRegistered = false;
     this.firstName = '';
     this.lastName = '';
-    this.email = '';
     this.pincodeQuery = '';
     this.pincodeOptions = [];
     this.pincodeOption = null;
@@ -510,13 +402,10 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.editingAddress = false;
     this.editCustomerId = '';
     clearTimeout(this.pincodeTimer);
-    this.newPassword = '';
-    this.confirmPassword = '';
-    this.currentPassword = '';
     this.otp = '';
+    this.otpSent = false;
     this.otpResending = false;
     this.otpCountdown = 0;
-    this.otpPurpose = 'SIGNUP';
     clearInterval(this.otpTimer);
     this.errorMessage = '';
     this.infoMessage = '';
