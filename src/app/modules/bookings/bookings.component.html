@@ -84,6 +84,16 @@
                 <span class="bk-dot" *ngIf="call.createdAt && view(call).products.length">•</span>
                 <span *ngIf="view(call).products.length">{{ view(call).products.length }} {{ view(call).products.length === 1 ? 'service' : 'services' }}</span>
               </span>
+              <span class="bk-codes" *ngIf="view(call).startActivityCode || view(call).happyCode">
+                <span class="bk-code" *ngIf="view(call).startActivityCode">
+                  <span class="bk-code-label">Start code</span>
+                  <span class="bk-code-value">{{ view(call).startActivityCode }}</span>
+                </span>
+                <span class="bk-code" *ngIf="view(call).happyCode">
+                  <span class="bk-code-label">Happy code</span>
+                  <span class="bk-code-value">{{ view(call).happyCode }}</span>
+                </span>
+              </span>
             </span>
 
             <span class="bk-item-side">
@@ -105,6 +115,14 @@
               <div class="bk-row" *ngIf="view(call).slotLabel">
                 <span>Slot</span>
                 <span>{{ view(call).slotLabel }}</span>
+              </div>
+              <div class="bk-row" *ngIf="view(call).startActivityCode">
+                <span>Start code</span>
+                <span class="bk-mono">{{ view(call).startActivityCode }}</span>
+              </div>
+              <div class="bk-row" *ngIf="view(call).happyCode">
+                <span>Happy code</span>
+                <span class="bk-mono">{{ view(call).happyCode }}</span>
               </div>
               <div class="bk-row" *ngIf="view(call).formattedAddress || view(call).address">
                 <span>Address</span>

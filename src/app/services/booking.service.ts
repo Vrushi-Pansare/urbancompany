@@ -70,6 +70,10 @@ export interface BookingCall {
   formattedAddress?: string;
   address?: string;
   slotLabel?: string;
+  /** Code the customer gives the professional to start the job */
+  startActivityCode?: string;
+  /** Code the customer gives the professional once the job is done */
+  happyCode?: string;
   products: { productId: string; name?: string; unitPrice: number }[];
   total: number;
   raw: any;
@@ -365,10 +369,26 @@ export class BookingService {
       formattedAddress: r?.formattedAddress,
       address: r?.address,
       slotLabel: typeof slot === 'object' && slot ? slot.label ?? slot.name : undefined,
+      startActivityCode: this.codeField(r, 'startActivityCode'),
+      happyCode: this.codeField(r, 'happyCode'),
       products: mapped,
       total: mapped.reduce((sum, p) => sum + p.unitPrice, 0),
       raw: r
     };
+  }
+
+  /** A code field on a Call record: top level, or one level down (e.g. under `data` / `fields`) */
+  private codeField(r: any, key: string): string | undefined {
+    const text = (v: unknown) => (typeof v === 'string' || typeof v === 'number') && String(v).trim() ? String(v).trim() : undefined;
+    const direct = text(r?.[key]);
+    if (direct || !r || typeof r !== 'object') return direct;
+    for (const child of Object.values(r)) {
+      if (child && typeof child === 'object' && !Array.isArray(child)) {
+        const nested = text((child as any)[key]);
+        if (nested) return nested;
+      }
+    }
+    return undefined;
   }
 
   private get(url: string, params: Record<string, string | number> = {}): Promise<any> {
