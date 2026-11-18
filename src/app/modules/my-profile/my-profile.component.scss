@@ -1,0 +1,354 @@
+/* Mirrors bookings.component.scss tokens and chrome */
+:host {
+  --pf-purple: #6c40e5;
+  --pf-purple-tint: #f4f1fe;
+  --pf-border: #ededed;
+  --pf-ink: #0f0f0f;
+  --pf-muted: #808080;
+
+  display: block;
+  background-color: #fafafb;
+  min-height: 100vh;
+  color: var(--pf-ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* ── Top bar ── */
+.pf-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 24px;
+  background-color: rgba(255, 255, 255, 0.86);
+  backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 1px solid var(--pf-border);
+
+  .pf-back {
+    display: inline-flex;
+    padding: 4px;
+    border: none;
+    background: none;
+    color: var(--pf-ink);
+    cursor: pointer;
+    border-radius: 8px;
+
+    &:hover {
+      background: #f0f0f0;
+    }
+  }
+
+  .pf-brand {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .pf-logo {
+    height: 30px;
+    width: auto;
+    max-width: 120px;
+    object-fit: contain;
+    display: block;
+  }
+
+  .pf-topbar-title {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  @media (max-width: 768px) {
+    padding: 12px 16px;
+
+    .pf-brand {
+      display: none; // back + title is enough on a phone
+    }
+  }
+}
+
+/* ── Body ── */
+.pf-body {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 24px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  @media (max-width: 768px) {
+    padding: 16px;
+  }
+}
+
+.pf-card {
+  background-color: #ffffff;
+  border: 1px solid var(--pf-border);
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+/* ── Hero ── */
+.pf-hero {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 22px 24px;
+  border-radius: 18px;
+  color: #ffffff;
+  background:
+    radial-gradient(130% 150% at 100% 0%, rgba(255, 255, 255, 0.22), transparent 55%),
+    linear-gradient(135deg, #7a4ff0 0%, var(--pf-purple) 48%, #5831c4 100%);
+  box-shadow: 0 10px 26px -12px rgba(108, 64, 229, 0.55);
+}
+
+.pf-avatar {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.pf-hero-text {
+  min-width: 0;
+}
+
+.pf-hero-name {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+
+.pf-hero-sub {
+  margin-top: 4px;
+  font-size: 13.5px;
+  color: rgba(255, 255, 255, 0.86);
+}
+
+/* ── Sections ── */
+.pf-section {
+  padding: 18px 20px;
+}
+
+.pf-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+
+  .pf-section-title {
+    margin-bottom: 0;
+  }
+}
+
+.pf-section-title {
+  margin-bottom: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.pf-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 11px 0;
+  font-size: 14px;
+  border-bottom: 1px solid #f2f2f2;
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  span:first-child {
+    flex: none;
+    color: var(--pf-muted);
+  }
+
+  span:last-child {
+    font-weight: 600;
+    text-align: right;
+  }
+}
+
+.pf-break {
+  overflow-wrap: anywhere;
+}
+
+/* ── Address ── */
+.pf-address {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #f2f2f2;
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
+
+.pf-address-icon {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  color: var(--pf-purple);
+  background: var(--pf-purple-tint);
+}
+
+.pf-address-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.pf-address-text {
+  font-size: 14px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.pf-address-pin {
+  font-size: 12px;
+  color: var(--pf-muted);
+}
+
+.pf-inline-state {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* ── Links ── */
+.pf-links {
+  overflow: hidden;
+}
+
+.pf-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 16px 20px;
+  border: none;
+  border-bottom: 1px solid #f2f2f2;
+  background: none;
+  color: var(--pf-ink);
+  font: inherit;
+  font-size: 14.5px;
+  font-weight: 600;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: #fafafa;
+  }
+
+  svg {
+    color: #9a9a9a;
+  }
+}
+
+.pf-logout,
+.pf-logout svg {
+  color: #c62828;
+}
+
+/* ── State card (logged out) ── */
+.pf-state {
+  padding: 36px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.pf-state-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 4px;
+  border-radius: 16px;
+  color: var(--pf-purple);
+  background: var(--pf-purple-tint);
+}
+
+.pf-title {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.pf-muted {
+  color: var(--pf-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.pf-error {
+  color: #c62828;
+  font-size: 13px;
+}
+
+/* ── Buttons ── */
+.pf-primary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 6px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 10px;
+  background-color: var(--pf-purple);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 16px -8px rgba(108, 64, 229, 0.7);
+}
+
+.pf-ghost-btn {
+  flex: none;
+  padding: 7px 16px;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  background: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    background: #f7f7f7;
+    border-color: #c9c9c9;
+  }
+}

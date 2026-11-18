@@ -84,6 +84,11 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     this.router.navigate(['/checkout']);
   }
 
+  openProfile(): void {
+    this.showProfileDropdown = false;
+    this.router.navigate(['/profile']);
+  }
+
   openBookings(): void {
     this.showProfileDropdown = false;
     this.router.navigate(['/bookings']);

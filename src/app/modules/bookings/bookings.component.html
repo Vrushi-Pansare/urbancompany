@@ -7,6 +7,9 @@
       <img [src]="logoUrl" alt="MyGenie" class="bk-logo" />
     </a>
     <span class="bk-topbar-title">My bookings</span>
+    <a routerLink="/profile" class="bk-profile-link" aria-label="My profile" title="My profile" *ngIf="user">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3"/><path d="M6.2 18.4a6.5 6.5 0 0 1 11.6 0"/></svg>
+    </a>
   </header>
 
   <main class="bk-body">

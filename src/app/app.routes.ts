@@ -4,6 +4,7 @@ import { ServiceListingComponent } from './modules/service-listing/service-listi
 import { CheckoutComponent } from './modules/checkout/checkout.component';
 import { BookingSuccessComponent } from './modules/booking-success/booking-success.component';
 import { BookingsComponent } from './modules/bookings/bookings.component';
+import { MyProfileComponent } from './modules/my-profile/my-profile.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -13,6 +14,7 @@ export const routes: Routes = [
   { path: 'cart', redirectTo: 'checkout', pathMatch: 'full' },
   { path: 'booking-success', component: BookingSuccessComponent },
   { path: 'bookings', component: BookingsComponent },
+  { path: 'profile', component: MyProfileComponent },
   { path: '**', redirectTo: '' }
 ];
 

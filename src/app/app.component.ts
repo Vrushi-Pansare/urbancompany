@@ -27,7 +27,7 @@ export class AppComponent implements OnInit, OnDestroy {
   isUnserviceable$ = this.locationService.isUnserviceable$;
   needsLocation$ = this.locationService.needsLocation$;
   toast$ = this.notify.message$;
-  // Checkout, booking success and My bookings use their own minimal chrome, so hide the site header/footer there.
+  // Checkout, booking success, My bookings and My profile use their own minimal chrome, so hide the site header/footer there.
   hideChrome = false;
 
   private sub = new Subscription();
@@ -61,7 +61,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private isCheckout(url: string): boolean {
     const path = url.split('?')[0];
-    return path.startsWith('/checkout') || path.startsWith('/booking-success') || path.startsWith('/bookings');
+    return path.startsWith('/checkout') || path.startsWith('/booking-success') || path.startsWith('/bookings') || path.startsWith('/profile');
   }
 
   ngOnDestroy(): void {
