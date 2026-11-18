@@ -46,7 +46,8 @@ export class LoginComponent implements OnInit, OnDestroy {
   pincodeListOpen = false;
   addressLine = ''; // free-text address (house/flat, street, landmark)
   editingAddress = false; // address step opened from checkout "Edit" (vs. register step 2)
-  private editCustomerId = ''; // the customer being edited (checkout "Edit")
+  private editCustomerId = ''; // the customer being edited (checkout "Edit" / "Add address")
+  private fromCheckout = false; // address step opened from checkout, so it must be told about the save
   private pincodeTimer?: ReturnType<typeof setTimeout>;
 
   // Phone OTP (sent from the "Get OTP" button in the login / register phone box)
@@ -297,8 +298,9 @@ export class LoginComponent implements OnInit, OnDestroy {
     const pincode = this.pincodeOption;
     if (!this.canSaveAddress || !pincode) return;
     await this.run(async () => {
-      // Editing from checkout: send only the addresses array, no name/phone/email/customerTypeId
-      if (this.editingAddress) {
+      // From checkout with an existing Customer (edit, or adding its first address):
+      // send only the address patch, no name/phone/email/customerTypeId
+      if (this.editCustomerId) {
         await this.authService.updateCustomerAddress({
           customerId: this.editCustomerId,
           masterPincodeId: pincode.value,
@@ -310,7 +312,7 @@ export class LoginComponent implements OnInit, OnDestroy {
           pincode: pincode.code,
           address: this.addressLine.trim()
         });
-        this.finish('Address updated!');
+        this.finish(this.editingAddress ? 'Address updated!' : 'Address added!');
         return;
       }
       await this.authService.createCustomer(this.phoneNumber, {
@@ -320,27 +322,44 @@ export class LoginComponent implements OnInit, OnDestroy {
         masterPincodeId: pincode.value,
         pincode: pincode.code
       });
+      // Checkout "Add address" with no Customer record yet: it was just created, so tell checkout
+      if (this.fromCheckout) {
+        this.authService.notifyAddressUpdated({
+          masterPincodeId: pincode.value,
+          pincode: pincode.code,
+          address: this.addressLine.trim()
+        });
+        this.finish('Address added!');
+        return;
+      }
       this.finish('Account created!');
     });
   }
 
-  /** Fill the address step from the record being edited (checkout "Edit") */
+  /** Fill the address step from checkout: the address being edited, or blank to add the first one */
   private applyAddressPrefill(): void {
     const prefill = this.authService.addressEditPrefill;
     if (!prefill) {
       this.currentStep = 'login';
       return;
     }
-    this.editingAddress = true;
+    this.fromCheckout = true;
     this.editCustomerId = prefill.customerId;
     this.phoneNumber = prefill.phone;
     this.firstName = prefill.firstName;
     this.lastName = prefill.lastName;
     this.addressLine = prefill.address;
-    this.pincodeOption = prefill.pincodeOption;
-    this.pincodeQuery = prefill.pincodeOption.label;
-    this.pincodeStatus = 'ready';
     this.currentStep = 'address';
+    if (prefill.pincodeOption) {
+      this.editingAddress = true;
+      this.pincodeOption = prefill.pincodeOption;
+      this.pincodeQuery = prefill.pincodeOption.label;
+      this.pincodeStatus = 'ready';
+    } else {
+      // Adding: nothing picked yet, so load the first page of pincodes for the dropdown
+      this.pincodeStatus = 'loading';
+      this.loadPincodes('');
+    }
   }
 
   /** Back arrow: one step back, or close from a first step */
@@ -401,6 +420,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.addressLine = '';
     this.editingAddress = false;
     this.editCustomerId = '';
+    this.fromCheckout = false;
     clearTimeout(this.pincodeTimer);
     this.otp = '';
     this.otpSent = false;

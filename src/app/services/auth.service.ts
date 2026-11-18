@@ -19,7 +19,10 @@ interface AuthSession {
 /** Which auth popup is open: the login flow, or editing a saved address */
 export type AuthModalView = 'login' | 'edit-address' | null;
 
-/** Prefill passed to the address dialog when editing an existing address from checkout */
+/**
+ * Prefill passed to the address dialog from checkout: editing a saved address, or -- with no
+ * `pincodeOption` -- adding the first one (`customerId` is '' when there is no Customer record yet)
+ */
 export interface AddressEditPrefill {
   customerId: string;
   phone: string;
@@ -27,7 +30,7 @@ export interface AddressEditPrefill {
   lastName: string;
   email: string;
   address: string;
-  pincodeOption: PincodeOption;
+  pincodeOption: PincodeOption | null;
 }
 
 /** The address just saved from the edit dialog, so checkout can show it without a re-fetch */

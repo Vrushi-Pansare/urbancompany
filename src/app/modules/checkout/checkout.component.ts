@@ -189,6 +189,25 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     });
   }
 
+  /** No address to book with (none saved, or no Customer record yet): open the dialog blank to add one */
+  addAddress(): void {
+    if (!this.user) {
+      this.login();
+      return;
+    }
+    this.showAddressPicker = false;
+    const [firstName = '', ...rest] = (this.user.name ?? '').trim().split(/\s+/);
+    this.auth.openEditAddressModal({
+      customerId: this.customer?.customerId ?? '',
+      phone: this.customer?.customerPhoneNumber || this.user.phoneNumber || '',
+      firstName: this.customer?.customerFirstName || firstName,
+      lastName: this.customer?.customerLastName || rest.join(' '),
+      email: this.customer?.email ?? '',
+      address: '',
+      pincodeOption: null
+    });
+  }
+
   selectAddress(address: CustomerAddress): void {
     this.selectedAddress = address;
     this.showAddressPicker = false;
@@ -210,6 +229,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     }
     this.selectedAddress = updated;
     this.customerState = 'ready';
+    // "Add address" just created the Customer record: load it, since booking needs its id
+    if (!this.customer) this.booking.loadCustomer();
   }
 
   // ── Slots ──

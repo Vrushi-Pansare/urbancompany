@@ -61,7 +61,7 @@
                   <ng-container *ngSwitchCase="'ready'">
                     <span class="co-step-value co-step-wrap" *ngIf="selectedAddress">{{ selectedAddress.address || selectedAddress.formattedAddress }}</span>
                     <span class="co-step-value co-step-error" *ngIf="!selectedAddress">
-                      {{ customer ? 'No saved address on your profile.' : 'We could not find your customer profile.' }}
+                      {{ customer ? 'No saved address on your profile.' : 'Add an address to book this service.' }}
                     </span>
                   </ng-container>
                 </ng-container>
@@ -74,6 +74,14 @@
                 (click)="editAddress()"
               >
                 Edit
+              </button>
+              <button
+                type="button"
+                class="co-ghost-btn"
+                *ngIf="customerState === 'ready' && !selectedAddress"
+                (click)="addAddress()"
+              >
+                Add address
               </button>
             </div>
 
