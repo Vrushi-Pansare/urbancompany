@@ -80,7 +80,7 @@
               </span>
               <span class="bk-sub bk-ellipsis">
                 <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                {{ view(call).formattedAddress || view(call).address || 'Address on file' }}
+                {{ fullAddress(view(call)) || 'Address on file' }}
               </span>
               <span class="bk-meta">
                 <span *ngIf="call.createdAt">{{ call.createdAt | date: 'd MMM, h:mm a' }}</span>
@@ -127,9 +127,9 @@
                 <span>Happy code</span>
                 <span class="bk-mono">{{ view(call).happyCode }}</span>
               </div>
-              <div class="bk-row" *ngIf="view(call).formattedAddress || view(call).address">
+              <div class="bk-row" *ngIf="fullAddress(view(call))">
                 <span>Address</span>
-                <span>{{ view(call).formattedAddress || view(call).address }}</span>
+                <span>{{ fullAddress(view(call)) }}</span>
               </div>
             </div>
 

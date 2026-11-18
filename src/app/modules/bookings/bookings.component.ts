@@ -128,6 +128,15 @@ export class BookingsComponent implements OnInit, OnDestroy {
     return { key, label: d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) };
   }
 
+  /** "address, formattedAddress" (house/flat line, then the area); just one when the other is missing or the same */
+  fullAddress(call: BookingCall): string {
+    const address = (call.address ?? '').trim();
+    const formatted = (call.formattedAddress ?? '').trim();
+    if (!address || !formatted) return address || formatted;
+    if (formatted.toLowerCase().includes(address.toLowerCase())) return formatted;
+    return `${address}, ${formatted}`;
+  }
+
   login(): void {
     this.auth.openLoginModal();
   }
