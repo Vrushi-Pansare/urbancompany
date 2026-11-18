@@ -51,6 +51,8 @@ export interface CreateCallPayload {
   customerId: string;
   customerFullName: string;
   customerPhoneNumber: string;
+  /** Optional alternate number entered at checkout; "" when left blank */
+  customerSecondaryPhoneNumber: string;
   customerEmail: string;
   customerTypeId: string;
   addressMasterPincodeId: string;
@@ -70,6 +72,8 @@ export interface BookingCall {
   formattedAddress?: string;
   address?: string;
   slotLabel?: string;
+  /** Alternate number given at checkout (blank when none was entered) */
+  secondaryPhone?: string;
   /** Code the customer gives the professional to start the job */
   startActivityCode?: string;
   /** Code the customer gives the professional once the job is done */
@@ -369,6 +373,7 @@ export class BookingService {
       formattedAddress: r?.formattedAddress,
       address: r?.address,
       slotLabel: typeof slot === 'object' && slot ? slot.label ?? slot.name : undefined,
+      secondaryPhone: this.codeField(r, 'customerSecondaryPhoneNumber'),
       startActivityCode: this.codeField(r, 'startActivityCode'),
       happyCode: this.codeField(r, 'happyCode'),
       products: mapped,
@@ -377,7 +382,7 @@ export class BookingService {
     };
   }
 
-  /** A code field on a Call record: top level, or one level down (e.g. under `data` / `fields`) */
+  /** A text field on a Call record: top level, or one level down (e.g. under `data` / `fields`) */
   private codeField(r: any, key: string): string | undefined {
     const text = (v: unknown) => (typeof v === 'string' || typeof v === 'number') && String(v).trim() ? String(v).trim() : undefined;
     const direct = text(r?.[key]);

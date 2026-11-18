@@ -225,6 +225,38 @@
   white-space: nowrap;
 }
 
+.co-optional {
+  font-weight: 500;
+  color: #8a8a8a;
+}
+
+.co-input {
+  width: 100%;
+  max-width: 320px;
+  margin-top: 6px;
+  padding: 10px 12px;
+  border: 1px solid #d4d4d4;
+  border-radius: 8px;
+  background: #ffffff;
+  color: inherit;
+  font: inherit;
+  font-size: 16px; // 16px stops iOS zooming the page on focus
+
+  &::placeholder {
+    color: #a8a8a8;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #6c40e5;
+    box-shadow: 0 0 0 3px rgba(108, 64, 229, 0.14);
+  }
+
+  &.invalid {
+    border-color: #c62828;
+  }
+}
+
 .co-step-disabled {
   opacity: 0.85;
 }

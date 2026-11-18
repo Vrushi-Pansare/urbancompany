@@ -43,6 +43,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   customerError = '';
   selectedAddress: CustomerAddress | null = null;
   showAddressPicker = false;
+  // Optional alternate number the professional can reach (sent as customerSecondaryPhoneNumber)
+  secondaryPhone = '';
 
   slots: BookingSlot[] = [];
   slotsState: LoadState = 'idle';
@@ -208,6 +210,19 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     });
   }
 
+  // ── Alternate phone number (optional) ──
+  onSecondaryPhoneInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.secondaryPhone = input.value.replace(/\D/g, '').slice(0, 10);
+    input.value = this.secondaryPhone;
+    this.submitError = '';
+  }
+
+  /** Blank is fine; anything typed must be a full 10-digit number */
+  get secondaryPhoneInvalid(): boolean {
+    return !!this.secondaryPhone && this.secondaryPhone.length !== 10;
+  }
+
   selectAddress(address: CustomerAddress): void {
     this.selectedAddress = address;
     this.showAddressPicker = false;
@@ -265,6 +280,10 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       this.submitError = 'Select a slot to continue.';
       return;
     }
+    if (this.secondaryPhoneInvalid) {
+      this.submitError = 'Enter a 10-digit alternate phone number, or leave it blank.';
+      return;
+    }
 
     this.submitting = true;
     this.submitError = '';
@@ -275,6 +294,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         customerId: this.customer.customerId,
         customerFullName: `${this.customer.customerFirstName} ${this.customer.customerLastName}`.trim(),
         customerPhoneNumber: this.customer.customerPhoneNumber,
+        customerSecondaryPhoneNumber: this.secondaryPhone, // optional: "" when left blank
         customerEmail: this.customer.email,
         customerTypeId: CUSTOMER_TYPE_ID,
         addressMasterPincodeId: address.masterPincodeId,
@@ -348,6 +368,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   // Customer fields aren't reset here -- they follow BookingService.customer$
   private resetBookingDetails(): void {
     this.showAddressPicker = false;
+    this.secondaryPhone = '';
     this.selectedSlotId = null;
     this.submitError = '';
     this.submission = null;
